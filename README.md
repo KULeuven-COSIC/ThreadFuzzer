@@ -2,10 +2,8 @@
 
 ## Installation
 ### Step 1
-Clone the repository with all the submodules:
-```bash
-git clone --recurse-submodules https://github.com/IljaSir/ThreadFuzzer
-```
+Clone the repository with all the submodules.
+
 If you’ve already cloned the repository without the submodules, you can update them by running:
 ```bash
 git submodule update --init --recursive
