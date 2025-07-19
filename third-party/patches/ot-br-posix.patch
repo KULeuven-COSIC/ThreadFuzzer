@@ -1,0 +1,206 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4fefd2798b7..a774938ec43 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,7 +29,7 @@
+ cmake_minimum_required(VERSION 3.10.2)
+ project(openthread-br VERSION 0.3.0)
+ 
+-add_compile_options(-Wall -Wextra -Werror -Wfatal-errors -Wuninitialized -Wno-missing-braces)
++add_compile_options(-Wall -Wextra -Werror -Wfatal-errors -Wuninitialized -Wno-missing-braces -Wno-unused-result -Wno-unused-but-set-variable -Wno-documentation -Wno-vla-cxx-extension)
+ 
+ add_library(otbr-config INTERFACE)
+ 
+@@ -52,7 +52,7 @@ if(NOT CMAKE_C_STANDARD)
+ endif()
+ 
+ if(NOT CMAKE_CXX_STANDARD)
+-    set(CMAKE_CXX_STANDARD 11)
++    set(CMAKE_CXX_STANDARD 14) # THREADFUZZ: CHANGE CMAKE_CXX_STANDARD FROM 11 to 14
+     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ endif()
+ 
+diff --git a/src/agent/CMakeLists.txt b/src/agent/CMakeLists.txt
+index 9a8b710238d..b59ee453197 100644
+--- a/src/agent/CMakeLists.txt
++++ b/src/agent/CMakeLists.txt
+@@ -26,7 +26,24 @@
+ #  POSSIBILITY OF SUCH DAMAGE.
+ #
+ 
++# THREADFUZZ: INCLUDE DIRECTORIES (START)
++include_directories(
++    ../../../../common/
++    ../../../../common/Coverage_Instrumentation/include
++    ../../../../common/ZMQ/ZMQ_Server/include
++)
++# THREADFUZZ: INCLUDE DIRECTORIES (END)
++
++# THREADFUZZ: LINK DIRECTORIES (START)
++link_directories(
++    ../../../../common/shm/build
++    ../../../../common/Coverage_Instrumentation/build
++    ../../../../common/ZMQ/ZMQ_Server/build
++)
++# THREADFUZZ: LINK DIRECTORIES (END)
++
+ add_executable(otbr-agent
++    coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
+     application.cpp
+     main.cpp
+     uris.hpp
+@@ -34,6 +51,10 @@ add_executable(otbr-agent
+ )
+ 
+ target_link_libraries(otbr-agent PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     $<$<BOOL:${OTBR_BORDER_AGENT}>:otbr-border-agent>
+     $<$<BOOL:${OTBR_BACKBONE_ROUTER}>:otbr-backbone-router>
+     $<$<BOOL:${OTBR_DBUS}>:otbr-dbus-server>
+diff --git a/src/agent/coverage_listener/zmq_cov.cpp b/src/agent/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 00000000000..eca0114b133
+--- /dev/null
++++ b/src/agent/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,54 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5567");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                if (send_bitmap_data()) {
++                    printf("Sent bitmap data successfully!\n");
++                } else {
++                    printf("Sending bitmap data failed!\n");
++                }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/agent/coverage_listener/zmq_cov.h b/src/agent/coverage_listener/zmq_cov.h
+new file mode 100644
+index 00000000000..f5f5857e128
+--- /dev/null
++++ b/src/agent/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
+diff --git a/src/agent/main.cpp b/src/agent/main.cpp
+index bc082ca6484..8a3dc70ae76 100644
+--- a/src/agent/main.cpp
++++ b/src/agent/main.cpp
+@@ -58,6 +58,34 @@
+ #include "common/types.hpp"
+ #include "ncp/ncp_openthread.hpp"
+ 
++// THREADFUZZ: INCLUDE SHM (START)
++#include "shm/shared_memory.h"
++// THREADFUZZ: INCLUDE SHM (END)
++
++// THREADFUZZ: INCLUDE SHM_HELPER (START)
++#include "shm/shm_helper.h"
++// THREADFUZZ: INCLUDE SHM_HELPER (END)
++
++// THREADFUZZ: INCLUDE COV_INSTR (START)
++#include "instrumentation.h"
++// THREADFUZZ: INCLUDE COV_INSTR (END)
++
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (START)
++#include "shm/fuzz_config.h"
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (END)
++
++// THREADFUZZ: INCLUDE COV LISTENER (START)
++#include "coverage_listener/zmq_cov.h"
++// THREADFUZZ: INCLUDE COV LISTENER (START)
++
++// THREADFUZZ: DECLARE SHM_HELPER_G (START)
++std::unique_ptr<SHM_Helper> shm_helper_g;
++// THREADFUZZ: DECLARE SHM_HELPER_G (END)
++
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (START)
++extern Fuzz_Config fuzz_config_g;
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (END)
++
+ static const char kSyslogIdent[]          = "otbr-agent";
+ static const char kDefaultInterfaceName[] = "wpan0";
+ 
+@@ -290,6 +318,16 @@ static int realmain(int argc, char *argv[])
+         assert(false);
+     }
+ 
++    // THREADFUZZ: INIT SHARED MEMORY (START)
++    if (!parse_fuzz_config()) return -1;
++    if (fuzz_config_g.fuzz()) {
++        SHM::keep_running = 1;
++        //shm_g = std::make_unique<SHM>(SHM_CLIENT, SHM_NAME, SHM_MSG_MAX_SIZE);
++        shm_helper_g = std::make_unique<SHM_Helper>(SHM_NAME);
++    }
++    std::thread(zmq_cov::worker_loop).detach();
++    // THREADFUZZ: INIT SHARED MEMORY (END)
++
+     {
+         otbr::Application app(interfaceName, backboneInterfaceNames, radioUrls, enableAutoAttach, restListenAddress,
+                               restListenPort);
+@@ -305,6 +343,7 @@ static int realmain(int argc, char *argv[])
+     otbrLogDeinit();
+ 
+ exit:
++
+     return ret;
+ }
+ 

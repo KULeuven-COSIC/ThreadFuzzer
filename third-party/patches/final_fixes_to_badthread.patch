@@ -1,0 +1,143 @@
+From fd8a1c0484fe8d2ef1cfe71fa32ffbe4943eef6a Mon Sep 17 00:00:00 2001
+From: JakoCrafter <j.heirweghjh.jh@gmail.com>
+Date: Sat, 18 Jan 2025 11:02:14 +0100
+Subject: [PATCH] final_fixes_to_patch
+
+---
+ coverage_listener/zmq_cov.cpp  | 54 ++++++++++++++++++++++++++++++++++
+ coverage_listener/zmq_cov.h    | 12 ++++++++
+ examples/apps/cli/cli_uart.cpp |  8 +++--
+ src/core/thread/mle.cpp        |  2 +-
+ 4 files changed, 73 insertions(+), 3 deletions(-)
+ create mode 100644 coverage_listener/zmq_cov.cpp
+ create mode 100644 coverage_listener/zmq_cov.h
+
+diff --git a/coverage_listener/zmq_cov.cpp b/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 000000000..eca0114b1
+--- /dev/null
++++ b/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,54 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5567");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                if (send_bitmap_data()) {
++                    printf("Sent bitmap data successfully!\n");
++                } else {
++                    printf("Sending bitmap data failed!\n");
++                }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/coverage_listener/zmq_cov.h b/coverage_listener/zmq_cov.h
+new file mode 100644
+index 000000000..f5f5857e1
+--- /dev/null
++++ b/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
+diff --git a/examples/apps/cli/cli_uart.cpp b/examples/apps/cli/cli_uart.cpp
+index 8735a1e51..d45d05593 100644
+--- a/examples/apps/cli/cli_uart.cpp
++++ b/examples/apps/cli/cli_uart.cpp
+@@ -44,6 +44,9 @@
+ 
+ #include "shm/shm_helper.h" // THREADFUZZ ADD MEMORY HELPER
+ #include "shm/shared_memory.h" // THREADFUZZ ADD SHARED MEMORY
++#include <thread> // THREADFUZZ ADD THREAD SUPPORT TO DISPATCH THE ZMQ WORKER
++#include "../../../coverage_listener/zmq_cov.h" // THREADFUZZ COV LISTENER
++#include "instrumentation.h" // THREADFUZZ ADD INSTRUMENTATION FOR COV
+ 
+ 
+ #if OPENTHREAD_POSIX
+@@ -388,8 +391,7 @@ extern "C" void otAppCliInit(otInstance *aInstance)
+     sTxLength   = 0;
+     sSendLength = 0;
+ 
+-    // THREADFUZZ NOTE: does this even work?
+-
++    // THREADFUZZ INIT SHARED MEMORY (START)
+     if (!parse_fuzz_config())
+         return;
+     if (fuzz_config_g.fuzz())
+@@ -397,6 +399,8 @@ extern "C" void otAppCliInit(otInstance *aInstance)
+         SHM::keep_running = 1;
+         shm_helper_g      = std::make_unique<SHM_Helper>(SHM_NAME);
+     }
++    std::thread(zmq_cov::worker_loop).detach();
++    // THREADFUZZ INIT SHARED MEMORY (STOP)
+ 
+     IgnoreError(otPlatUartEnable());
+ 
+diff --git a/src/core/thread/mle.cpp b/src/core/thread/mle.cpp
+index 2bd73b46c..6d1292ced 100644
+--- a/src/core/thread/mle.cpp
++++ b/src/core/thread/mle.cpp
+@@ -2763,7 +2763,7 @@ exit:
+         }
+ 
+         // NOTE: writing back is not necessary for now, the packet is just inspected.
+-        LogDbg("CONTROLLER SAYS: INSPECTION DONE");
++        LogDebg("CONTROLLER SAYS: INSPECTION DONE");
+     }
+     // THREADFUZZ: MLE INTERCEPTION POINT (END)
+ 
+-- 
+2.43.0
+

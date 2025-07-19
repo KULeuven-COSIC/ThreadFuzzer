@@ -1,0 +1,8 @@
+{
+    "socket_1": "/dev/pts/1",
+    "socket_2": "/dev/ttyACM0",
+    "interface": "dummy0",
+    "ot_path_for_dut": "./third-party/openthread",
+    "ot_path_for_packet_generator": "./third-party/ot-br-posix",
+    "// network_dataset": ""
+}

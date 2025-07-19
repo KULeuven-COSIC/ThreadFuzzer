@@ -1,0 +1,7 @@
+{
+    "fuzzing_strategies": ["LEN_FUZZING"],
+    "use_coverage_logging": false,
+    "coverage_log_path": "coverage_log/",
+    "use_coverage_feedback": false,
+    "total_iterations": 5
+}

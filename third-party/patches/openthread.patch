@@ -1,0 +1,277 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c966aa753..7147ee9dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,7 +45,7 @@ add_library(ot-config-ftd INTERFACE)
+ add_library(ot-config-mtd INTERFACE)
+ add_library(ot-config-radio INTERFACE)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+-set(CMAKE_CXX_STANDARD 11)
++set(CMAKE_CXX_STANDARD 14)
+ set(CMAKE_C_STANDARD 99)
+ 
+ message(STATUS "OpenThread Source Directory: ${PROJECT_SOURCE_DIR}")
+diff --git a/examples/apps/cli/CMakeLists.txt b/examples/apps/cli/CMakeLists.txt
+index d81251299..e34abf785 100644
+--- a/examples/apps/cli/CMakeLists.txt
++++ b/examples/apps/cli/CMakeLists.txt
+@@ -26,6 +26,24 @@
+ #  POSSIBILITY OF SUCH DAMAGE.
+ #
+ 
++# THREADFUZZ: INCLUDE DIRECTORIES (START)
++set(COMMON_DIR ../../../../../common/)
++include_directories(
++    ${COMMON_DIR}
++    ${COMMON_DIR}/Coverage_Instrumentation/include
++    ${COMMON_DIR}/ZMQ/ZMQ_Server/include
++)
++# THREADFUZZ: INCLUDE DIRECTORIES (END)
++
++# THREADFUZZ: LINK DIRECTORIES (START)
++link_directories(
++    ${COMMON_DIR}/shm/build
++    ${COMMON_DIR}/Coverage_Instrumentation/build
++    ${COMMON_DIR}/ZMQ/ZMQ_Server/build
++)
++# THREADFUZZ: LINK DIRECTORIES (END)
++
++
+ set(COMMON_INCLUDES
+     ${OT_PUBLIC_INCLUDES}
+     ${PROJECT_SOURCE_DIR}/examples/platforms
+diff --git a/examples/apps/cli/cli_uart.cpp b/examples/apps/cli/cli_uart.cpp
+index 81f05f825..9256b35fd 100644
+--- a/examples/apps/cli/cli_uart.cpp
++++ b/examples/apps/cli/cli_uart.cpp
+@@ -40,6 +40,11 @@
+ #include "common/debug.hpp"
+ #include "utils/uart.h"
+ 
++// THREADFUZZ: INCLUDE ZMQ_COV.CPP (START)
++#include "coverage_listener/zmq_cov.h"
++#include <thread>
++// THREADFUZZ: INCLUDE ZMQ_COV.CPP (END)
++
+ #if OPENTHREAD_POSIX
+ #include <signal.h>
+ #include <sys/types.h>
+@@ -374,6 +379,8 @@ void otPlatUartSendDone(void) { SendDoneTask(); }
+ 
+ extern "C" void otAppCliInit(otInstance *aInstance)
+ {
++    std::thread(zmq_cov::worker_loop).detach(); // THREADFUZZ: SETUP THE COV LISTENER THREAD
++
+     sRxLength   = 0;
+     sTxHead     = 0;
+     sTxLength   = 0;
+diff --git a/examples/apps/cli/coverage_listener/zmq_cov.cpp b/examples/apps/cli/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 000000000..60dfa051a
+--- /dev/null
++++ b/examples/apps/cli/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,54 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5577");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                if (send_bitmap_data()) {
++                    printf("Sent bitmap data successfully!\n");
++                } else {
++                    printf("Sending bitmap data failed!\n");
++                }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/examples/apps/cli/coverage_listener/zmq_cov.h b/examples/apps/cli/coverage_listener/zmq_cov.h
+new file mode 100644
+index 000000000..f5f5857e1
+--- /dev/null
++++ b/examples/apps/cli/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
+diff --git a/examples/apps/cli/ftd.cmake b/examples/apps/cli/ftd.cmake
+index 9ed9be18c..a1ac75ae7 100644
+--- a/examples/apps/cli/ftd.cmake
++++ b/examples/apps/cli/ftd.cmake
+@@ -29,6 +29,7 @@
+ add_executable(ot-cli-ftd
+     cli_uart.cpp
+     main.c
++    coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.cpp
+ )
+ 
+ target_include_directories(ot-cli-ftd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +39,9 @@ if(NOT DEFINED OT_PLATFORM_LIB_FTD)
+ endif()
+ 
+ target_link_libraries(ot-cli-ftd PRIVATE
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-cli-ftd
+     ${OT_PLATFORM_LIB_FTD}
+     openthread-ftd
+diff --git a/examples/apps/cli/mtd.cmake b/examples/apps/cli/mtd.cmake
+index 786f74161..a005a9e45 100644
+--- a/examples/apps/cli/mtd.cmake
++++ b/examples/apps/cli/mtd.cmake
+@@ -29,6 +29,7 @@
+ add_executable(ot-cli-mtd
+     cli_uart.cpp
+     main.c
++    coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.cpp
+ )
+ 
+ target_include_directories(ot-cli-mtd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +39,9 @@ if(NOT DEFINED OT_PLATFORM_LIB_MTD)
+ endif()
+ 
+ target_link_libraries(ot-cli-mtd PRIVATE
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-cli-mtd
+     ${OT_PLATFORM_LIB_MTD}
+     openthread-mtd
+diff --git a/examples/apps/cli/radio.cmake b/examples/apps/cli/radio.cmake
+index b2fe5d968..46c4c6d6e 100644
+--- a/examples/apps/cli/radio.cmake
++++ b/examples/apps/cli/radio.cmake
+@@ -29,6 +29,7 @@
+ add_executable(ot-cli-radio
+     cli_uart.cpp
+     main.c
++    coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.cpp
+ )
+ 
+ target_include_directories(ot-cli-radio PRIVATE ${COMMON_INCLUDES})
+@@ -42,6 +43,9 @@ if(NOT DEFINED OT_MBEDTLS_RCP)
+ endif()
+ 
+ target_link_libraries(ot-cli-radio PRIVATE
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-cli-radio
+     ${OT_PLATFORM_LIB_RCP}
+     openthread-radio-cli
+diff --git a/src/core/net/ip6_address.cpp b/src/core/net/ip6_address.cpp
+index e6d924296..cd64d6ba3 100644
+--- a/src/core/net/ip6_address.cpp
++++ b/src/core/net/ip6_address.cpp
+@@ -142,6 +142,18 @@ uint8_t Prefix::MatchLength(const uint8_t *aPrefixA, const uint8_t *aPrefixB, ui
+ {
+     uint8_t matchedLength = 0;
+ 
++    // printf("THREADFUZZ\n");
++    // printf("Max size: %u\n", aMaxSize);
++    // for (uint8_t i = 0; i < aMaxSize; i++)
++    // {
++    //     printf("[%u] Prefix A: 0x%02X, B: 0x%02X\n", i, aPrefixA[i], aPrefixB[i]);
++    // }
++
++    // if (aMaxSize > Address::kSize) {
++    //     int* null_ptr = nullptr;
++    //     *null_ptr = 42;
++    // }
++
+     OT_ASSERT(aMaxSize <= Address::kSize);
+ 
+     for (uint8_t i = 0; i < aMaxSize; i++)
+diff --git a/src/core/thread/mle.cpp b/src/core/thread/mle.cpp
+index 8ce0a35d4..799ef6899 100644
+--- a/src/core/thread/mle.cpp
++++ b/src/core/thread/mle.cpp
+@@ -2721,6 +2721,7 @@ void Mle::HandleUdpReceive(Message &aMessage, const Ip6::MessageInfo &aMessageIn
+ #endif
+ 
+ exit:
++
+     // We skip logging failures for broadcast MLE messages since it
+     // can be common to receive such messages from adjacent Thread
+     // networks.
+diff --git a/src/core/thread/network_data.cpp b/src/core/thread/network_data.cpp
+index 009e67515..2f114ddd4 100644
+--- a/src/core/thread/network_data.cpp
++++ b/src/core/thread/network_data.cpp
+@@ -296,7 +296,7 @@ Error NetworkData::Iterate(Iterator &aIterator, uint16_t aRloc16, Config &aConfi
+                     {
+                         continue;
+                     }
+-
++                    
+                     if ((aRloc16 == Mac::kShortAddrBroadcast) || (server->GetServer16() == aRloc16))
+                     {
+                         aConfig.mOnMeshPrefix  = nullptr;
+diff --git a/src/core/thread/network_data_types.cpp b/src/core/thread/network_data_types.cpp
+index 24440cf53..ec66c83f2 100644
+--- a/src/core/thread/network_data_types.cpp
++++ b/src/core/thread/network_data_types.cpp
+@@ -225,6 +225,11 @@ void ServiceConfig::ServerConfig::SetFrom(const ServerTlv &aServerTlv)
+     mStable           = aServerTlv.IsStable();
+     mRloc16           = aServerTlv.GetServer16();
+     mServerDataLength = serverData.GetLength();
++    // THREADFUZZ: CRASH 2 (LEN 254)
++    printf("Server Data Len: %u\n", mServerDataLength);
++    for (int i = 0; i < mServerDataLength; ++i) {
++        printf("[%d]: 0x%02x\n", i, serverData.GetBytes()[i]);
++    }
+     serverData.CopyBytesTo(mServerData);
+ }
+ 

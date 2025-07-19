@@ -1,0 +1,37 @@
+mle.udp.port: 19788
+
+mle.meshlink_mic_ok: FALSE
+
+wpan.802154_ethertype: 0x809a
+
+wpan.802154_sec_suite: AES-CCM-32
+
+wpan.802154_ack_tracking: FALSE
+
+wpan.802154_fcs_ok: FALSE
+
+wpan.802154_extend_auth: TRUE
+
+wpan.802154e_compatibility: FALSE
+
+eth.check_fcs:FALSE
+
+eth.fcs: never
+
+coap.udp.port: 61631
+
+thread.thr_seq_ctr: 00000000
+
+thread.thr_auto_acq_thr_seq_ctr: TRUE
+
+thread.thr_use_pan_id_in_key: FALSE
+
+6lowpan.context0: fd87:10d7:9b3d:4677::/64
+
+6lowpan.iid_has_universal_local_bit: FALSE
+
+6lowpan.rfc4944_short_address_format: FALSE
+
+6lowpan.summary_in_tree: TRUE
+
+udp.check_checksum: FALSE

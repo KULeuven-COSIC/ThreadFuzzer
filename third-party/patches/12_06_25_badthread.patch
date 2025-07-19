@@ -1,0 +1,657 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c966aa753..de6eb8723 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -35,6 +35,27 @@ string(STRIP ${OT_DEFAULT_VERSION} OT_DEFAULT_VERSION)
+ project(openthread VERSION ${OT_DEFAULT_VERSION})
+ include(CTest)
+ 
++# THREADFUZZ: INCLUDE COMMON DIR (START)
++# include_directories(../../../../../common/)
++# THREADFUZZ: INCLUDE COMMON DIR (END)
++# THREADFUZZ: INCLUDE DIRECTORIES (START)
++include_directories(
++	../../common
++	../../common/shm
++	../../common/Coverage_Instrumentation/include
++	../../common/ZMQ/ZMQ_Server/include
++)
++# THREADFUZZ: INCLUDE DIRECTORIES (END)
++
++# THREADFUZZ: LINK DIRECTORIES (START)
++link_directories(
++	../../common/shm/build
++	../../common/Coverage_Instrumentation/build
++	../../common/ZMQ/ZMQ_Server/build
++)
++
++# THREADFUZZ: LINK DIRECTORIES (END)
++
+ option(OT_BUILD_EXECUTABLES "Build executables" ON)
+ option(OT_COVERAGE "enable coverage" OFF)
+ set(OT_EXTERNAL_MBEDTLS "" CACHE STRING "Specify external mbedtls library")
+@@ -45,7 +66,7 @@ add_library(ot-config-ftd INTERFACE)
+ add_library(ot-config-mtd INTERFACE)
+ add_library(ot-config-radio INTERFACE)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+-set(CMAKE_CXX_STANDARD 11)
++set(CMAKE_CXX_STANDARD 14) # THREADFUZZ: CHANGE CMAKE_CXX_STANDARD FROM 11 to 14
+ set(CMAKE_C_STANDARD 99)
+ 
+ message(STATUS "OpenThread Source Directory: ${PROJECT_SOURCE_DIR}")
+@@ -56,6 +77,7 @@ target_include_directories(ot-config INTERFACE
+     ${PROJECT_SOURCE_DIR}/src/core
+ )
+ 
++
+ include(TestBigEndian)
+ TEST_BIG_ENDIAN(OT_BIG_ENDIAN)
+ if(OT_BIG_ENDIAN)
+@@ -212,7 +234,9 @@ endif()
+ add_subdirectory(src)
+ add_subdirectory(third_party EXCLUDE_FROM_ALL)
+ 
+-add_subdirectory(tests)
++# THREADFUZZ: disable tests (START)
++# add_subdirectory(tests)
++# THREADFUZZ: disable tests (END)
+ add_subdirectory(tools)
+ 
+ add_custom_target(print-ot-config ALL
+diff --git a/coverage_listener/zmq_cov.cpp b/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 000000000..eca0114b1
+--- /dev/null
++++ b/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,54 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5567");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                if (send_bitmap_data()) {
++                    printf("Sent bitmap data successfully!\n");
++                } else {
++                    printf("Sending bitmap data failed!\n");
++                }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/coverage_listener/zmq_cov.h b/coverage_listener/zmq_cov.h
+new file mode 100644
+index 000000000..f5f5857e1
+--- /dev/null
++++ b/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
+diff --git a/examples/apps/CMakeLists.txt b/examples/apps/CMakeLists.txt
+index 03da6f0a0..4e65de9c1 100644
+--- a/examples/apps/CMakeLists.txt
++++ b/examples/apps/CMakeLists.txt
+@@ -30,4 +30,5 @@ if(OT_APP_CLI)
+     add_subdirectory(cli)
+ endif()
+ 
+-add_subdirectory(ncp)
++# THREADFUZZ: We don't want NCP
++# add_subdirectory(ncp)
+diff --git a/examples/apps/cli/CMakeLists.txt b/examples/apps/cli/CMakeLists.txt
+index d81251299..171b33731 100644
+--- a/examples/apps/cli/CMakeLists.txt
++++ b/examples/apps/cli/CMakeLists.txt
+@@ -26,6 +26,25 @@
+ #  POSSIBILITY OF SUCH DAMAGE.
+ #
+ 
++# THREADFUZZ: INCLUDE DIRECTORIES (START)
++# set(COMMON_DIR ../../../../../common/)
++# include_directories(
++#     ${COMMON_DIR}
++#     ${COMMON_DIR}/shm
++#     ${COMMON_DIR}/Coverage_Instrumentation/include
++#     ${COMMON_DIR}/ZMQ/ZMQ_Server/include
++# )
++# THREADFUZZ: INCLUDE DIRECTORIES (END)
++
++# THREADFUZZ: LINK DIRECTORIES (START)
++# link_directories(
++#     ${COMMON_DIR}/shm/build
++#     ${COMMON_DIR}/Coverage_Instrumentation/build
++#     ${COMMON_DIR}/ZMQ/ZMQ_Server/build
++# )
++# THREADFUZZ: LINK DIRECTORIES (END)
++
++
+ set(COMMON_INCLUDES
+     ${OT_PUBLIC_INCLUDES}
+     ${PROJECT_SOURCE_DIR}/examples/platforms
+diff --git a/examples/apps/cli/cli_uart.cpp b/examples/apps/cli/cli_uart.cpp
+index 81f05f825..b5a37906f 100644
+--- a/examples/apps/cli/cli_uart.cpp
++++ b/examples/apps/cli/cli_uart.cpp
+@@ -25,6 +25,9 @@
+  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  *  POSSIBILITY OF SUCH DAMAGE.
+  */
++// THREADFUZZ: fuzzing config (START)
++#include "fuzz_config.h"
++// THREADFUZZ: fuzzing config (END)
+ #include "openthread-core-config.h"
+ 
+ #include <stdarg.h>
+@@ -40,6 +43,14 @@
+ #include "common/debug.hpp"
+ #include "utils/uart.h"
+ 
++
++#include "shm/shm_helper.h" // THREADFUZZ ADD MEMORY HELPER
++#include "shm/shared_memory.h" // THREADFUZZ ADD SHARED MEMORY
++#include <thread> // THREADFUZZ ADD THREAD SUPPORT TO DISPATCH THE ZMQ WORKER
++#include "../../../coverage_listener/zmq_cov.h" // THREADFUZZ COV LISTENER
++#include "instrumentation.h" // THREADFUZZ ADD INSTRUMENTATION FOR COV
++
++
+ #if OPENTHREAD_POSIX
+ #include <signal.h>
+ #include <sys/types.h>
+@@ -97,6 +108,9 @@ uint16_t sTxLength;
+ 
+ uint16_t sSendLength;
+ 
++std::unique_ptr<SHM_Helper> shm_helper_g; // THREADFUZZ SHARED MEMORY!!
++extern Fuzz_Config fuzz_config_g; // THREADFUZZ FUZZING CONFIG
++
+ #ifdef OT_CLI_UART_LOCK_HDR_FILE
+ 
+ #include OT_CLI_UART_LOCK_HDR_FILE
+@@ -379,6 +393,17 @@ extern "C" void otAppCliInit(otInstance *aInstance)
+     sTxLength   = 0;
+     sSendLength = 0;
+ 
++    // THREADFUZZ INIT SHARED MEMORY (START)
++    if (!parse_fuzz_config())
++        return;
++    if (fuzz_config_g.fuzz())
++    {
++        SHM::keep_running = 1;
++        shm_helper_g      = std::make_unique<SHM_Helper>(SHM_NAME);
++    }
++    std::thread(zmq_cov::worker_loop).detach();
++    // THREADFUZZ INIT SHARED MEMORY (STOP)
++
+     IgnoreError(otPlatUartEnable());
+ 
+     otCliInit(aInstance, CliUartOutput, aInstance);
+diff --git a/examples/apps/cli/ftd.cmake b/examples/apps/cli/ftd.cmake
+index 9ed9be18c..4ee6b6af9 100644
+--- a/examples/apps/cli/ftd.cmake
++++ b/examples/apps/cli/ftd.cmake
+@@ -29,6 +29,8 @@
+ add_executable(ot-cli-ftd
+     cli_uart.cpp
+     main.c
++    ../../../coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
++    ../../../../../common/shm/fuzz_config.cpp # THREADFUZZ: HARDCODE THE CONFIG
+ )
+ 
+ target_include_directories(ot-cli-ftd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +40,10 @@ if(NOT DEFINED OT_PLATFORM_LIB_FTD)
+ endif()
+ 
+ target_link_libraries(ot-cli-ftd PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-cli-ftd
+     ${OT_PLATFORM_LIB_FTD}
+     openthread-ftd
+diff --git a/examples/apps/cli/mtd.cmake b/examples/apps/cli/mtd.cmake
+index 786f74161..a296426be 100644
+--- a/examples/apps/cli/mtd.cmake
++++ b/examples/apps/cli/mtd.cmake
+@@ -29,6 +29,8 @@
+ add_executable(ot-cli-mtd
+     cli_uart.cpp
+     main.c
++    ../../../coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
++    ../../../../../common/shm/fuzz_config.cpp # THREADFUZZ: HARDCODE THE CONFIG
+ )
+ 
+ target_include_directories(ot-cli-mtd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +40,10 @@ if(NOT DEFINED OT_PLATFORM_LIB_MTD)
+ endif()
+ 
+ target_link_libraries(ot-cli-mtd PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT    
+     openthread-cli-mtd
+     ${OT_PLATFORM_LIB_MTD}
+     openthread-mtd
+diff --git a/examples/apps/cli/radio.cmake b/examples/apps/cli/radio.cmake
+index b2fe5d968..c2a27e7aa 100644
+--- a/examples/apps/cli/radio.cmake
++++ b/examples/apps/cli/radio.cmake
+@@ -29,6 +29,8 @@
+ add_executable(ot-cli-radio
+     cli_uart.cpp
+     main.c
++    ../../../coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
++    ../../../../../common/shm/fuzz_config.cpp # THREADFUZZ: HARDCODE THE CONFIG
+ )
+ 
+ target_include_directories(ot-cli-radio PRIVATE ${COMMON_INCLUDES})
+@@ -42,6 +44,10 @@ if(NOT DEFINED OT_MBEDTLS_RCP)
+ endif()
+ 
+ target_link_libraries(ot-cli-radio PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-cli-radio
+     ${OT_PLATFORM_LIB_RCP}
+     openthread-radio-cli
+diff --git a/examples/apps/ncp/ftd.cmake b/examples/apps/ncp/ftd.cmake
+index a7ffa51ad..24fe905d1 100644
+--- a/examples/apps/ncp/ftd.cmake
++++ b/examples/apps/ncp/ftd.cmake
+@@ -29,6 +29,8 @@
+ add_executable(ot-ncp-ftd
+     main.c
+     ncp.c
++    ../../../coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
++    ../../../../common/shm/fuzz_config.cpp # THREADFUZZ: HARDCODE THE CONFIG
+ )
+ 
+ target_include_directories(ot-ncp-ftd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +40,10 @@ if(NOT DEFINED OT_PLATFORM_LIB_FTD)
+ endif()
+ 
+ target_link_libraries(ot-ncp-ftd PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-ncp-ftd
+     ${OT_PLATFORM_LIB_FTD}
+     openthread-ftd
+diff --git a/examples/apps/ncp/mtd.cmake b/examples/apps/ncp/mtd.cmake
+index 2fecbacc0..81e043ada 100644
+--- a/examples/apps/ncp/mtd.cmake
++++ b/examples/apps/ncp/mtd.cmake
+@@ -29,6 +29,8 @@
+ add_executable(ot-ncp-mtd
+     main.c
+     ncp.c
++    ../../../coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
++    ../../../../common/shm/fuzz_config.cpp # THREADFUZZ: HARDCODE THE CONFIG
+ )
+ 
+ target_include_directories(ot-ncp-mtd PRIVATE ${COMMON_INCLUDES})
+@@ -38,6 +40,10 @@ if(NOT DEFINED OT_PLATFORM_LIB_MTD)
+ endif()
+ 
+ target_link_libraries(ot-ncp-mtd PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     openthread-ncp-mtd
+     ${OT_PLATFORM_LIB_MTD}
+     openthread-mtd
+diff --git a/examples/platforms/simulation/uart.c b/examples/platforms/simulation/uart.c
+index fe3fcebe8..62f5492bc 100644
+--- a/examples/platforms/simulation/uart.c
++++ b/examples/platforms/simulation/uart.c
+@@ -74,6 +74,11 @@ otError otPlatUartEnable(void)
+     s_out_fd = dup(STDOUT_FILENO);
+     dup2(STDERR_FILENO, STDOUT_FILENO);
+ 
++    // THREADFUZZ START : TO AVOID OVERFLOW
++    fcntl(s_in_fd, F_SETFD, FD_CLOEXEC);
++    fcntl(s_out_fd, F_SETFD, FD_CLOEXEC);
++    // THREADFUZZ END
++
+     // We need this signal to make sure that this
+     // process terminates properly.
+     signal(SIGPIPE, SIG_DFL);
+diff --git a/script/cmake-build b/script/cmake-build
+index e457bfcd1..25329b138 100755
+--- a/script/cmake-build
++++ b/script/cmake-build
+@@ -74,7 +74,6 @@ OT_POSIX_SIM_COMMON_OPTIONS=(
+     "-DOT_ANYCAST_LOCATOR=ON"
+     "-DOT_BORDER_AGENT=ON"
+     "-DOT_BORDER_AGENT_ID=ON"
+-    "-DOT_BORDER_ROUTER=ON"
+     "-DOT_CHANNEL_MANAGER=ON"
+     "-DOT_CHANNEL_MONITOR=ON"
+     "-DOT_COAP=ON"
+@@ -83,7 +82,9 @@ OT_POSIX_SIM_COMMON_OPTIONS=(
+     "-DOT_COAP_OBSERVE=ON"
+     "-DOT_COMMISSIONER=ON"
+     "-DOT_COMPILE_WARNING_AS_ERROR=ON"
+-    "-DOT_COVERAGE=ON"
++    # THREADFUZZ: disable coverage (START)
++    "-DOT_COVERAGE=OFF"
++    # THREADFUZZ: disable coverage (END)
+     "-DOT_DATASET_UPDATER=ON"
+     "-DOT_DHCP6_CLIENT=ON"
+     "-DOT_DHCP6_SERVER=ON"
+@@ -96,6 +97,9 @@ OT_POSIX_SIM_COMMON_OPTIONS=(
+     "-DOT_JAM_DETECTION=ON"
+     "-DOT_JOINER=ON"
+     "-DOT_LOG_LEVEL_DYNAMIC=ON"
++    # THREADFUZZ: enable logging to file (START) 
++    "-DOT_LOG_OUTPUT=PLATFORM_DEFINED"
++    # THREADFUZZ: enable logging to file (END) 
+     "-DOT_MAC_FILTER=ON"
+     "-DOT_NEIGHBOR_DISCOVERY_AGENT=ON"
+     "-DOT_NETDATA_PUBLISHER=ON"
+@@ -108,6 +112,29 @@ OT_POSIX_SIM_COMMON_OPTIONS=(
+     "-DOT_SRP_CLIENT=ON"
+     "-DOT_SRP_SERVER=ON"
+     "-DOT_UPTIME=ON"
++
++    # THREADFUZZ: enable BR packets (START)
++    "-DOT_BACKBONE_ROUTER=ON"
++    "-DOT_BACKBONE_ROUTER_MULTICAST_ROUTING=ON"
++    "-DOT_BORDER_ROUTER=ON"
++    "-DOT_BORDER_ROUTING=ON"
++    "-DOT_BORDER_ROUTING_DHCP6_PD=ON"
++    "-DOT_BORDER_ROUTING_COUNTERS=ON"
++    "-DOT_NAT64_BORDER_ROUTING=ON"
++    "-DOT_BORDER_AGENT=ON"
++    "-DOT_MLR=ON"
++    "-DOT_UDP_FORWARD=ON"
++    "-DOT_COAP_BLOCK=ON"
++    "-DOT_DNSSD_SERVER=ON"
++    "-DOT_NETDATA_PUBLISHER=ON"
++    "-DOT_SRP_SERVER=ON"
++    "-DOT_TREL=OFF"
++    "-DOT_TCP=ON"
++    "-DOT_POWER_SUPPLY=EXTERNAL"
++    "-DOT_DEVICE_PROP_LEADER_WEIGHT=ON"
++    "-DOT_MLE_MAX_CHILDREN=32"
++    "-DOT_HISTORY_TRACKER=ON"
++    # THREADFUZZ: enable BR packets (END)
+ )
+ readonly OT_POSIX_SIM_COMMON_OPTIONS
+ 
+diff --git a/src/core/coap/coap.cpp b/src/core/coap/coap.cpp
+index 38e561858..cb04f801b 100644
+--- a/src/core/coap/coap.cpp
++++ b/src/core/coap/coap.cpp
+@@ -40,6 +40,23 @@
+ #include "net/udp6.hpp"
+ #include "thread/thread_netif.hpp"
+ 
++// THREADFUZZ: INCLUDE SHM (START)
++// #include "shm/shared_memory.h"
++// THREADFUZZ: INCLUDE SHM (END)
++
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (START)
++#include "shm/fuzz_config.h"
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (END)
++
++// THREADFUZZ: EXTERN SHM_G (START)
++// extern std::unique_ptr<SHM> shm_g;
++// THREADFUZZ: EXTERN SHM_G (END)
++
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (START)
++// extern Fuzz_Config fuzz_config_g;
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (END)
++
++
+ /**
+  * @file
+  *   This file contains common code base for CoAP client and server.
+@@ -178,6 +195,12 @@ Error CoapBase::Send(ot::Message &aMessage, const Ip6::MessageInfo &aMessageInfo
+ {
+     Error error;
+ 
++    // THREADFUZZ: COAP INTERCEPTION POINT (START)
++    // if (fuzz_config_g.FUZZ_COAP) {
++    //     otLogNotePlat("CALLING FUZZER AT COAP LEVEL");
++    // }
++    // THREADFUZZ: COAP INTERCEPTION POINT (END)
++
+ #if OPENTHREAD_CONFIG_OTNS_ENABLE
+     Get<Utils::Otns>().EmitCoapSend(AsCoapMessage(&aMessage), aMessageInfo);
+ #endif
+@@ -1751,6 +1774,7 @@ Error Coap::Send(CoapBase &aCoapBase, ot::Message &aMessage, const Ip6::MessageI
+ 
+ Error Coap::Send(ot::Message &aMessage, const Ip6::MessageInfo &aMessageInfo)
+ {
++    
+     return mSocket.IsBound() ? mSocket.SendTo(aMessage, aMessageInfo) : kErrorInvalidState;
+ }
+ 
+diff --git a/src/core/common/new.hpp b/src/core/common/new.hpp
+index 76d2f5e17..a94259ec9 100644
+--- a/src/core/common/new.hpp
++++ b/src/core/common/new.hpp
+@@ -40,6 +40,10 @@
+ 
+ #include <openthread/platform/toolchain.h>
+ 
+-inline void *operator new(size_t, void *p) throw() { return p; }
++// THREADFUZZ: COMMENT OUT OPENTHREAD's IMPLEMENTATION OF OPERATOR NEW (START)
++// inline void *operator new(size_t, void *p) throw() { return p; }
++#include <memory>
++// THREADFUZZ: COMMENT OUT OPENTHREAD's IMPLEMENTATION OF OPERATOR NEW (END)
++
+ 
+ #endif // OT_CORE_COMMON_NEW_HPP_
+diff --git a/src/core/config/mle.h b/src/core/config/mle.h
+index 57e1e507e..f0647684a 100644
+--- a/src/core/config/mle.h
++++ b/src/core/config/mle.h
+@@ -130,7 +130,7 @@
+  *
+  */
+ #ifndef OPENTHREAD_CONFIG_MLE_ATTACH_BACKOFF_ENABLE
+-#define OPENTHREAD_CONFIG_MLE_ATTACH_BACKOFF_ENABLE 1
++#define OPENTHREAD_CONFIG_MLE_ATTACH_BACKOFF_ENABLE 0 // THREADFUZZ: CHANGED FROM 1 TO 0
+ #endif
+ 
+ /**
+@@ -232,7 +232,7 @@
+  *
+  */
+ #ifndef OPENTHREAD_CONFIG_MLE_CHILD_ROUTER_LINKS
+-#define OPENTHREAD_CONFIG_MLE_CHILD_ROUTER_LINKS 3
++#define OPENTHREAD_CONFIG_MLE_CHILD_ROUTER_LINKS 1 // THREADFUZZ: CHANGED FROM 3 TO 1
+ #endif
+ 
+ /**
+diff --git a/src/core/thread/mle.cpp b/src/core/thread/mle.cpp
+index 8ce0a35d4..37afa2b00 100644
+--- a/src/core/thread/mle.cpp
++++ b/src/core/thread/mle.cpp
+@@ -32,6 +32,9 @@
+  */
+ 
+ #include "mle.hpp"
++// THREADFUZZ: shared memory (START)
++#include "shared_memory.h"
++// THREADFUZZ: shared memory (END)
+ 
+ #include <openthread/platform/radio.h>
+ #include <openthread/platform/time.h>
+@@ -59,6 +62,21 @@
+ #include "thread/time_sync_service.hpp"
+ #include "thread/version.hpp"
+ 
++// THREADFUZZ: INCLUDE SHM_HELPER (START)
++#include "shm/shm_helper.h"
++// THREADFUZZ: INCLUDE SHM_HELPER (END)
++
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (START)
++#include "shm/fuzz_config.h"
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (END)
++
++// THREADFUZZ: EXTERN SHM_HELPER_G (START)
++extern std::unique_ptr<SHM_Helper> shm_helper_g;
++// THREADFUZZ: EXTERN SHM_HELPER_G (END)
++
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (START)
++extern Fuzz_Config fuzz_config_g;
++
+ using ot::Encoding::BigEndian::HostSwap16;
+ 
+ namespace ot {
+@@ -2721,6 +2739,37 @@ void Mle::HandleUdpReceive(Message &aMessage, const Ip6::MessageInfo &aMessageIn
+ #endif
+ 
+ exit:
++
++    // THREADFUZZ: MLE INTERCEPTION POINT (START)
++    if (fuzz_config_g.FUZZ_MLE) {
++
++        LogDebg("<<< PACKET RX DETECTED >>>");
++
++        LogDebg("PRESENTING PACKET TO INSPECT");
++        uint16_t payload_offset = aMessage.GetOffset();
++        uint16_t payload_len = aMessage.GetLength() - payload_offset;
++
++        if (payload_len > SHM_MSG_MAX_SIZE) {
++            LogDebg("MESSAGE TOO BIG TO FIT INTO SHARED MEMORY");
++        } else {
++            // TODO: might need an other offset if we need to include the command
++            uint8_t buf[SHM_MSG_MAX_SIZE];
++            uint32_t buf_size = payload_len + 1;
++            aMessage.ReadBytes(payload_offset - 1, buf, buf_size);
++            shm_helper_g->send_msg(PACKET_SRC::SRC_DUT, buf, buf_size, EnumMutex::SHM_MUTEX_MLE);
++            // LogNote("WROTE MESSAGE TO SHARED MEMORY. SIZE: %u", buf_size);
++            // if (!shm_g->read_bytes(mutex_num, buf, buf_size)) {
++            //     LogNote("FAILED: READ MESSAGE FROM SHARED MEMORY");
++            // } else {
++            //     LogNote("SUCCESS: READ MESSAGE FROM SHARED MEMORY. SIZE: %u", buf_size);
++            // }
++        }
++
++        // NOTE: writing back is not necessary for now, the packet is just inspected.
++        LogDebg("CONTROLLER SAYS: INSPECTION DONE");
++    }
++    // THREADFUZZ: MLE INTERCEPTION POINT (END)
++
+     // We skip logging failures for broadcast MLE messages since it
+     // can be common to receive such messages from adjacent Thread
+     // networks.
+@@ -4841,6 +4890,45 @@ Error Mle::TxMessage::SendTo(const Ip6::Address &aDestination)
+     IgnoreError(Read(offset, securitySuite));
+     offset += sizeof(securitySuite);
+ 
++    // THREADFUZZ: MLE INTERCEPTION POINT (START)
++    if (fuzz_config_g.FUZZ_MLE) {
++
++        LogDebg("CALLING THE FUZZER AT MLE-LAYER");
++
++        // NOTE: when encrypted, we need to write our payload
++        // beyond the security header
++        if (securitySuite == k154Security)
++        {
++            offset += sizeof(SecurityHeader);
++        }
++
++        uint16_t payload_len = this->GetLength() - offset;
++
++        if (payload_len > SHM_MSG_MAX_SIZE) {
++            LogDebg("MESSAGE TOO BIG TO FIT INTO SHARED MEMORY");
++        } else {
++            std::unique_ptr<uint8_t[]> buf(new uint8_t[SHM_MSG_MAX_SIZE]);
++            uint32_t read_buf_size = this->ReadBytes(offset, buf.get(), payload_len);
++            LogDebg("WRITING MESSAGE TO SHARED MEMORY. SIZE: %u: ", read_buf_size);
++            shm_helper_g->send_msg(PACKET_SRC::SRC_PROTOCOL_STACK, buf.get(), read_buf_size, EnumMutex::SHM_MUTEX_MLE);
++            // if (!shm_g->read_bytes(mutex_num, buf.get(), read_buf_size)) {
++            //     LogNote("FAILED: READ MESSAGE FROM SHARED MEMORY");
++            // } else {
++            LogDebg("SUCCESS: READ MESSAGE FROM SHARED MEMORY. SIZE: %u: ", read_buf_size);
++            uint16_t new_payload_len = read_buf_size;
++            SuccessOrExit(this->SetLength(new_payload_len + offset));
++            this->WriteBytes(offset, buf.get(), new_payload_len);
++            //}
++        }
++
++        // NOTE: here we need to decrease the offset again to make sure
++        // the next part of the code still works!
++        if (securitySuite == k154Security)
++        {
++            offset -= sizeof(SecurityHeader);
++        }
++    }
++    // THREADFUZZ: MLE INTERCEPTION POINT (END)
+     if (securitySuite == k154Security)
+     {
+         SecurityHeader header;
+diff --git a/src/core/thread/mle.hpp b/src/core/thread/mle.hpp
+index 5e7a96087..6ba770e0b 100644
+--- a/src/core/thread/mle.hpp
++++ b/src/core/thread/mle.hpp
+@@ -1785,7 +1785,7 @@ private:
+ 
+ #if OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_3
+     // First attach cycle includes two Parent Requests to routers, followed by four to routers and REEDs.
+-    static constexpr uint8_t kFirstAttachCycleTotalParentRequests       = 6;
++  static constexpr uint8_t kFirstAttachCycleTotalParentRequests       = 1; // THREADFUZZ CHANGED FROM 6 TO 1
+     static constexpr uint8_t kFirstAttachCycleNumParentRequestToRouters = 2;
+ #else
+     // First attach cycle in Thread 1.1/1.2 includes a Parent Requests to routers, followed by one to routers and REEDs.

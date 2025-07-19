@@ -1,0 +1,385 @@
+From 1b824905e95370b654a516ae4acc9482993e6217 Mon Sep 17 00:00:00 2001
+From: JakoCrafter <j.heirweghjh.jh@gmail.com>
+Date: Wed, 18 Dec 2024 10:38:38 +0100
+Subject: [PATCH] no_otbr
+
+---
+ .gitignore                                    |   7 +-
+ clean.sh                                      |  30 ++++
+ common/shm/fuzz_config.h                      |   4 +-
+ compile_commands.json                         |   1 +
+ .../Configs/Fuzzing_Settings/timers_config.h  |   3 +-
+ include/dissector.h                           |   4 +-
+ .../Fuzzing_Settings/timers_config.cpp        |   3 +-
+ src/Protocol_Stack/DUT/OT_DUT.cpp             |   5 +-
+ src/Protocol_Stack/OTBR/FAST_OT.cpp           | 162 ++++++++++++++++++
+ third-party/.gitignore                        |   1 +
+ third-party/badthread                         |   1 +
+ third-party/wdissector/libs/matter-dissector  |   1 -
+ .../wdissector/libs/wireshark/.gitignore      |   1 +
+ 13 files changed, 214 insertions(+), 9 deletions(-)
+ create mode 100755 clean.sh
+ create mode 120000 compile_commands.json
+ create mode 100644 src/Protocol_Stack/OTBR/FAST_OT.cpp
+ create mode 100644 third-party/.gitignore
+ create mode 160000 third-party/badthread
+ delete mode 160000 third-party/wdissector/libs/matter-dissector
+ create mode 100644 third-party/wdissector/libs/wireshark/.gitignore
+
+diff --git a/.gitignore b/.gitignore
+index 0a65767..76ef32a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -7,4 +7,9 @@ asan_log/
+ coverage_log/
+ TODO
+ *.txt
+-packets/
+\ No newline at end of file
++packets/
++.cache
++common/Coverage_Instrumentation/.cache
++common/shm/.cache
++third-party/wdissector/.cache
++third-party/wdissector/libs/wireshark/.cache
+diff --git a/clean.sh b/clean.sh
+new file mode 100755
+index 0000000..40f5204
+--- /dev/null
++++ b/clean.sh
+@@ -0,0 +1,30 @@
++#!/bin/bash -x
++
++echo cleaning out the working directory...
++
++
++
++# openthread
++cd third-party/openthread;
++sudo rm -rf build;
++sudo rm -rf .cache;
++
++# badthread
++cd ../badthread;
++sudo rm -rf build;
++sudo rm -rf .cache;
++
++# # otbr
++# cd ../ot-br-posix;
++# sudo rm -rf build;
++# sudo rm -rf .cache;
++
++# # wireshark
++# cd ../wdissector/libs/wireshark;
++# sudo rm -rf build;
++# sudo rm -rf .cache;
++# 
++# # wdissector
++# cd ../../
++# sudo rm -rf build;
++# sudo rm -rf .cache;
+diff --git a/common/shm/fuzz_config.h b/common/shm/fuzz_config.h
+index 02e3799..4b75f60 100644
+--- a/common/shm/fuzz_config.h
++++ b/common/shm/fuzz_config.h
+@@ -2,7 +2,7 @@
+ 
+ #include <nlohmann/json.hpp>
+ 
+-#define FUZZ_CONFIG_PATH "/home/isiros/Projects/ThreadFuzzer/common/shm/config.json"
++#define FUZZ_CONFIG_PATH "/home/jakob/Documents/uni/doc/project/ThreadFuzzer/common/shm/config.json"
+ 
+ class Fuzz_Config final {
+ public:
+@@ -14,4 +14,4 @@ public:
+ 
+ bool parse_fuzz_config(const std::string& path_to_config = FUZZ_CONFIG_PATH);
+ 
+-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Fuzz_Config, FUZZ_MLE, FUZZ_COAP)
+\ No newline at end of file
++NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Fuzz_Config, FUZZ_MLE, FUZZ_COAP)
+diff --git a/compile_commands.json b/compile_commands.json
+new file mode 120000
+index 0000000..25eb4b2
+--- /dev/null
++++ b/compile_commands.json
+@@ -0,0 +1 @@
++build/compile_commands.json
+\ No newline at end of file
+diff --git a/include/Configs/Fuzzing_Settings/timers_config.h b/include/Configs/Fuzzing_Settings/timers_config.h
+index 99b4c0b..74d5188 100644
+--- a/include/Configs/Fuzzing_Settings/timers_config.h
++++ b/include/Configs/Fuzzing_Settings/timers_config.h
+@@ -14,10 +14,11 @@ public:
+ 
+     int system_cmd_max_timeout_default_s = 10;
+     int tapo_restart_wait_time_s = 5;
++  int speed = 1;
+ 
+     std::ostream& dump (std::ostream& os) const;
+ };
+ 
+ std::ostream& operator<< (std::ostream& os, const Timers_Config& config);
+ 
+-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Timers_Config, protocol_stack_restart_timer_s, dut_restart_timer_s, iteration_length_s, router_selection_jitter_s, system_cmd_max_timeout_default_s, tapo_restart_wait_time_s)
+\ No newline at end of file
++NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Timers_Config, protocol_stack_restart_timer_s, dut_restart_timer_s, iteration_length_s, router_selection_jitter_s, system_cmd_max_timeout_default_s, tapo_restart_wait_time_s, speed)
+diff --git a/include/dissector.h b/include/dissector.h
+index 4b93e56..e10d1c4 100644
+--- a/include/dissector.h
++++ b/include/dissector.h
+@@ -2,6 +2,8 @@
+ 
+ // #include "wdissector.h"
+ 
++#include <cstdint>
++
+ #include <string>
+ #include <vector>
+ 
+@@ -13,4 +15,4 @@ namespace Dissector {
+     std::string get_last_packet_summary();
+     bool dissect_packet(std::vector<uint8_t>& packet);
+     bool set_dissector(const std::string& dissector_name);
+-};
+\ No newline at end of file
++};
+diff --git a/src/Configs/Fuzzing_Settings/timers_config.cpp b/src/Configs/Fuzzing_Settings/timers_config.cpp
+index cf9d29c..70ffa42 100644
+--- a/src/Configs/Fuzzing_Settings/timers_config.cpp
++++ b/src/Configs/Fuzzing_Settings/timers_config.cpp
+@@ -8,10 +8,11 @@ std::ostream& Timers_Config::dump(std::ostream &os) const
+ {
+     os << "iteration_length_s: " << iteration_length_s << std::endl;
+     os << "router_selection_jitter" << router_selection_jitter_s << std::endl;
++    os << "speed" << speed << std::endl;
+     return os;
+ }
+ 
+ std::ostream &operator<<(std::ostream &os, const Timers_Config &config)
+ {
+     return config.dump(os);
+-}
+\ No newline at end of file
++}
+diff --git a/src/Protocol_Stack/DUT/OT_DUT.cpp b/src/Protocol_Stack/DUT/OT_DUT.cpp
+index 523799f..add8e9d 100644
+--- a/src/Protocol_Stack/DUT/OT_DUT.cpp
++++ b/src/Protocol_Stack/DUT/OT_DUT.cpp
+@@ -35,8 +35,9 @@ bool OT_DUT::start() {
+     const std::string asan_file = main_config_g.asan_log_path + "/dut_asan_" + 
+         helpers::get_current_time_stamp_short() + ".log";
+     const std::string cmd = "ASAN_OPTIONS='log_path=" + asan_file + 
+-        "' ./third-party/openthread/build/simulation/examples/apps/cli/" + name_ + " 4";
++      "' ./third-party/openthread/build/simulation/examples/apps/cli/" + name_ + " 4 -s " + std::to_string(timers_config_g.speed);
+     // const std::string cmd = "./third-party/openthread/build/simulation/examples/apps/cli/" + name_ + " 4";
++    printf("starting dut with speed: %s\n", std::to_string(timers_config_g.speed).c_str());
+     if (helpers::stuff_cmd_to_screen(name_, cmd)) {
+         my_logger_g.logger->error("Failed to start DUT");
+         return false;
+@@ -133,4 +134,4 @@ bool OT_DUT::deactivate_thread() {
+     }
+ 
+     return true;
+-}
+\ No newline at end of file
++}
+diff --git a/src/Protocol_Stack/OTBR/FAST_OT.cpp b/src/Protocol_Stack/OTBR/FAST_OT.cpp
+new file mode 100644
+index 0000000..2b734ed
+--- /dev/null
++++ b/src/Protocol_Stack/OTBR/FAST_OT.cpp
+@@ -0,0 +1,162 @@
++#include "Protocol_Stack/OTBR/OTBR.h"
++
++#include "helpers.h"
++#include "my_logger.h"
++#include "Configs/Fuzzing_Settings/main_config.h"
++#include "Configs/Fuzzing_Settings/technical_config.h"
++#include "Configs/Fuzzing_Settings/timers_config.h"
++#include "Protocol_Stack/RCP/RCP_Sim.h"
++#include "Protocol_Stack/RCP/RCP_factory.h"
++
++#include <iostream>
++
++extern Main_Config main_config_g;
++extern Technical_Config technical_config_g;
++extern Timers_Config timers_config_g;
++extern My_Logger my_logger_g;
++
++FAST_OT::OTBR() {
++    rcp_ = RCP_Factory::get_rcp_instance_by_name(main_config_g.rcp_name);
++}
++
++bool OTBR::start()
++{
++    const std::string socket = technical_config_g.socket_2;
++    const std::string interface = technical_config_g.interface;
++
++    /* Start Boarder Router */
++    const std::string prepare_br_config_cmd = "echo \"OTBR_AGENT_OPTS='-I wpan0 -B " + interface + " spinel+hdlc+uart://" + socket + " trel://" + interface + "' \nOTBR_NO_AUTO_ATTACH=0\" | sudo tee /etc/default/" + name_;
++    if (helpers::exec_system_cmd_with_default_timeout(prepare_br_config_cmd) != 0) {
++        my_logger_g.logger->error("Failed to prepare BR config");
++        return false;
++    }
++
++    const std::string restart_br_service_cmd = "sudo service " + name_ + " restart";
++    if (helpers::exec_system_cmd_with_default_timeout(restart_br_service_cmd) != 0) {
++        my_logger_g.logger->error("Failed to restart BR");
++        return false;
++    }
++
++    // const std::string see_otbr_logs_cmd = "gnome-terminal --geometry=180x25+200+550 --title=OTBR_LOGS -- bash -c \"tail -f /var/log/syslog | grep " + name_ + "\"";
++    // if (helpers::exec_system_cmd_with_default_timeout(see_otbr_logs_cmd) != 0) {
++    //     my_logger_g.logger->error("Failed to launch a gnome terminal with OTBR LOGS");
++    //     return false;
++    // }
++
++    std::this_thread::sleep_for(std::chrono::seconds(3));
++    
++    /* Start RCP */
++    if (!rcp_->start()) {
++        my_logger_g.logger->error("Failed to start RCP");
++        return false;
++    }
++
++    if (dynamic_cast<RCP_Sim*>(rcp_.get())) {
++        /* Wait a bit if we are in the simulation mode */
++        std::this_thread::sleep_for(std::chrono::seconds(2));
++    }
++
++    if (!activate_thread()) {
++        my_logger_g.logger->error("Failed to activate thread in BR");
++        return false;
++    }
++
++    return true;
++}
++
++bool OTBR::stop() {
++
++    bool success = true;
++
++    // /* Kill log */
++    // if (!helpers::kill_process("tail -f /var/log/syslog")) {
++    //     my_logger_g.logger->warn("Failed to stop the BR logs");
++    // }
++
++    /* Stop RCP */
++    if (!rcp_->stop()) {
++        my_logger_g.logger->warn("Failed to stop RCP");
++        success = false;
++    }
++
++    /* Stop Boarder Router */
++    if (!helpers::signal_service(name_, "SIGINT")) {
++        my_logger_g.logger->warn("Failed to stop BR");
++        success = false;
++    }
++
++    return success;
++}
++
++bool OTBR::restart() {
++    this->stop();
++    std::this_thread::sleep_for(std::chrono::seconds(1));
++    if (!this->start()) return false;
++    return true;
++}
++
++bool OTBR::is_running() {
++    return helpers::is_process_alive(name_) && rcp_->is_running();
++}
++
++bool OTBR::reset() {
++    // if (!deactivate_thread()) {
++    //     my_logger_g.logger->error("Failed to deactivate thread in BR");
++    //     return false;
++    // }
++    // std::this_thread::sleep_for(std::chrono::seconds(1));
++    // if (!activate_thread()) {
++    //     my_logger_g.logger->error("Failed to activate thread in BR");
++    //     return false;
++    // }
++    return true;
++}
++
++bool OTBR::activate_thread() {
++
++    const std::string ifconfig_up_cmd = "sudo " + cli_name_ + " ifconfig up > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(ifconfig_up_cmd) != 0) {
++        my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}", cli_name_);
++        return false;
++    }
++    std::string set_router_selection_jitter = "sudo " + cli_name_ + " routerselectionjitter " + std::to_string(timers_config_g.router_selection_jitter_s) + " > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(set_router_selection_jitter) != 0) {
++        my_logger_g.logger->error("Failed to set routerselectionjitter in BR");
++        return false;
++    }
++    std::string set_dataset_active_br_cmd = "sudo " + cli_name_ + " dataset set active " + technical_config_g.network_dataset + " > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(set_dataset_active_br_cmd) != 0) {
++        my_logger_g.logger->error("Failed to set dataset active in BR");
++        return false;
++    }
++    const std::string thread_start = "sudo " + cli_name_ + " thread start" + " > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(thread_start) != 0) {
++        my_logger_g.logger->error("Failed to run \"thread start\" in " + cli_name_);
++        return false;
++    }
++
++    return true;
++}
++
++bool OTBR::deactivate_thread() {
++
++    const std::string thread_stop = "sudo " + cli_name_ + " thread stop > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(thread_stop) != 0) {
++        my_logger_g.logger->error("Failed to run \"thread start\" in " + cli_name_);
++        return false;
++    }
++
++    const std::string ifconfig_down_cmd = "sudo " + cli_name_ + " ifconfig down > /dev/null";
++    if (helpers::exec_system_cmd_with_default_timeout(ifconfig_down_cmd) != 0) {
++        my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}", cli_name_);
++        return false;
++    }
++
++    // const std::string factoryreset_cmd = "sudo " + cli_name_ + " factoryreset > /dev/null";
++    // if (helpers::exec_system_cmd_with_default_timeout(factoryreset_cmd) != 0) {
++    //     my_logger_g.logger->error("Failed to run \"factoryreset\" in {}", cli_name_);
++    //     return false;
++    // }
++
++    return true;
++}
+diff --git a/third-party/.gitignore b/third-party/.gitignore
+new file mode 100644
+index 0000000..16d3c4d
+--- /dev/null
++++ b/third-party/.gitignore
+@@ -0,0 +1 @@
++.cache
+diff --git a/third-party/badthread b/third-party/badthread
+new file mode 160000
+index 0000000..8bc2504
+--- /dev/null
++++ b/third-party/badthread
+@@ -0,0 +1 @@
++Subproject commit 8bc25042ba5cde20605eec2a329c0dff575303f4
+diff --git a/third-party/wdissector/libs/matter-dissector b/third-party/wdissector/libs/matter-dissector
+deleted file mode 160000
+index 97e9d99..0000000
+--- a/third-party/wdissector/libs/matter-dissector
++++ /dev/null
+@@ -1 +0,0 @@
+-Subproject commit 97e9d9963f212a7de2f27c894f555ab027a54931
+diff --git a/third-party/wdissector/libs/wireshark/.gitignore b/third-party/wdissector/libs/wireshark/.gitignore
+new file mode 100644
+index 0000000..16d3c4d
+--- /dev/null
++++ b/third-party/wdissector/libs/wireshark/.gitignore
+@@ -0,0 +1 @@
++.cache
+-- 
+2.43.0
+

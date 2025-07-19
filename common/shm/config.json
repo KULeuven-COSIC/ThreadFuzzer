@@ -1,0 +1,4 @@
+{
+    "FUZZ_MLE": true,
+    "FUZZ_COAP": false
+}

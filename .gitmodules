@@ -1,0 +1,9 @@
+[submodule "third-party/openthread"]
+	path = third-party/openthread
+	url = https://github.com/openthread/openthread
+[submodule "third-party/ot-br-posix"]
+	path = third-party/ot-br-posix
+	url = https://github.com/openthread/ot-br-posix/
+[submodule "third-party/badthread"]
+	path = third-party/badthread
+	url = https://github.com/openthread/openthread.git

@@ -1,0 +1,7 @@
+{
+    "fuzzing_strategies": ["TLV_DUPLICATING"],
+    "use_coverage_logging": true,
+    "coverage_log_path": "coverage_log/",
+    "use_coverage_feedback": false,
+    "total_iterations": 1
+}

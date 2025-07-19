@@ -1,0 +1,17 @@
+{
+    "fuzzing_strategies": ["NONE"],
+    "use_coverage_logging": false,
+    "coverage_log_path": "coverage_log/fast_test",
+    "use_coverage_feedback": false,
+    "total_iterations": 20,
+    "use_existing_seeds": true,
+    "// fuzzing_stop_states": ["Parent Request, Bad FCS"],
+    "seed_paths": [
+        "seeds/crash_seeds/OpenThread_DUT/Crash_2/crash_seed_2_inj.json"
+    ],
+    "// seed_paths": [
+        "../ThreadFuzzer/seeds/hang_seeds/hang_seed_1_inj.json"
+    ],
+    "// seed_paths": ["crash_seed_1_mut.json"],
+    "// seed_paths": ["seeds/crash_seeds/OpenThread_DUT/NewCrash/crash_inj.json"]
+}

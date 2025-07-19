@@ -1,0 +1,11 @@
+{
+    "fuzzing_strategies": ["LEN_FUZZING", "RANDOM_FUZZING"],
+    "use_coverage_logging": true,
+    "coverage_log_path": "coverage_log/len_and_random_fuzzing_no_cov_k_2_iter_3s/",
+    "use_coverage_feedback": false,
+    "init_prob_mult_factor": 3.0,
+    "mutation_prob": 100,
+    "total_iterations": 1000,
+    "states_to_fuzz": ["Parent Request, Bad FCS"],
+    "fields_not_to_fuzz": ["mle.sec_suite"]
+}
