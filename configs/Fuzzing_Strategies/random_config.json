@@ -2,43 +2,11 @@
     "fuzzing_strategies": [
         "RANDOM_FUZZING"
     ],
-    "use_coverage_logging": false,
-    "coverage_log_path": "coverage_log/random_5000_TEST",
+    "use_coverage_logging": true,
+    "coverage_log_path": "coverage_log/random_fuzzing",
     "use_coverage_feedback": false,
     "init_prob_mult_factor": 3,
-    "// init_prob_mult_factor": 3,
-    "// mutation_prob": 50,
     "mutation_prob": 100,
     "skip_prob": 0,
-    "total_iterations": 4000,
-    "// fuzzing_stop_states": [
-        "Link Request, Bad FCS",
-        "Link Accept, Bad FCS",
-        "Link Accept and Request, Bad FCS"
-    ],
-    "// states_to_fuzz": [
-        "Parent Request, Bad FCS",
-        "Parent Response, Bad FCS"
-    ],
-    "// fields_not_to_fuzz": [
-        "mle.sec_suite",
-        "mle.tlv.challenge",
-        "mle.tlv.response"
-    ],
-    "// C1 fields_to_fuzz": [
-        "thread_nwd.tlv.prefix.length"
-    ],
-    "// C5 fields_to_fuzz": [
-        "mle.tlv.leader_data.router_id"
-    ],
-    "// C4 fields_to_fuzz": [
-        "mle.tlv.timeout"
-    ],
-    "// C3 fields_to_fuzz": [
-        "thread_nwd.tlv.len"
-    ],
-    "// fields_to_fuzz": [
-        "thread_nwd.tlv.len",
-        "thread_nwd.tlv.server.16"
-    ]
+    "total_iterations": 100
 }

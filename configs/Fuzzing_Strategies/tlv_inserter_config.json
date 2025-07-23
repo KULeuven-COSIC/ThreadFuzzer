@@ -1,9 +1,7 @@
 {
     "fuzzing_strategies": ["RANDOM_FUZZING", "TLV_INSERTING"],
-    "use_coverage_logging": false,
+    "use_coverage_logging": true,
     "coverage_log_path": "coverage_log/",
     "use_coverage_feedback": false,
-    "total_iterations": 100000,
-    "//use_existing_seeds": true,
-    "//seed_paths": ["seeds/crash_seeds/OpenThread_DUT/Crash_1/crash_seed_1_mut.json"]
+    "total_iterations": 100
 }
