@@ -1,18 +1,14 @@
 # ThreadFuzzer
 
 ## Installation
-### Step 1
-Clone the repository with all the submodules.
-
-If you’ve already cloned the repository without the submodules, you can update them by running:
+Run the setup script. It will install all the libraries, pull the submodules, checkout and apply the patches to them.
 ```bash
-git submodule update --init --recursive
+sudo ./setup.sh
 ```
 
-### Step 2
-Run the setup script. It will checkout the submodules and apply the patches.
+## Running the Fuzzer in the simulation mode
 ```bash
-./setup.sh
+sudo ./build/ThreadFuzzer configs/Fuzzing_Settings/main_config.json configs/Fuzzing_Strategies/random_config.json
 ```
 
 ## Notes
