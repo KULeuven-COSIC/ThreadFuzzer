@@ -58,86 +58,6 @@ index c966aa753..de6eb8723 100644
  add_subdirectory(tools)
  
  add_custom_target(print-ot-config ALL
-diff --git a/coverage_listener/zmq_cov.cpp b/coverage_listener/zmq_cov.cpp
-new file mode 100644
-index 000000000..eca0114b1
---- /dev/null
-+++ b/coverage_listener/zmq_cov.cpp
-@@ -0,0 +1,54 @@
-+#include "zmq_cov.h"
-+
-+#include "zmq_server.h"
-+#include "instrumentation.h"
-+
-+#include <iostream>
-+#include <zmq.hpp>
-+#include <string>
-+
-+extern feedback_t feedback;
-+
-+namespace zmq_cov {
-+
-+    // Private part
-+    static ZMQ_Server zmq_server;
-+
-+    static std::string recv_message() {
-+        boost::optional<zmq::message_t> msg = zmq_server.recv();
-+        if (msg) {
-+            return msg.value().to_string();
-+        }
-+        return {};
-+    }
-+
-+    static bool send_bitmap_data() {
-+        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
-+    }
-+
-+    static void reset_bitmap() {
-+        memset(feedback.guard_map.get(), 0, feedback.guard_count);
-+    }
-+
-+    // Public function
-+    void worker_loop() {
-+        zmq_server.bind("tcp://*:5567");
-+        std::string msg;
-+        while (msg != "OVER") {
-+            msg = recv_message();
-+            if (msg == "GET_COVERAGE_MAP") {
-+                if (send_bitmap_data()) {
-+                    printf("Sent bitmap data successfully!\n");
-+                } else {
-+                    printf("Sending bitmap data failed!\n");
-+                }
-+            } else if (msg == "RESET_COVERAGE_MAP") {
-+                reset_bitmap();
-+                zmq_server.send("OK");
-+            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
-+                zmq_server.send(std::to_string(feedback.guard_count));
-+            }
-+        }
-+    }
-+
-+}
-\ No newline at end of file
-diff --git a/coverage_listener/zmq_cov.h b/coverage_listener/zmq_cov.h
-new file mode 100644
-index 000000000..f5f5857e1
---- /dev/null
-+++ b/coverage_listener/zmq_cov.h
-@@ -0,0 +1,12 @@
-+#ifndef ZMQ_COV_H_
-+#define ZMQ_COV_H_
-+
-+#include <cstdint>
-+
-+namespace zmq_cov {
-+
-+    void worker_loop();
-+
-+};
-+
-+#endif //ZMQ_COV_H_
-\ No newline at end of file
 diff --git a/examples/apps/CMakeLists.txt b/examples/apps/CMakeLists.txt
 index 03da6f0a0..4e65de9c1 100644
 --- a/examples/apps/CMakeLists.txt
@@ -356,6 +276,19 @@ index 2fecbacc0..81e043ada 100644
      openthread-ncp-mtd
      ${OT_PLATFORM_LIB_MTD}
      openthread-mtd
+diff --git a/examples/platforms/simulation/logging.c b/examples/platforms/simulation/logging.c
+index cce2ad558..1d62ab02e 100644
+--- a/examples/platforms/simulation/logging.c
++++ b/examples/platforms/simulation/logging.c
+@@ -55,7 +55,7 @@ void platformLoggingSetFileName(const char *aName)
+         fclose(sLogFile);
+     }
+ 
+-    sLogFile = fopen(aName, "wt");
++    sLogFile = fopen(aName, "at");
+ 
+     if (sLogFile == NULL)
+     {
 diff --git a/examples/platforms/simulation/uart.c b/examples/platforms/simulation/uart.c
 index fe3fcebe8..62f5492bc 100644
 --- a/examples/platforms/simulation/uart.c

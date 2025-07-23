@@ -2,7 +2,7 @@
 
 #include <nlohmann/json.hpp>
 
-#define FUZZ_CONFIG_PATH "/home/jakob/Documents/uni/doc/project/Virtual_ThreadFuzzer/common/shm/config.json"
+#define FUZZ_CONFIG_PATH "FUZZ_CONFIG_PATH_PLACEHOLDER"
 
 class Fuzz_Config final {
 public:
