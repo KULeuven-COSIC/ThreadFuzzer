@@ -11,6 +11,13 @@ index c966aa753..7147ee9dd 100644
  set(CMAKE_C_STANDARD 99)
  
  message(STATUS "OpenThread Source Directory: ${PROJECT_SOURCE_DIR}")
+diff --git a/compile_commands.json b/compile_commands.json
+new file mode 100644
+index 000000000..fe51488c7
+--- /dev/null
++++ b/compile_commands.json
+@@ -0,0 +1 @@
++[]
 diff --git a/examples/apps/cli/CMakeLists.txt b/examples/apps/cli/CMakeLists.txt
 index d81251299..e34abf785 100644
 --- a/examples/apps/cli/CMakeLists.txt
@@ -65,6 +72,87 @@ index 81f05f825..9256b35fd 100644
      sRxLength   = 0;
      sTxHead     = 0;
      sTxLength   = 0;
+diff --git a/examples/apps/cli/coverage_listener/zmq_cov.cpp b/examples/apps/cli/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 000000000..b57bb2a6f
+--- /dev/null
++++ b/examples/apps/cli/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,55 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5577");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                send_bitmap_data();
++                // if (send_bitmap_data()) {
++                //     printf("Sent bitmap data successfully!\n");
++                // } else {
++                //     printf("Sending bitmap data failed!\n");
++                // }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/examples/apps/cli/coverage_listener/zmq_cov.h b/examples/apps/cli/coverage_listener/zmq_cov.h
+new file mode 100644
+index 000000000..f5f5857e1
+--- /dev/null
++++ b/examples/apps/cli/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
 diff --git a/examples/apps/cli/ftd.cmake b/examples/apps/cli/ftd.cmake
 index 9ed9be18c..a1ac75ae7 100644
 --- a/examples/apps/cli/ftd.cmake
