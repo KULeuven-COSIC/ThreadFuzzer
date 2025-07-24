@@ -16,8 +16,9 @@ sudo ./setup.sh
 - `include/` — Header files
 - `third-party/` — Third-party libraries
 - `common/` — Common libraries shared across modules
+- `scripts/` — Multiple useful scripts
 - `seeds/` — Seeds used to reproduce crashes
-- `coverage_logs/` — Coverage information generated during fuzzing runs
+- `coverage_log/` — Coverage information generated during fuzzing runs
 - `logs/` — Log files from fuzzer runs
 - `configs/` — Configuration files:
   - `Fuzzing_Settings/` — Core fuzzer settings (technical configuration)
@@ -50,6 +51,14 @@ sudo ./build/ThreadFuzzer configs/seeds/crash_seeds/Crash_X/main_config.json con
 ```
 
 ---
+
+## Plotting the graphs from the paper
+Run one of the following scripts to plot Figures 2, 3, 4 or 5, respectively:
+`./scripts/visualize_coverage_results_greybox.sh`
+`./scripts/visualize_coverage_results_blackbox.sh`
+`./scripts/visualize_coverage_results_tlv_fuzzer.sh`
+`./scripts/visualize_coverage_results_mtd.sh`
+
 
 ## Notes
 
