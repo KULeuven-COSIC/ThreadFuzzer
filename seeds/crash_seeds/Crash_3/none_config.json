@@ -1,0 +1,11 @@
+{
+    "fuzzing_strategies": ["NONE"],
+    "use_coverage_logging": false,
+    "coverage_log_path": "coverage_log/fast_test",
+    "use_coverage_feedback": false,
+    "total_iterations": 100,
+    "use_existing_seeds": true,
+    "seed_paths": [
+        "seeds/crash_seeds/OpenThread_DUT/Crash_3/crash_seed_3_mut.json"
+    ]
+}
