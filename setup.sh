@@ -27,7 +27,7 @@ default_wlan_interface_name="$(ip -o -4 route show to default | awk '{print $5}'
 ### FUNCTION DEFINITIONS START
 function build_success { echo "Build successful"; }
 function build_fail { echo "Build failed"; }
-function build_routine { mkdir -p build && cd build && CC=/usr/bin/clang-14 CXX=/usr/bin/clang++-14 cmake .. && cmake --build . -j3; }
+function build_routine { mkdir -p build && cd build && CC=/usr/bin/clang-18 CXX=/usr/bin/clang++-18 cmake .. && cmake --build . -j3; }
 function build_dir { 
     success=0;
     start_dir=`pwd`;
@@ -39,6 +39,18 @@ function build_dir {
         build_fail;
     fi
     cd $start_dir;
+    return $success
+}
+
+function build_install_dir { 
+    start_dir_l=`pwd`
+    if ! build_dir $1; then
+        return $?
+    fi
+    start_dir_l=`pwd`
+    cd $1 && cd build && sudo make install;
+    success=$?
+    cd $pwd
     return $success
 }
 
@@ -115,13 +127,44 @@ function apt_install_all_packets {
     ## For Fuzzer
     # LibSerial
     sudo apt install -y g++ git autogen autoconf build-essential cmake graphviz libboost-dev libboost-test-dev libgtest-dev libtool \
-                 python3-sip-dev doxygen python3-sphinx pkg-config python3-sphinx-rtd-theme android-tools-adb
+                python3-sip-dev doxygen python3-sphinx pkg-config python3-sphinx-rtd-theme android-tools-adb
     # ZMQ
-    sudo apt-get install -y libzmq3-dev
+    sudo apt-get install -y libzmq3-dev catch2
     # SPDLOG
-    sudo apt install libspdlog-dev
+    sudo apt install -y libspdlog-dev
     # Additional
     sudo apt install -y dbus-x11 python3 bear
+}
+
+function install_neccessary_libs() {
+    # Apt install necessary packets
+    apt_install_all_packets
+
+    # Install everything in the third-party folder
+    cd third-party
+    start_dir_l=`pwd`
+
+    # Install nlohmann json
+    git clone https://github.com/nlohmann/json.git
+    if ! build_install_dir json; then
+        custom_exit $?
+    fi
+    cd $start_dir_l
+
+    # Install libzmq
+    git clone https://github.com/zeromq/libzmq.git && cd libzmq
+    ./autogen.sh
+    ./configure
+    make
+    sudo make install && sudo ldconfig
+    cd $start_dir_l
+
+    # Install cppzmq`
+    git clone https://github.com/zeromq/cppzmq.git
+    if ! build_install_dir cppzmq; then
+        custom_exit $?
+    fi
+    cd $start_dir_l
 }
 
 ### FUNCTION DEFINITIONS END
@@ -131,7 +174,7 @@ function apt_install_all_packets {
 cd "$script_dir" || exit_func 1
 
 # Install all apt packets
-apt_install_all_packets
+install_neccessary_libs
 
 # Remove randomization. That is due to the bug in ASAN, which causes crashes otherwise. 
 # See https://stackoverflow.com/questions/78293129/c-programs-fail-with-asan-addresssanitizerdeadlysignal for details.
@@ -160,7 +203,7 @@ echo "Building OpenThread and BadThread"
 checkout_tag "$OPENTHREAD_PATH" "$OPENTHREAD_CHECKOUT_TAG"
 checkout_tag "$BADTHREAD_PATH" "$OPENTHREAD_CHECKOUT_TAG"
 
-# TODO: ADD CHECK IF THE PATCHES ARE ALREADY APPLIED!
+# # TODO: ADD CHECK IF THE PATCHES ARE ALREADY APPLIED!
 cd "$OPENTHREAD_PATH" && git apply --ignore-whitespace ../patches/openthread.patch && CFLAGS="${CFLAGS} -g -fsanitize=address -fsanitize-coverage=edge,no-prune,trace-pc-guard" CXXFLAGS="${CXXFLAGS} -g -fsanitize=address -fsanitize-coverage=edge,no-prune,trace-pc-guard"  CXX=/usr/bin/clang++-18 CC=/usr/bin/clang-18 bear -- ./script/cmake-build simulation -DOT_FULL_LOGS=ON -DOT_THREAD_VERSION=1.3 && cd - || exit_func 1
 cd "$BADTHREAD_PATH" && git apply --ignore-whitespace ../patches/badthread.patch && CFLAGS="${CFLAGS} -g -fsanitize=address -fsanitize-coverage=edge,no-prune,trace-pc-guard" CXXFLAGS="${CXXFLAGS} -g -fsanitize=address -fsanitize-coverage=edge,no-prune,trace-pc-guard" CXX=/usr/bin/clang++-18 CC=/usr/bin/clang-18 bear -- ./script/cmake-build simulation -DOT_FULL_LOGS=ON -DOT_THREAD_VERSION=1.3 && cd - || exit_func 1
 
