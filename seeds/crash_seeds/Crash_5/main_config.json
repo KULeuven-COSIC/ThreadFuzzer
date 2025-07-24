@@ -1,0 +1,25 @@
+{
+    "protocol_stack_name": "OPENTHREAD",
+    "coordinator_name": "TIMEOUT_BASED",
+    "packet_generator_name": "OT_FTD",
+    "dut_name": "OT_FTD",
+    "rcp_name": "RCP_DUMMY",
+    "asan_log_path": "asan_log",
+    "use_monitor": true,
+    "dut_log_file": "dut_log_output.txt",
+    "gen_log_file": "gen_log_output.txt",
+    "technical_config_path": "configs/Fuzzing_Settings/technical_config.json",
+    "timers_config_path": "configs/Fuzzing_Settings/timers_config.json",
+    "pg_cli_args": [
+        "routerselectionjitter 1",
+        "br init 2 1",
+        "br enable",
+        "ifconfig up",
+        "thread start"
+    ],
+    "dut_cli_args": [
+        "routerselectionjitter 1",
+        "ifconfig up",
+        "thread start"
+    ]
+}

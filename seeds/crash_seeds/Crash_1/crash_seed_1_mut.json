@@ -1,0 +1,17 @@
+{
+    "patches": [
+        {
+            "layer": 0,
+            "packet_summary": "Child ID Response, Bad FCS",
+            "mutations": [
+                {
+                    "field": {
+                        "field_name": "thread_nwd.tlv.prefix.length",
+                        "index": 0
+                    },
+                    "new_value": 255
+                }
+            ]
+        }
+    ]
+}

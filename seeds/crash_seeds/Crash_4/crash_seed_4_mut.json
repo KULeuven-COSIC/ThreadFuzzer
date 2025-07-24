@@ -1,0 +1,17 @@
+{
+    "patches": [
+        {
+            "layer": 0,
+            "packet_summary": "Child Update Response, Bad FCS",
+            "mutations": [
+                {
+                    "field": {
+                        "field_name": "mle.tlv.timeout",
+                        "index": 0
+                    },
+                    "new_value": 4294967295
+                }
+            ]
+        }
+    ]
+}

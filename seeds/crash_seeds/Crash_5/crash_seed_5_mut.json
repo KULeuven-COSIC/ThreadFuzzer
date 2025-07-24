@@ -1,0 +1,17 @@
+{
+    "patches": [
+        {
+            "layer": 0,
+            "packet_summary": "Advertisement, Bad FCS",
+            "mutations": [
+                {
+                    "field": {
+                        "field_name": "mle.tlv.leader_data.router_id",
+                        "index": 0
+                    },
+                    "new_value": 255
+                }
+            ]
+        }
+    ]
+}

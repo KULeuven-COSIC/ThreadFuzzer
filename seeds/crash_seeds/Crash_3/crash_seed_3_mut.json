@@ -1,0 +1,17 @@
+{
+    "patches": [
+        {
+            "layer": 0,
+            "packet_summary": "Data Response, Bad FCS",
+            "mutations": [
+                {
+                    "field": {
+                        "field_name": "thread_nwd.tlv.len",
+                        "index": 1
+                    },
+                    "new_value": 255
+                }
+            ]
+        }
+    ]
+}
