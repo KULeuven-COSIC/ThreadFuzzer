@@ -2,8 +2,4 @@
 **/build/*
 tmp/
 log/
-log_bak/
-asan_log/
-coverage_log/
-TODO
-packets/
+*.pipe
