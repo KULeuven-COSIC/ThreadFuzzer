@@ -165,6 +165,7 @@ function install_neccessary_libs() {
         custom_exit $?
     fi
     cd $start_dir_l
+    cd ..
 }
 
 ### FUNCTION DEFINITIONS END
