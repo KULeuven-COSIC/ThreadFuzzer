@@ -5,7 +5,7 @@
 Run the setup script to install dependencies, pull submodules, and apply necessary patches:
 
 ```bash
-sudo ./setup.sh
+chmod +x setup.sh && sudo ./setup.sh
 ```
 
 ---
@@ -47,7 +47,7 @@ sudo ./build/ThreadFuzzer configs/Fuzzing_Settings/main_config.json configs/Fuzz
 To reproduce one of the predefined crashes (1–6), use the corresponding configuration files. Replace `X` with the crash number:
 
 ```bash
-sudo ./build/ThreadFuzzer configs/seeds/crash_seeds/Crash_X/main_config.json configs/seeds/crash_seeds/Crash_X/none_config.json
+sudo ./build/ThreadFuzzer seeds/crash_seeds/Crash_X/main_config.json seeds/crash_seeds/Crash_X/none_config.json
 ```
 
 ---

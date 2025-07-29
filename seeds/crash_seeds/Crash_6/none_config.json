@@ -6,6 +6,6 @@
     "total_iterations": 100,
     "use_existing_seeds": true,
     "seed_paths": [
-        "seeds/crash_seeds/OpenThread_DUT/Crash_6/crash_seed_6_inj.json"
+        "seeds/crash_seeds/Crash_6/crash_seed_6_inj.json"
     ]
 }
