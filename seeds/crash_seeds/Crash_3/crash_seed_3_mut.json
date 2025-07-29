@@ -7,7 +7,7 @@
                 {
                     "field": {
                         "field_name": "thread_nwd.tlv.len",
-                        "index": 1
+                        "index": 0
                     },
                     "new_value": 255
                 }
