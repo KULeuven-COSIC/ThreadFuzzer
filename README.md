@@ -69,6 +69,7 @@ sudo ./build/ThreadFuzzer seeds/crash_seeds/Crash_X/main_config.json seeds/crash
 ---
 
 ## Plotting the graphs from the paper
+Note: You cannot do this step from the Docker container.
 Run one of the following scripts to plot Figures 2, 3, 4 or 5, respectively:
 
 - `./scripts/visualize_coverage_results_greybox.sh`
