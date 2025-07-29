@@ -119,7 +119,11 @@ function apt_install_all_packets {
     sudo apt update && sudo apt upgrade
     
     # GIT
-    sudo apt install git -y
+    sudo apt install git 
+    
+    # Python
+    sudo apt python3.5 python3-pip -y
+    yes | pip3 install pandas matplotlib scipy
 
     ## For WDissector
     sudo apt install -y libglib2.0-dev libc-ares-dev qtbase5-dev \
