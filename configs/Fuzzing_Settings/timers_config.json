@@ -1,9 +1,9 @@
 {
-    "iteration_length_ms": 50,
+    "iteration_length_ms": 100,
     "iteration_length_s": 70,
     "empty_iteration_length_s": 100,
     "router_selection_jitter_s": 1,
-    "speed": 50,
+    "speed": 100,
     "system_cmd_max_timeout_default_s": 5,
     "empty_iteration_length_ms": 60000,
     "node_async_reader_timeout_ms": 100,
