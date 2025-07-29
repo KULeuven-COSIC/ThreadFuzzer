@@ -2,11 +2,27 @@
 
 ## Installation
 
+### Option 1: Native Installation
 Run the setup script to install dependencies, pull submodules, and apply necessary patches:
 
 ```bash
 chmod +x setup.sh && sudo ./setup.sh
 ```
+
+### Option 2: Docker Installation
+#### 1. Build the Docker image
+
+Run the following to build the container:
+```bash
+sudo docker build --pull --progress=plain -t thread_fuzzer:latest .
+```
+
+#### 2. Run the container interactively
+```bash
+sudo docker run --rm -it thread_fuzzer
+```
+
+Inside the container, you can run the same commands as in the native installation, **without using `sudo`**.
 
 ---
 
