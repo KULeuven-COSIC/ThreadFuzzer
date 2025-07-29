@@ -73,6 +73,8 @@ RUN git clone https://github.com/nlohmann/json.git && cd json && git checkout ta
 RUN cd common/shm/ && rm -rf build && mkdir -p build && cd build && cmake .. && make
 
 # # Checkout, apply patches and build openthread and badthread
+RUN cd third-party && git clone https://github.com/openthread/openthread.git
+RUN cd third-party && git clone https://github.com/openthread/openthread.git badthread
 ARG OT_CHECKOUT_TAG="thread-reference-20230706"
 RUN git -C "third-party/openthread" checkout "$OT_CHECKOUT_TAG"
 RUN git -C "third-party/badthread" checkout "$OT_CHECKOUT_TAG"
