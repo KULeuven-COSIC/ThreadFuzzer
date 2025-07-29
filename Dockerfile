@@ -96,6 +96,9 @@ RUN unset CXX
 COPY common/ ./common/
 COPY configs/ ./configs/
 COPY seeds/ ./seeds/
+COPY scripts/ ./scripts/
+COPY bin/ ./bin/
+COPY coverage_log/ ./coverage_log/
 
 # ENTRYPOINT ["/bin/bash", "-l", "-c"]
 # CMD [ "./build/ThreadFuzzer" ]
