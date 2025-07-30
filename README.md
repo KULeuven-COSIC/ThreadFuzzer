@@ -2,7 +2,7 @@
 
 ## Installation
 
-### Option 1: Native Installation
+### Option 1: Native Installation (Ubuntu 22.04)
 Run the setup script to install dependencies, pull submodules, and apply necessary patches:
 
 ```bash
