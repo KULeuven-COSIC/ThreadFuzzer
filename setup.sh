@@ -122,7 +122,7 @@ function apt_install_all_packets {
     sudo apt install git 
     
     # Python
-    sudo apt python3 python3-pip -y
+    sudo apt install python3 python3-pip -y
     yes | pip3 install pandas matplotlib scipy
 
     ## For WDissector
