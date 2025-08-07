@@ -1,0 +1,1809 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c966aa753176b04576a53a0dddf1108da8f6ae98..d66587f09094a4a9a1cd34934ecb08fd6c96542e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -95,6 +95,8 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+     )
+ endif()
+ 
++target_compile_definitions(ot-config INTERFACE "FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION") # FUZZ
++
+ set(OT_PACKAGE_NAME "OPENTHREAD" CACHE STRING "OpenThread Package Name")
+ target_compile_definitions(ot-config INTERFACE "PACKAGE_NAME=\"${OT_PACKAGE_NAME}\"")
+ message(STATUS "Package Name: ${OT_PACKAGE_NAME}")
+diff --git a/include/openthread/platform/radio.h b/include/openthread/platform/radio.h
+index bb7ef0c3db72a05ab99f8b41183c2510d991f687..c40957baa293519e8f2c47d8e584afe094e6dc4e 100644
+--- a/include/openthread/platform/radio.h
++++ b/include/openthread/platform/radio.h
+@@ -68,7 +68,8 @@ extern "C" {
+ 
+ enum
+ {
+-    OT_RADIO_FRAME_MAX_SIZE = 127, ///< aMaxPHYPacketSize (IEEE 802.15.4-2006)
++    // FUZZ: was 127
++    OT_RADIO_FRAME_MAX_SIZE = 220, ///< aMaxPHYPacketSize (IEEE 802.15.4-2006)
+     OT_RADIO_FRAME_MIN_SIZE = 3,   ///< Minimal size of frame FCS + CONTROL
+ 
+     OT_RADIO_SYMBOLS_PER_OCTET = 2,      ///< 2.4 GHz IEEE 802.15.4-2006
+diff --git a/src/core/common/random.cpp b/src/core/common/random.cpp
+index 18efcef8a26228c75c88b9bcc189aa49bacce503..1fde4a8be4a8a72b7cbccafbee0e6275b019527a 100644
+--- a/src/core/common/random.cpp
++++ b/src/core/common/random.cpp
+@@ -84,7 +84,11 @@ uint32_t Manager::NonCryptoGetUint32(void)
+ {
+     OT_ASSERT(sInitCount > 0);
+ 
+-    return sPrng.GetNext();
++#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
++    return 1000;
++#else
++     return sPrng.GetNext();
++#endif
+ }
+ 
+ //-------------------------------------------------------------------
+diff --git a/src/core/config/misc.h b/src/core/config/misc.h
+index df9fd28fa403485ee8e9e2d5659387a3b94f6391..77e27d0f958166f730aa5f05f3258eebb8bd420e 100644
+--- a/src/core/config/misc.h
++++ b/src/core/config/misc.h
+@@ -539,7 +539,7 @@
+  *
+  */
+ #ifndef OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT
+-#define OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT 0
++#define OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT 1 // FUZZ: was 0
+ #endif
+ 
+ #endif // CONFIG_MISC_H_
+diff --git a/src/core/crypto/crypto_platform.cpp b/src/core/crypto/crypto_platform.cpp
+index a8da82e95d57204156f88c71494c610c69e256da..d18d1bda795617e2b1147483abed056bb78278a5 100644
+--- a/src/core/crypto/crypto_platform.cpp
++++ b/src/core/crypto/crypto_platform.cpp
+@@ -487,8 +487,13 @@ OT_TOOL_WEAK void otPlatCryptoRandomDeinit(void)
+ 
+ OT_TOOL_WEAK otError otPlatCryptoRandomGet(uint8_t *aBuffer, uint16_t aSize)
+ {
++#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
++    memset(aBuffer, 0xCC, aSize);
++    return OT_ERROR_NONE;
++#else    
+     return ot::Crypto::MbedTls::MapError(
+         mbedtls_ctr_drbg_random(&sCtrDrbgContext, static_cast<unsigned char *>(aBuffer), static_cast<size_t>(aSize)));
++#endif
+ }
+ 
+ #if OPENTHREAD_CONFIG_ECDSA_ENABLE
+diff --git a/src/core/mac/mac_types.cpp b/src/core/mac/mac_types.cpp
+index 9ea115e445be271c3f97509230dc144a35116e40..9ebf220c0761935624fce320561ef06df47da480 100644
+--- a/src/core/mac/mac_types.cpp
++++ b/src/core/mac/mac_types.cpp
+@@ -57,7 +57,11 @@ PanId GenerateRandomPanId(void)
+ #if !OPENTHREAD_RADIO
+ void ExtAddress::GenerateRandom(void)
+ {
++#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION // FUZZ SET FIXED SRC ADDRESS
++    memset(this, 0xAA, sizeof(*this));
++#else
+     IgnoreError(Random::Crypto::Fill(*this));
++#endif
+     SetGroup(false);
+     SetLocal(true);
+ }
+diff --git a/src/core/thread/mle.cpp b/src/core/thread/mle.cpp
+index 8ce0a35d4fd69a28baf5bed7149fd2e11eadf24f..7f82d7dc9d3014f8e262e897d0e17afd05049519 100644
+--- a/src/core/thread/mle.cpp
++++ b/src/core/thread/mle.cpp
+@@ -4411,7 +4411,11 @@ void Mle::TlvList::AddElementsFrom(const TlvList &aTlvList)
+ void Mle::Challenge::GenerateRandom(void)
+ {
+     mLength = kMaxChallengeSize;
++#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION // FUZZ SET FIXED CHALLENGE
++    memset(mBuffer, 0xBB, mLength);
++#else
+     IgnoreError(Random::Crypto::FillBuffer(mBuffer, mLength));
++#endif
+ }
+ 
+ bool Mle::Challenge::Matches(const uint8_t *aBuffer, uint8_t aLength) const
+diff --git a/src/core/thread/topology.cpp b/src/core/thread/topology.cpp
+index ebb6c94dd6b7d408252e942ab4a7716a74eae843..8439d100806154148ad128c3689f0ea61902e73c 100644
+--- a/src/core/thread/topology.cpp
++++ b/src/core/thread/topology.cpp
+@@ -494,7 +494,11 @@ exit:
+ 
+ void Child::GenerateChallenge(void)
+ {
++#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION // FUZZ SET FIXED CHALLENGE
++    memset(mAttachChallenge, 0xBB, sizeof(mAttachChallenge));
++#else
+     IgnoreError(Random::Crypto::FillBuffer(mAttachChallenge, sizeof(mAttachChallenge)));
++#endif
+ }
+ 
+ #if OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index 84053764755adf82058cc962a9cd0681c47cf837..4d4ec15be84e3485eaa7f56e4f8fbf0260809be8 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -26,12 +26,17 @@
+ #  POSSIBILITY OF SUCH DAMAGE.
+ #
+ 
+-if(OT_FTD AND BUILD_TESTING)
+-    add_subdirectory(unit)
+-endif()
++# if(OT_FTD AND BUILD_TESTING)
++    # add_subdirectory(unit)
++# endif()
+ 
+ option(OT_FUZZ_TARGETS "enable fuzz targets" OFF)
+ 
+ if(OT_FUZZ_TARGETS)
+     add_subdirectory(fuzz)
+ endif()
++
++# FUZZ
++if(OT_FUZZ_TARGETS)
++    add_subdirectory(improved_fuzz)
++endif()
+diff --git a/tests/fuzz/CMakeLists.txt b/tests/fuzz/CMakeLists.txt
+index 39ca67b23d4b443938a2f15c1d60409d49a36f50..dc10b1344104fa1787f1382249babbc47bb65993 100644
+--- a/tests/fuzz/CMakeLists.txt
++++ b/tests/fuzz/CMakeLists.txt
+@@ -34,6 +34,8 @@ set(COMMON_INCLUDES
+ set(COMMON_COMPILE_OPTIONS
+     -DOPENTHREAD_FTD=1
+     -DOPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE=1
++    -fsanitize=address
++    -fsanitize=fuzzer
+ )
+ 
+ set(COMMON_SOURCES
+@@ -45,6 +47,8 @@ set(COMMON_LIBS
+     ${OT_MBEDTLS}
+     $ENV{LIB_FUZZING_ENGINE}
+     ot-config
++    -fsanitize=address
++    -fsanitize=fuzzer
+ )
+ 
+ add_executable(ot-cli-received-fuzzer
+diff --git a/tests/improved_fuzz/CMakeLists.txt b/tests/improved_fuzz/CMakeLists.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..656518e6c6aa50ecf9bc1373f6a6434123942a9c
+--- /dev/null
++++ b/tests/improved_fuzz/CMakeLists.txt
+@@ -0,0 +1,87 @@
++set(COMMON_INCLUDES
++  ${PROJECT_SOURCE_DIR}/include
++  ${PROJECT_SOURCE_DIR}/src/core
++  ../fuzz/
++)
++
++set(COMMON_LIBS
++  openthread-ftd
++  ${OT_MBEDTLS}
++  $ENV{LIB_FUZZING_ENGINE}
++  ot-config
++)
++
++set(FUZZ_CXX_FLAGS
++    -O0
++    -g
++    -fsanitize=address
++    -fsanitize=fuzzer
++)
++set(FUZZ_LINK_FLAGS
++    -fsanitize=address
++    -fsanitize=fuzzer
++)
++
++## UNIVERSAL MLE FUZZER 1
++set(COMMON_SOURCES
++  universal_mle_fuzzer-1.cpp
++  ../fuzz/fuzzer_platform.cpp
++)
++
++add_executable(universal-mle-fuzzer-1
++  ${COMMON_SOURCES}
++)
++
++target_include_directories(universal-mle-fuzzer-1
++  PRIVATE
++  ${COMMON_INCLUDES}
++)
++
++target_compile_definitions(universal-mle-fuzzer-1
++  PRIVATE
++    OPENTHREAD_FTD=1
++    OPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE=1
++)
++
++target_compile_options(universal-mle-fuzzer-1
++  PRIVATE
++    ${FUZZ_CXX_FLAGS}
++)
++
++target_link_libraries(universal-mle-fuzzer-1
++  PRIVATE
++    ${COMMON_LIBS}
++    ${FUZZ_LINK_FLAGS}
++)
++
++## UNIVERSAL MLE FUZZER 2
++set(COMMON_SOURCES
++  universal_mle_fuzzer-2.cpp
++  ../fuzz/fuzzer_platform.cpp
++)
++
++add_executable(universal-mle-fuzzer-2
++  ${COMMON_SOURCES}
++)
++
++target_include_directories(universal-mle-fuzzer-2
++  PRIVATE
++  ${COMMON_INCLUDES}
++)
++
++target_compile_definitions(universal-mle-fuzzer-2
++  PRIVATE
++    OPENTHREAD_FTD=1
++    OPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE=1
++)
++
++target_compile_options(universal-mle-fuzzer-2
++  PRIVATE
++    ${FUZZ_CXX_FLAGS}
++)
++
++target_link_libraries(universal-mle-fuzzer-2
++  PRIVATE
++    ${COMMON_LIBS}
++    ${FUZZ_LINK_FLAGS}
++)
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/address_solicit.h b/tests/improved_fuzz/benign_packets/address_solicit.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..d252e8fbe93613e34687b9afe854a8bc1af81fc2
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/address_solicit.h
+@@ -0,0 +1,24 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++uint8_t address_solicit[] = {
++    0x69, 0x98, 0xC9, 
++    /* PAN ID */ 0xad, 0xde,
++    /* Dest Short Address */ 0x00, 0x2C, 
++    /* Src Short Address */ 0x01, 0x2C,
++    0x0D, 0x00, 0x00, 0x00, 0x00, 0x01, 0x76,
++    0x77, 0x07,
++    0xF3, 0xFF,
++    0xEB, 0x71, 0x42, 0x02,
++    0x08, 0xFC, 0x30, 0xC2, 0xB1, 0x61, 0x02, 0x61,
++    0x73, 0xFF,
++    /* Thread ExtMacAddr TLV */ 0x01, 0x08, 0x76, 0xCE, 0x80, 0x85, 0xAB, 0x25, 0xB8, 0x11,
++    /* RLOC TLV */ 0x02, 0x02, 0xF0, 0x00,
++    0x04, 0x01, 0x02, 0x11, 0x76, 0xD3, 0xD2, 0x29,
++    0x6F
++};
++constexpr size_t address_solicit_size = sizeof(address_solicit);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/address_solicit_response.h b/tests/improved_fuzz/benign_packets/address_solicit_response.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..bf41c83f72060044aa0d5c7bda3344eb8b917eb3
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/address_solicit_response.h
+@@ -0,0 +1,30 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// ADDRESS SOLICIT RESPONSE
++uint8_t address_solicit_response[] = {
++    0x69, 0x98, 0x94, 
++    /* PAN ID */ 0xad, 0xde, 
++    /* Dest Short Address */ 0x01, 0xCC,
++    /* Src Short Address */ 0x00, 0xCC,
++    0x0D, 0x02, 0x00, 0x00, 0x00, 0x01, 0x76,
++    0x77, 0x07, 
++    0xF3, 0xFF,
++    /* UDP CHECKSUM ? */ 0x61, 0x9D,
++    0x62, 
++    /* CODE */ 0x44, 
++    /* MSG ID */ 0xCE, 0x1F,
++    /* Token */ 0xCC, 0xCC,
++    0xFF, 0x04, 0x01, 0x00,
++    0x02, 0x02, 
++    /* RLOC16 */ 0x48, 0x00, /*0x48, 0x00,*/
++    0x07, 0x09, 0xED, 0x00,
++    0x00, 0x20, 0x00, 0x00, 0x00, 0x10, 
++    0x00, 0xD2,
++    0xC9, 0x12, 0xAB, 0xAE, 0x23
++};
++constexpr size_t address_solicit_response_size = sizeof(address_solicit_response);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/advertisement.h b/tests/improved_fuzz/benign_packets/advertisement.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..a16ec8596055d9dc40bbdc5e0bf7e56b955191b4
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/advertisement.h
+@@ -0,0 +1,74 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// BENIGN ADVERTISEMENT
++uint8_t advertisement[] = {
++    FRAME_CTRL_FIELD_STD,
++    /* SEQUENCE NUM */ 0xcd,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC,
++    IPHC_HEADER,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x10),
++    CMD_ADVERTISEMENT,
++    TLV_SRC_ADDR,
++    TLV_LEADER_DATA,
++    TLV_ROUTE_64,
++    FAKE_CS
++  };
++constexpr size_t advertisement_size = sizeof(advertisement);
++
++// BENIGN ADVERTISEMENT
++uint8_t advertisement_2[] = {
++  FRAME_CTRL_FIELD_STD,
++  /* SEQUENCE NUM */ 0xcd,
++  PAN_ID,
++  WPAN_DST,
++  EXTENDED_SRC,
++  IPHC_HEADER,
++  01,
++  UDP_HEADER_COMPRESSION,
++  SRC_PORT_MLE,
++  DST_PORT_MLE,
++  UDP_CS_FAKE,
++  MLE_SEC_SUITE,
++  AUX_SEC_HEADER(0x10),
++  CMD_ADVERTISEMENT,
++  /* TLV SRC ADDR */ 0x00, 0x02, 0xF0, 0x00, /* Must end with 0 */
++  /* TLV LEADER DATA */ 0x0b, 0x08, 0x32, 0x82, 0x0B, 0xE5, 0x40, 0xC0, 0x22, 0x0B,
++  TLV_ROUTE_64,
++  FAKE_CS
++};
++constexpr size_t advertisement_2_size = sizeof(advertisement_2);
++
++// BENIGN ADVERTISEMENT
++uint8_t advertisement_2_header[] = {
++  FRAME_CTRL_FIELD_STD,
++  /* SEQUENCE NUM */ 0xcd,
++  PAN_ID,
++  WPAN_DST,
++  EXTENDED_SRC,
++  IPHC_HEADER,
++  01,
++  UDP_HEADER_COMPRESSION,
++  SRC_PORT_MLE,
++  DST_PORT_MLE,
++  UDP_CS_FAKE,
++  MLE_SEC_SUITE,
++  AUX_SEC_HEADER(0x10),
++  CMD_ADVERTISEMENT,
++  /* TLV SRC ADDR */ 0x00, 0x02, 0xF0, 0x00, /* Must end with 0 */
++  /* TLV LEADER DATA */ 0x0b, 0x08, 0x32, 0x82, 0x0B, 0xE5, 0x40, 0xC0, 0x22, 0x0B,
++  TLV_ROUTE_64,
++  FAKE_CS
++};
++constexpr size_t advertisement_2_header_size = sizeof(advertisement_2_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/all_packets.h b/tests/improved_fuzz/benign_packets/all_packets.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..e313a4f2892acac9a4981ec2d9a7988f885dacfc
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/all_packets.h
+@@ -0,0 +1,14 @@
++#pragma once
++
++#include "address_solicit.h"
++#include "address_solicit_response.h"
++#include "advertisement.h"
++#include "child_id_request.h"
++#include "child_id_response.h"
++#include "child_update_request.h"
++#include "child_update_response.h"
++#include "data_request.h"
++#include "data_response.h"
++#include "link_request.h"
++#include "parent_request.h"
++#include "parent_response.h"
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/child_id_request.h b/tests/improved_fuzz/benign_packets/child_id_request.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..98ce65891ae7dd261ec2d04987b4fd323a10bbd1
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/child_id_request.h
+@@ -0,0 +1,53 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++/* MLE CHILD REQUEST */
++uint8_t mle_child_id_request[] = {
++    /* Frame Control Field */ 0x41, 0xDC,
++    /* SEQUENCE NUM */ 0xCD, 
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x04),
++    CMD_CHILD_ID_REQUEST,
++    TLV_RESPONSE,
++    /* Link Frame Counter TLV */ 0x05, 0x04, 0x00, 0x00, 0x00, 0x00,
++    /* MLE Frame Counter TLV */ 0x08, 0x04, 0x00, 0x00, 0x00, 0x02,
++    TLV_MODE,
++    /* Timeout TLV */ 0x02, 0x04, 0x00, 0x00, 0x00, 0xF0,
++    TLV_VERSION,
++    TLV_UNKNOWN_0x1B,
++    /* Request TLV */ 0x0D, 0x03, 0x0A, 0x0C, 0x09,
++    TLV_TIMESTAMP,
++    FAKE_CS
++};
++constexpr size_t mle_child_id_request_size = sizeof(mle_child_id_request);
++
++/* MLE CHILD REQUEST */
++uint8_t mle_child_id_request_header[] = {
++    /* Frame Control Field */ 0x41, 0xDC,
++    /* SEQUENCE NUM */ 0xCD, 
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x04)
++};
++constexpr size_t mle_child_id_request_header_size = sizeof(mle_child_id_request_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/child_id_response.h b/tests/improved_fuzz/benign_packets/child_id_response.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..f37bb52317d00b1d8e3958f6d68044099ff34608
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/child_id_response.h
+@@ -0,0 +1,32 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++/* MLE CHILD ID RESPONSE */
++uint8_t mle_child_id_response[] = {
++    FRAME_CTRL_FIELD_STD,
++    /* SEQUENCE NUM */ 0xCD,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC,
++    /* IPHC_HEADER */ 0x7F, 0x33,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x02),
++    CMD_CHILD_ID_RESPONSE,
++    TLV_SRC_ADDR,
++    TLV_LEADER_DATA,
++    TLV_TIMESTAMP,
++    TLV_ADDRESS_16,
++    TLV_NETWORK_DATA,
++    TLV_ROUTE_64,
++    TLV_UNKNOWN_0x1B,
++    FAKE_CS
++};
++constexpr size_t mle_child_id_response_size = sizeof(mle_child_id_response);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/child_update_request.h b/tests/improved_fuzz/benign_packets/child_update_request.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..49d7cddf50f4032755864f469faf433b4b761b34
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/child_update_request.h
+@@ -0,0 +1,52 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// BENIGN CHILD UPDATE REQUEST
++uint8_t mle_child_update_request[] = {
++    0x61, 0xDC, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x10),
++    CMD_CHILD_UPDATE_REQUEST,
++    /* SRC ADDRESS TLV */ 0x00, 0x02, 0x2C, 0x01,
++    TLV_LEADER_DATA,
++    TLV_NETWORK_DATA,
++    TLV_TIMESTAMP,
++    TLV_MODE,
++    TLV_NETWORK_DATA,
++    TLV_TIMESTAMP,
++    /* TLV REQUEST TLV */ 0x0D, 0x02, 0x02, 0x13,
++    /* CHALLENGE TLV */ 0x03, 0x08, 0xAD, 0xC8, 0x06, 0x62, 0x91, 0x30, 0x55, 0xF2, 
++    FAKE_CS
++};
++constexpr size_t mle_child_update_request_size = sizeof(mle_child_update_request);
++
++uint8_t mle_child_update_request_header[] = {
++    0x61, 0xDC, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x10),
++};
++constexpr size_t mle_child_update_request_header_size = sizeof(mle_child_update_request_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/child_update_response.h b/tests/improved_fuzz/benign_packets/child_update_response.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..5c74cae6f1d817e60971ce4c28d9b25a5a6e732b
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/child_update_response.h
+@@ -0,0 +1,48 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// BENIGN CHILD UPDATE RESPONSE
++uint8_t mle_child_update_response[] = {
++    0x61, 0xDC, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x12),
++    CMD_CHILD_UPDATE_RESPONSE,
++    /* SRC ADDRESS TLV */ 0x00, 0x02, 0x2C, 0x01,
++    /* TLV_MODE */ 0x01, 0x01, 0x0b,
++    TLV_LEADER_DATA,
++    /* MLE FRAME COUNTER TLV */ 0x08, 0x04, 0xff, 0xff, 0xff, 0xff,
++    /* LINK LAYER FRAME COUNTER TLV */ 0x05, 0x04, 0x00, 0x00, 0x8d, 0x60,
++    FAKE_CS
++};
++constexpr size_t mle_child_update_response_size = sizeof(mle_child_update_response);
++
++uint8_t mle_child_update_response_header[] = {
++    0x61, 0xDC, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x12),
++};
++constexpr size_t mle_child_update_response_header_size = sizeof(mle_child_update_response_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/common.h b/tests/improved_fuzz/benign_packets/common.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..063398b422792b68bb4d29a7c19b751bcb53ba36
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/common.h
+@@ -0,0 +1,60 @@
++#pragma once
++
++#define FRAME_CTRL_FIELD_STD 0x61, 0xdc
++#define WPAN_DST_16 0xff, 0xff // USED FOR BROADCAST
++#define WPAN_DST 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa
++#define PAN_ID 0xAD, 0xDE
++#define EXTENDED_SRC 0xfc, 0x95, 0xc8, 0xfc, 0x6b, 0x3d, 0x54, 0xba
++#define SRC_PORT_MLE 0x4D, 0x4C
++#define DST_PORT_MLE 0x4D, 0x4C
++#define IPHC_HEADER 0x7f, 0x3B
++#define UDP_HEADER_COMPRESSION 0xf0
++#define UDP_CS_FAKE 0x00, 0x00 /* Fake Checksum */
++#define AUX_SEC_HEADER(second_byte) 0x15, second_byte, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
++#define MLE_SEC_SUITE 0x00
++#define FAKE_CS 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++
++/* TLVs */
++#define TLV_SRC_ADDR 0x00, 0x02, 0xCC, 0x00
++#define TLV_LEADER_DATA 0x0b, 0x08, 0x21, 0xE8, 0x80, 0x5F, 0x40, 0xCF, 0xFF, 0x33
++#define TLV_NETWORK_DATA 0x0c, 0x06, 0x08, 0x04, 0x0b, 0x02, 0xf5, 0x9e
++#define TLV_RESPONSE 0x04, 0x08, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB
++#define TLV_ADDRESS_16 0x0a, 0x02, 0xCC, 0x01
++#define TLV_ROUTE_64 0x09, 0x0a, 0x6b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x01
++#define TLV_VERSION 0x12, 0x02, 0x00, 0x04
++#define TLV_UNKNOWN_0x1B 0x1B, 0x02, 0x00, 0x81
++#define TLV_TIMESTAMP 0x16, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00
++#define TLV_MODE 0x01, 0x01, 0x0F
++
++/* COMMANDS */
++#define CMD_LINK_REQUEST 0x00
++#define CMD_ADVERTISEMENT 0x04
++#define CMD_DATA_REQUEST 0x07
++#define CMD_DATA_RESPONSE 0x08
++#define CMD_PARENT_REQUEST 0x09
++#define CMD_PARENT_RESPONSE 0x0a
++#define CMD_CHILD_ID_REQUEST 0x0b
++#define CMD_CHILD_ID_RESPONSE 0x0c
++#define CMD_CHILD_UPDATE_REQUEST 0x0d
++#define CMD_CHILD_UPDATE_RESPONSE 0x0e
++
++// GENERIC MLE HEADER AND FOOTER
++uint8_t mle_header[] = {
++    0x61, 0xdc, 0xd4, 
++    /* PAN ID */
++    0xad, 0xde,
++    /* WPAN DESTINATION */
++    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
++    /**/
++    0xfc, 0x95, 0xc8, 0xfc, 0x6b, 0x3d, 0x54, 0xba, 0x7f, 0x33, 0xf0,
++    0x4d, 0x4c, 0x4d, 0x4c, 0xbd, 0x30,
++    /* MLE Security Suite */ 0x00,
++    /* Auxiliary Security Header */ 0x15, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
++};
++constexpr size_t mle_header_size = sizeof(mle_header);
++
++uint8_t mle_footer[] = {
++    0x00, 0x00, 0x00, 0x00,
++    /* FAKE CHECKSUM */ 0x00, 0x00
++};
++constexpr size_t mle_footer_size = sizeof(mle_footer);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/data_request.h b/tests/improved_fuzz/benign_packets/data_request.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..d5543dcf825e5963420c8da25df1166588f05b9a
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/data_request.h
+@@ -0,0 +1,43 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++/* BENIGN DATA REQUEST */
++uint8_t data_request[] = {
++    FRAME_CTRL_FIELD_STD,
++    /* SEQUENCE NUM */ 0xFD,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC,
++    /* IPHC_HEADER*/ 0x7F, 0x33,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x14),
++    CMD_DATA_REQUEST,
++    /* TLV REQUEST */ 0x0D, 0x01, /* Network Data */ 0x0C,
++    TLV_TIMESTAMP,
++    FAKE_CS
++};
++constexpr size_t data_request_size = sizeof(data_request);
++
++uint8_t data_request_header[] = {
++    FRAME_CTRL_FIELD_STD,
++    /* SEQUENCE NUM */ 0xFD,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC,
++    /* IPHC_HEADER*/ 0x7F, 0x33,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x14)
++};
++constexpr size_t data_request_header_size = sizeof(data_request_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/data_response.h b/tests/improved_fuzz/benign_packets/data_response.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..c37fed560afdd83620483c52079af9365498b5b2
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/data_response.h
+@@ -0,0 +1,47 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// BENIGN DATA RESPONSE
++uint8_t data_response[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xFD,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x16),
++    CMD_DATA_RESPONSE,
++    /* TLV SRC ADDR */ 0x00, 0x02, 0xF0, 0x00,
++    /* TLV LEADER DATA */ 0x0b, 0x08, 0x32, 0x82, 0x0B, 0xE5, 0x40, 0xC0, 0x22, 0x0B,
++    TLV_TIMESTAMP,
++    TLV_NETWORK_DATA,
++    FAKE_CS
++};
++constexpr size_t data_response_size = sizeof(data_response);
++
++uint8_t data_response_header[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xFD,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x16)
++};
++constexpr size_t data_response_header_size = sizeof(data_response_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/link_request.h b/tests/improved_fuzz/benign_packets/link_request.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..ed5e200da6f6a4888d7eda81a54403a859af66c4
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/link_request.h
+@@ -0,0 +1,47 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++// BENIGN LINK REQUEST
++uint8_t mle_link_request[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xFC,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x12),
++    CMD_LINK_REQUEST,
++    TLV_VERSION,
++    /* TLV REQUEST */ 0x0D, 0x02, /* Address16 */ 0x0A, /* Route64 */ 0x09,
++    /* TLV CHALLENGE */ 0x03, 0x08, 0x08, 0xF6, 0xD9, 0x1F, 0x82, 0xB4, 0xF8, 0x4D,
++    FAKE_CS
++};
++constexpr size_t mle_link_request_size = sizeof(mle_link_request);
++
++uint8_t mle_link_request_header[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xFC,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x12),
++    CMD_LINK_REQUEST
++};
++constexpr size_t mle_link_request_header_size = sizeof(mle_link_request_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/parent_request.h b/tests/improved_fuzz/benign_packets/parent_request.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..33b93a7146b32968789a7dd0a2b6373dd9248eb0
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/parent_request.h
+@@ -0,0 +1,47 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++/* MLE PARENT REQUEST */
++uint8_t mle_parent_request[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x00),
++    CMD_PARENT_REQUEST,
++    TLV_MODE,
++    /* Challenge TLV */ 0x03, 0x08, 0x1B, 0x81, 0x7F, 0x9F, 0xE4, 0xB7, 0x1D, 0x06,
++    /* Scan Mask TLV */ 0x0E, 0x01, 0x80,
++    TLV_VERSION,
++    FAKE_CS
++};
++constexpr size_t mle_parent_request_size = sizeof(mle_parent_request);
++
++uint8_t mle_parent_request_header[] = {
++    /* Frame Control Field */ 0x41, 0xD8, 
++    /* SEQUENCE NUM */ 0xCC,
++    PAN_ID,
++    WPAN_DST_16,
++    EXTENDED_SRC, /* Might not work because of that */
++    IPHC_HEADER,
++    /* 6LOWPAN DST */ 0x02,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x00),
++};
++constexpr size_t mle_parent_request_header_size = sizeof(mle_parent_request_header);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/benign_packets/parent_response.h b/tests/improved_fuzz/benign_packets/parent_response.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..ae16486c5d03d32fbbb22df7bfdeb678e659388b
+--- /dev/null
++++ b/tests/improved_fuzz/benign_packets/parent_response.h
+@@ -0,0 +1,34 @@
++#pragma once
++
++#include "common.h"
++
++#include <cstdlib>
++#include <cstdint>
++
++/* MLE PARENT RESPONSE */
++uint8_t mle_parent_response[] = {
++    FRAME_CTRL_FIELD_STD,
++    /* SEQUENCE NUM */ 0xcd,
++    PAN_ID,
++    WPAN_DST,
++    EXTENDED_SRC,
++    /* IPHC_HEADER */ 0x7F, 0x33,
++    UDP_HEADER_COMPRESSION,
++    SRC_PORT_MLE,
++    DST_PORT_MLE,
++    UDP_CS_FAKE,
++    MLE_SEC_SUITE,
++    AUX_SEC_HEADER(0x01),
++    CMD_PARENT_RESPONSE,
++    TLV_SRC_ADDR,
++    TLV_LEADER_DATA,
++    /* LINK LAYER FRAME COUNTER TLV: TYPE */ 0x05, /* LENGTH */ 0x04, /* DATA */ 0x00, 0x00, 0x00, 0x00,
++    /* MLE FRAME COUNTER TLV: TYPE */ 0x08, /* LENGTH */ 0x04, /* DATA */ 0x00, 0x00, 0x00, 0x02,
++    TLV_RESPONSE,
++    /* CHALLENGE TLV: TYPE */ 0x03, /* LENGTH */ 0x08, /* DATA */ 0xAD, 0xC8, 0x06, 0x62, 0x91, 0x30, 0x55, 0xF2, 
++    /* LINK MARGIN TLV: TYPE */ 0x10, /* LENGTH */ 0x01, /* DATA */ 0x50,
++    /* CONNECTIVITY: TYPE */ 0x0F, /* LENGTH */ 0x0A, /* DATA */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x68, 0x01, 0x05, 0x00, 0x01,
++    TLV_VERSION,
++    FAKE_CS
++};
++constexpr size_t mle_parent_response_size = sizeof(mle_parent_response);
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_0 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_0
+new file mode 100644
+index 0000000000000000000000000000000000000000..95bc303bb89bb2f0fc05a66a004e149c5f08761a
+GIT binary patch
+literal 29
+gcmZQ)U}0c7!@$j<_@W`+;rxGNPOfYQ2;g7@0AC&jod5s;
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_1 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_1
+new file mode 100644
+index 0000000000000000000000000000000000000000..ca0445e5a9f2cfe63f8085053d29d0e30892c21d
+GIT binary patch
+literal 29
+gcmZQ)WMN=B!@$j<_@W`+;rxGNPOfYQ2;g7@0AD%<o&W#<
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..2f02f4077dd04627ded3a59c4301218a8d9e2610
+GIT binary patch
+literal 29
+gcmZQ)Vqsu9!@$j<_@W`+;rxGNPOfYQ2;g7@0AE%Gp8x;=
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..1f6f2f18876f34c6ec3abf6d8fca4526a8ab2ce7
+GIT binary patch
+literal 29
+gcmZQ)W?^7D!@$j<_@W`+;rxGNPOfYQ2;g7@0AF$ipa1{>
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5aa53c5f32daf9347df5e161010869ce4dc2b8f
+GIT binary patch
+literal 29
+gcmZQ)VPRl8!@$j<_@W`+;rxGNPOfYQ2;g7@0AG#;p#T5?
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_5 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_advertisement_5
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5aa53c5f32daf9347df5e161010869ce4dc2b8f
+GIT binary patch
+literal 29
+gcmZQ)VPRl8!@$j<_@W`+;rxGNPOfYQ2;g7@0AG#;p#T5?
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_id_response_1 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_id_response_1
+new file mode 100644
+index 0000000000000000000000000000000000000000..3043deb6fc85e7ab548414cf5405fda195fd2b3f
+GIT binary patch
+literal 151
+zcmZQ)<Y8daVBqFR^SQp-fxDASjDrCL7#SG2m^9RQ(l}VSnW|g4`5G7*c{w#0%o$i2
+z82AL3IT+agFfwZ}FffZSIQ)(Io;Ib9fsvI(gW)3sJCmRTvoJ#fRFny998l>4ZplW*
+pSY8nghQA@1>vk$JEDKT%SllZdpm<T9ldGCR0i+OUvosS!BLI(j9I5~S
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..31de7800bd6441ce6f4ce09fe936bf1cf6de4c28
+GIT binary patch
+literal 49
+zcmZQ);$>i(!NAR7ey4J~1IHyb9ySgZZl-KLF%AYO;ALVGX6De@x%Y!<^q+nJ&1MPZ
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..54dc0c652d356057916df583375a5804083ded2c
+GIT binary patch
+literal 49
+zcmZQ)=4D`-!NAR7ey4J~1IHyb9ySgZZl-KLF%AYO;ALVGX6De@x%Y!<^q+nJ&6Ww~
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..0438b8375416ef174614a8a98deeee8638e30c73
+GIT binary patch
+literal 49
+zcmZQ);bmZ&!NAR7ey4J~1IHyb9ySgZZl-KLF%AYO;ALVGX6De@x%Y!<^q+nJ&Bh7m
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_5 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_request_5
+new file mode 100644
+index 0000000000000000000000000000000000000000..d585158aa6f76145289775801e7c76897a6011b8
+GIT binary patch
+literal 49
+zcmZQ)<z--+!NAR7ey4J~1IHyb9ySgZZl-KLF%AYO;ALVGX6De@x%Y!<^q+nJ&GrfC
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..ca1e4ee6d9e4c53d3ca25f98b5c88f7b9a1cf9c1
+GIT binary patch
+literal 40
+qcmZQ);$z|14F(KMXBZe6xw$zMUo^x!od0jk!SWvnSXmetdJ_N?H4d8q
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..4801344a0b834b53cf48013681df07a007fccc7b
+GIT binary patch
+literal 40
+qcmZQ)=40X54F(KMXBZe6xw$zMUo^x!od0jk!SWvnSXmetdJ_N?Tn?N7
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba61c89e4d1dab7e86c8253e5bd65307fe45d1c6
+GIT binary patch
+literal 40
+qcmZQ);bY<04F(KMXBZe6xw$zMUo^x!od0jk!SWvnSXmetdJ_N?gASbl
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_5 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_child_update_response_5
+new file mode 100644
+index 0000000000000000000000000000000000000000..da427af1546a45df8592bf1dda80c03fe114686e
+GIT binary patch
+literal 40
+qcmZQ)<zwO44F(KMXBZe6xw$zMUo^x!od0jk!SWvnSXmetdJ_N?st%q2
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_1 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_1
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa1a90f023d0b464e0513172908b3e3e5c7aa209
+GIT binary patch
+literal 172
+zcmZQ)WM^QS!NASIb#(G4hq6^_VjK)mz|+sc!p#&_%gxuo$jHk%gMpKQm4SgzfLVmW
+z;jeP<kq7e`7+G0nFnn%cXA*Q^=3-!AWShajFoTtWS(qUKs)7k*7$frxh6mjGjf}Cp
+zA~P8N-doGC?>z%U=mVA>6}y}%7v+JXtT536Pw~8iAtx_gRAlC7aL{5}VBa<CCddR<
+F1_1PqErb97
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..54ee74a15ba15134eabdf0805a96fff7f6fd149c
+GIT binary patch
+literal 172
+zcmZQ)VrO8Q!NASIb#(G4hq6^_VjK)mz|+sc!p#&_%gxuo$jHk%gMpKQm4SgzfLVmW
+z;jeP<kq7e`7+G0nFnn%cXA*Q^=3-!AWShajFoTtWS(qUKs)7k*7$frxh6mjGjf}Cp
+zA~P8N-doGC?>z%U=mVA>6}y}%7v+JXtT536Pw~8iAtx_gRAlC7aL{5}VBa<CCddR<
+F1_1RrErkF8
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..fcd753fab50e9270a8db63c3796a9ea0d6d1ca93
+GIT binary patch
+literal 172
+zcmZQ)W@liU!NASIb#(G4hq6^_VjK)mz|+sc!p#&_%gxuo$jHk%gMpKQm4SgzfLVmW
+z;jeP<kq7e`7+G0nFnn%cXA*Q^=3-!AWShajFoTtWS(qUKs)7k*7$frxh6mjGjf}Cp
+zA~P8N-doGC?>z%U=mVA>6}y}%7v+JXtT536Pw~8iAtx_gRAlC7aL{5}VBa<CCddR<
+F1_1TsErtL9
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..19d8235f00890e7c6d600290ffdee873e23161e2
+GIT binary patch
+literal 172
+zcmZQ)VP{~P!NASIb#(G4hq6^_VjK)mz|+sc!p#&_%gxuo$jHk%gMpKQm4SgzfLVmW
+z;jeP<kq7e`7+G0nFnn%cXA*Q^=3-!AWShajFoTtWS(qUKs)7k*7$frxh6mjGjf}Cp
+zA~P8N-doGC?>z%U=mVA>6}y}%7v+JXtT536Pw~8iAtx_gRAlC7aL{5}VBa<CCddR<
+F1_1VtEr$RA
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_5 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_request_5
+new file mode 100644
+index 0000000000000000000000000000000000000000..94a7ea2699bb9b1875e9ebc50f8c8b895f22310a
+GIT binary patch
+literal 172
+zcmZQ)WoKZT!NASIb#(G4hq6^_VjK)mz|+sc!p#&_%gxuo$jHk%gMpKQm4SgzfLVmW
+z;jeP<kq7e`7+G0nFnn%cXA*Q^=3-!AWShajFoTtWS(qUKs)7k*7$frxh6mjGjf}Cp
+zA~P8N-doGC?>z%U=mVA>6}y}%7v+JXtT536Pw~8iAtx_gRAlC7aL{5}VBa<CCddR<
+F1_1XuEr<XB
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_1 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_1
+new file mode 100644
+index 0000000000000000000000000000000000000000..34fd64c5a8dc18a205ad7989e34ad642f2178713
+GIT binary patch
+literal 35
+kcmZQ)<X~W$!NASIR;nH7px&V-#=!suJZu~++)V7f07r-ervLx|
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..0b497ace5947dfe53c84062b91c0498c8cebd09e
+GIT binary patch
+literal 35
+kcmZQ);$UE!!NASIR;nH7px&V-#=!suJZu~++)V7f07t3=r~m)}
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..c51303577883a1f62b8662b816be3702546833cd
+GIT binary patch
+literal 35
+kcmZQ)=3ro&!NASIR;nH7px&V-#=!suJZu~++)V7f07uLNsQ>@~
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..01bcdcfa271c86ac524326973773f4b6eb2fd647
+GIT binary patch
+literal 35
+kcmZQ);b35z!NASIR;nH7px&V-#=!suJZu~++)V7f07vcvssI20
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_5 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_data_response_5
+new file mode 100644
+index 0000000000000000000000000000000000000000..21265dcf421dd16aa1be2a3c2d089850249074a8
+GIT binary patch
+literal 35
+kcmZQ)<zQf%!NASIR;nH7px&V-#=!suJZu~++)V7f07wu6s{jB1
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_link_request_4 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_link_request_4
+new file mode 100644
+index 0000000000000000000000000000000000000000..b34eebe8f955562de2c0e49105c08054f7c1f8dd
+GIT binary patch
+literal 21
+ccmZQ)VGv?sVBuxr;$-H~3SKh#W{p<{02Ipv3;+NC
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_parent_response_0 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-1/mle_parent_response_0
+new file mode 100644
+index 0000000000000000000000000000000000000000..283d33dfc1fc85564a818f374b3eb8f9560ec91e
+GIT binary patch
+literal 68
+zcmZQ);9_8EVBqE`)L@l$`1VzSm4$)9-+}{3maJgrsJMSeWzKo6S^-9Fel7+O;9_KD
+OU=(6vU}E9e4Fv$y@enxx
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/address_solicit_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/address_solicit_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..61c543e7f52c3729adbc1af175cd8c1c08afce80
+GIT binary patch
+literal 59
+zcmZQ)%A9d>?L7t^Mjc)TAYd#jXaD^Fb)gdz#~*`38xxrli~lonl$~p6U9Gx9kcml$
+OfrXJtu<Y_B&3ph=aTE^#
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/advertisement_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/advertisement_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..fea0c9d8a2d0fc6dc1200db7e4996a4f1b8aaf41
+GIT binary patch
+literal 29
+gcmZQ)VqswVz`)I6)WrSN;eZl1Cs#HD1aL3{08S+YYXATM
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/advertisement_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/advertisement_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..3119c0d22b9e02e29365d345860d0520270e6808
+GIT binary patch
+literal 29
+gcmZQ)W?^9Zz`)I6)WrSN;eZl1Cs#HD1aL3{08T*!YybcN
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_id_request_1 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_id_request_1
+new file mode 100644
+index 0000000000000000000000000000000000000000..e03a11e65fad7f533b21e023cb466a2526f7acc8
+GIT binary patch
+literal 57
+ycmZQ)<YwX64F#+$3_!pEBAFN&`I$hB4?;`~EYeI2jl9fUJe*=2AQcRZ3=9BH=?EGC
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_update_request_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_update_request_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..04797407a83a3cabd83fc223ddb2e37d183472bc
+GIT binary patch
+literal 70
+zcmZQ);$>jcVdUmee9;i^aQ?qB4;u#yH`CX7VjK)0zz9T){Fs8gOiaSe9BWUoB~3I4
+G{R9A_Tnu3V
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_update_response_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/child_update_response_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..86b80cdad27b90a5929374144cf81c3c8ce156f6
+GIT binary patch
+literal 32
+mcmZQ);$vXaVPs_F=H^g*(Gc%&{=YE?%YPtXWnp0GO#lFLdkKyJ
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_request_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_request_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..6d32218533bb58a9c8a60f54319ff6fa25d328cf
+GIT binary patch
+literal 14
+ScmZQ)V&`S#5#wM00Y(4<%m7LN
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_request_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_request_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..6a5490ed3dd44172e224a88b84c3e59e8e12bd18
+GIT binary patch
+literal 14
+ScmZQ)X6I$(5#wM00Y(4<*#Jub
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_response_2 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_response_2
+new file mode 100644
+index 0000000000000000000000000000000000000000..1df1294c29d152a11d642a12a3c989b57932f456
+GIT binary patch
+literal 35
+ocmZQ);$UF<z`)I6)WrSN;eZmi7zYCgFfuUkuyL?(Gku*00A`N`#Q*>R
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_response_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/data_response_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..ae7915a46c370950bf9c6bac0fc3f39847fffb99
+GIT binary patch
+literal 35
+ocmZQ)=3rp@z`)I6)WrSN;eZmi7zYCgFfuUkuyL?(Gku*00A{fT#sB~S
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/link_request_3 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/link_request_3
+new file mode 100644
+index 0000000000000000000000000000000000000000..29ad7c6a5aab413091ad40a62c0667dafb3014f7
+GIT binary patch
+literal 21
+ccmZQ)W)NaxVBuxr;$-IF_;ypiY0D2^02iYK!2kdN
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/parent_request_0 b/tests/improved_fuzz/corpora/universal-mle-fuzzer-2/parent_request_0
+new file mode 100644
+index 0000000000000000000000000000000000000000..69d07a8302fddc0c16c03d7253903f66bb53465d
+GIT binary patch
+literal 23
+ecmZQ);ACXvXXcP@te^j6yDS?YV}lSA0}B8zNCZp(
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/improved_fuzz/universal_mle_fuzzer-1.cpp b/tests/improved_fuzz/universal_mle_fuzzer-1.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..3aeb758d015ebf15f154a99a6f94d11356d372af
+--- /dev/null
++++ b/tests/improved_fuzz/universal_mle_fuzzer-1.cpp
+@@ -0,0 +1,202 @@
++#include <stdlib.h>
++#include <string.h>
++
++#include <openthread/instance.h>
++#include <openthread/ip6.h>
++#include <openthread/link.h>
++#include <openthread/tasklet.h>
++#include <openthread/thread.h>
++#include <openthread/thread_ftd.h>
++#include <openthread/platform/alarm-milli.h>
++#include <openthread/platform/radio.h>
++
++#include <iostream>
++#include <vector>
++#include "fuzzer_platform.h"
++#include "common/code_utils.hpp"
++#include "common/time.hpp"
++
++#include "benign_packets/all_packets.h"
++
++enum DUTThreadState {
++    DetachedAfterParentRequest,
++    DetachedAfterChildIDRequest,
++    Child,
++    ChildAfterAddressSolicit,
++    Router,
++    ChildAfterChildUpdateRequest,
++    LastState,
++};
++
++void AdvanceTime(otInstance *aInstance, uint32_t aDuration)
++{
++    uint32_t time = otPlatAlarmMilliGetNow() + aDuration;
++
++    while (ot::TimeMilli(otPlatAlarmMilliGetNow()) <= ot::TimeMilli(time))
++    {
++        while (otTaskletsArePending(aInstance))
++        {
++            otTaskletsProcess(aInstance);
++        }
++
++        FuzzerPlatformProcess(aInstance);
++    }
++}
++
++bool SendBuffer(otInstance* instance, uint8_t* buf, size_t size) {
++    otRadioFrame frame;
++    int ret = 0;
++
++    memset(&frame, 0, sizeof(frame));
++    frame.mPsdu    = buf;
++    frame.mChannel = 11;
++    frame.mLength  = static_cast<uint8_t>(size);
++    otPlatRadioReceiveDone(instance, &frame, OT_ERROR_NONE);
++    return FuzzerPlatformResetWasRequested();
++}
++
++/*
++    Data has the following structure:
++    - 1 byte: linkMode flags represented by 3 bits
++    - 1 byte: State
++    - Rest: Fuzzed packet
++*/
++int FuzzerTestOneInput(const uint8_t *data, size_t data_size){
++    size_t total_size;
++    otInstance  *instance = nullptr;
++    otLinkModeConfig linkMode;
++    uint8_t     *fuzzed_buf = nullptr;
++    uint8_t      linkModeFlags;
++    uint8_t      state; // State to start fuzzing from
++
++    const otPanId panId = 0xdead;
++
++    if (data_size < 6) return -1;
++
++    /* Parse with the linkModeFlags */
++    linkModeFlags = data[0];
++
++    if (linkModeFlags > 0b111) return -1;
++    linkMode.mRxOnWhenIdle = linkModeFlags & 0b1; /* 1 - Rx always on, 0 - Rx off when idle*/
++    linkMode.mDeviceType = linkModeFlags & 0b10; /* 1 - FTD, 0 - MTD */
++    linkMode.mNetworkData = linkModeFlags & 0b100; /* 1 - requires full network data, 0 - otherwise */
++
++    if (linkMode.mDeviceType && !linkMode.mRxOnWhenIdle) return -1; /* That is not valid configuration. FTD should always have Rx ON. */
++
++    /* Parse the fuzzing state */
++    state = data[1];
++    if (state >= DUTThreadState::LastState) return -1;
++
++    data = data + 2; // Move the pointer to the real data
++    data_size -= 2;  // Adjust the size
++
++    total_size = mle_header_size + mle_footer_size + data_size;
++    if (total_size > OT_RADIO_FRAME_MAX_SIZE) return -1;
++
++    /* Assemble and send the fuzzed packet */
++    fuzzed_buf = static_cast<uint8_t *>(malloc(total_size));
++
++    memcpy(
++        fuzzed_buf,
++        mle_header,
++        mle_header_size
++    );
++
++    memcpy(
++        fuzzed_buf + mle_header_size,
++        data,
++        data_size
++    );
++
++    memcpy(
++        fuzzed_buf + mle_header_size + data_size,
++        mle_footer,
++        mle_footer_size
++    );
++
++    FuzzerPlatformInit();
++
++    instance = otInstanceInitSingle();
++
++    IgnoreError(otThreadSetLinkMode(instance, linkMode));
++    IgnoreError(otLinkSetPanId(instance, panId));
++    IgnoreError(otIp6SetEnabled(instance, true));
++    IgnoreError(otThreadSetEnabled(instance, true));
++
++    linkMode = otThreadGetLinkMode(instance);
++
++    // Become child
++    IgnoreError(otThreadBecomeChild(instance));
++    AdvanceTime(instance, 1000); // Wait for Parent request
++
++    if (state == DUTThreadState::DetachedAfterParentRequest) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++        AdvanceTime(instance, 100); // Wait a bit
++    }
++
++    // Send a benign Parent response
++    VerifyOrExit(!SendBuffer(instance, mle_parent_response, mle_parent_response_size));
++    AdvanceTime(instance, 1000); // Wait for Child request
++
++    if (state == DUTThreadState::DetachedAfterChildIDRequest) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++        AdvanceTime(instance, 100); // Wait a bit
++    }
++
++    // Send a benign Child response and verify child role
++    VerifyOrExit(!SendBuffer(instance, mle_child_id_response, mle_child_id_response_size));
++    AdvanceTime(instance, 1000); // Wait until device becomes a child
++    VerifyOrExit(otThreadGetDeviceRole(instance) == otDeviceRole::OT_DEVICE_ROLE_CHILD); // Check that device is a child
++
++    if (state == DUTThreadState::Child) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++        AdvanceTime(instance, 100); // Wait a bit
++    }
++
++    if (state == DUTThreadState::ChildAfterChildUpdateRequest) {
++        /* Wait for Child Update Request to be sent */
++        int timeout = linkMode.mDeviceType ? 235000 : 230000;
++        AdvanceTime(instance, timeout);
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++        AdvanceTime(instance, 100); // Wait a bit
++    }
++
++    if (linkMode.mDeviceType) {
++        /* If FTD, become router */
++        IgnoreError(otThreadBecomeRouter(instance));
++        AdvanceTime(instance, 1000); // Wait for Address Solicit
++
++        if (state == DUTThreadState::ChildAfterAddressSolicit) {
++            VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++            AdvanceTime(instance, 100); // Wait a bit
++        }
++
++        VerifyOrExit(!SendBuffer(instance, address_solicit_response, address_solicit_response_size));
++
++        AdvanceTime(instance, 1000); // Wait for the device to become a Router
++        VerifyOrExit(otThreadGetDeviceRole(instance) == OT_DEVICE_ROLE_ROUTER);
++
++        if (state == DUTThreadState::Router) {
++            VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++        }
++    }
++
++exit:
++
++    AdvanceTime(instance, 10000); // Wait for some after-effects to appear
++
++    if (fuzzed_buf != nullptr) {
++        free(fuzzed_buf);
++    }
++
++    if (instance != nullptr)
++    {
++        otInstanceFinalize(instance);
++    }
++
++    return 0;
++}
++
++extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
++    return FuzzerTestOneInput(data, size);
++}
+\ No newline at end of file
+diff --git a/tests/improved_fuzz/universal_mle_fuzzer-2.cpp b/tests/improved_fuzz/universal_mle_fuzzer-2.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..b4abe5fed9966f00bca1e2f334e0a851cfbb7f16
+--- /dev/null
++++ b/tests/improved_fuzz/universal_mle_fuzzer-2.cpp
+@@ -0,0 +1,216 @@
++#include <stdlib.h>
++#include <string.h>
++
++#include <openthread/instance.h>
++#include <openthread/ip6.h>
++#include <openthread/link.h>
++#include <openthread/tasklet.h>
++#include <openthread/thread.h>
++#include <openthread/thread_ftd.h>
++#include <openthread/platform/alarm-milli.h>
++#include <openthread/platform/radio.h>
++
++#include <iostream>
++#include <vector>
++#include "fuzzer_platform.h"
++#include "common/code_utils.hpp"
++#include "common/time.hpp"
++
++#include "benign_packets/all_packets.h"
++
++enum DUTThreadState {
++    Leader,
++    LeaderAfterParentResponse,
++    LeaderAfterChildIdResponse,
++    LeaderAfterAddressSolicitResponse,
++    LastState,
++};
++
++void AdvanceTime(otInstance *aInstance, uint32_t aDuration)
++{
++    uint32_t time = otPlatAlarmMilliGetNow() + aDuration;
++
++    while (ot::TimeMilli(otPlatAlarmMilliGetNow()) <= ot::TimeMilli(time))
++    {
++        while (otTaskletsArePending(aInstance))
++        {
++            otTaskletsProcess(aInstance);
++        }
++
++        FuzzerPlatformProcess(aInstance);
++    }
++}
++
++bool SendBuffer(otInstance* instance, uint8_t* buf, size_t size) {
++    otRadioFrame frame;
++
++    memset(&frame, 0, sizeof(frame));
++    frame.mPsdu    = buf;
++    frame.mChannel = 11;
++    frame.mLength  = static_cast<uint8_t>(size);
++    otPlatRadioReceiveDone(instance, &frame, OT_ERROR_NONE);
++
++    return FuzzerPlatformResetWasRequested();
++}
++
++/*
++    Data has the following structure:
++    - 1 byte: State
++    - Rest: Fuzzed packet
++*/
++int FuzzerTestOneInput(const uint8_t *data, size_t data_size){
++    size_t total_size;
++    otInstance  *instance = nullptr;
++    otLinkModeConfig linkMode;
++    uint8_t     *fuzzed_buf = nullptr;
++    uint8_t      linkModeFlags;
++    uint8_t      state; // State to start fuzzing from
++    uint8_t     *header = mle_header;
++    size_t header_size = mle_header_size;
++    uint8_t     *footer = mle_footer;
++    size_t footer_size = mle_footer_size;
++
++    const otPanId panId = 0xdead;
++
++    if (data_size < 6) return -1;
++
++    /* Parse with the linkModeFlags */
++    linkModeFlags = data[0];
++
++    if (linkModeFlags > 0b111) return -1;
++    linkMode.mRxOnWhenIdle = linkModeFlags & 0b1; /* 1 - Rx always on, 0 - Rx off when idle*/
++    linkMode.mDeviceType = linkModeFlags & 0b10; /* 1 - FTD, 0 - MTD */
++    linkMode.mNetworkData = linkModeFlags & 0b100; /* 1 - requires full network data, 0 - otherwise */
++
++    if (linkMode.mDeviceType && !linkMode.mRxOnWhenIdle) return -1; /* That is not valid configuration. FTD should always have Rx ON. */
++
++    /* Parse the fuzzing state */
++    state = data[1];
++    if (state >= DUTThreadState::LastState) return -1;
++
++    data = data + 2; // Move the pointer to the real data
++    data_size -= 2;  // Adjust the size
++
++    switch(static_cast<int>(data[0])) {
++        case CMD_PARENT_REQUEST:
++            header = mle_parent_request_header;
++            header_size = mle_parent_request_header_size;
++            break;
++        case CMD_CHILD_ID_REQUEST:
++            header = mle_child_id_request_header;
++            header_size = mle_child_id_request_header_size;
++            break;
++        case 0x69: /* Address solicit*/
++            header = {};
++            footer = {};
++            header_size = 0;
++            footer_size = 0;
++            break;
++        case CMD_ADVERTISEMENT:
++            header = advertisement_2_header;
++            header_size = advertisement_2_header_size;
++            break;
++        case CMD_LINK_REQUEST:
++            header = mle_link_request_header;
++            header_size = mle_link_request_header_size;
++            break;
++        case CMD_DATA_REQUEST:
++            header = data_request_header;
++            header_size = data_request_header_size;
++            break;
++        case CMD_DATA_RESPONSE:
++            header = data_response_header;
++            header_size = data_response_header_size;
++            break;
++        case CMD_CHILD_UPDATE_REQUEST:
++            header = mle_child_update_request_header;
++            header_size = mle_child_update_request_header_size;
++            break;
++        case CMD_CHILD_UPDATE_RESPONSE:
++            header = mle_child_update_response_header;
++            header_size = mle_child_update_response_header_size;
++            break;
++    }
++
++    total_size = header_size + footer_size + data_size;
++    VerifyOrExit(total_size <= OT_RADIO_FRAME_MAX_SIZE);
++
++    /* Assemble and send the fuzzed packet */
++    fuzzed_buf = static_cast<uint8_t *>(malloc(total_size));
++
++    memcpy(
++        fuzzed_buf,
++        header,
++        header_size
++    );
++
++    memcpy(
++        fuzzed_buf + header_size,
++        data,
++        data_size
++    );
++
++    memcpy(
++        fuzzed_buf + header_size + data_size,
++        footer,
++        footer_size
++    );
++
++    FuzzerPlatformInit();
++
++    instance = otInstanceInitSingle();
++    IgnoreError(otThreadSetLinkMode(instance, linkMode));
++    IgnoreError(otLinkSetPanId(instance, panId));
++    IgnoreError(otIp6SetEnabled(instance, true));
++    IgnoreError(otThreadSetEnabled(instance, true));
++
++    // Become leader
++    IgnoreError(otThreadBecomeLeader(instance));
++    AdvanceTime(instance, 10000);
++
++    if (state == DUTThreadState::Leader) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++    }
++    
++    // Send a benign Parent request
++    VerifyOrExit(!SendBuffer(instance, mle_parent_request, mle_parent_request_size));
++    AdvanceTime(instance, 100); // Wait for Parent response
++
++    if (state == DUTThreadState::LeaderAfterParentResponse) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++    }
++
++    // Send a benign Child ID request
++    VerifyOrExit(!SendBuffer(instance, mle_child_id_request, mle_child_id_request_size));
++    AdvanceTime(instance, 100); // Wait for Child ID Response
++
++    if (state == DUTThreadState::LeaderAfterChildIdResponse) {
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++    }
++
++    // Send a benign Address Solicit
++    VerifyOrExit(!SendBuffer(instance, address_solicit, address_solicit_size));
++    AdvanceTime(instance, 100); // Wait for Address Solicit Response
++
++    if (state == DUTThreadState::LeaderAfterAddressSolicitResponse)
++        VerifyOrExit(!SendBuffer(instance, fuzzed_buf, total_size));
++
++    AdvanceTime(instance, 10000); // Wait for some after-effects to appear
++
++exit:
++
++    if (fuzzed_buf != nullptr) {
++        free(fuzzed_buf);
++    }
++
++    if (instance != nullptr)
++    {
++        otInstanceFinalize(instance);
++    }
++
++    return 0;
++}
++
++extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
++    return FuzzerTestOneInput(data, size);
++}
+\ No newline at end of file

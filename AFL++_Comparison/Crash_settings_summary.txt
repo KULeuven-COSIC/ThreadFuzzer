@@ -1,0 +1,9 @@
+This file describes which flags in `linkMode` structure should be set to reproduce the crashes using `Universal MLE Fuzzer 1`.
+The structure provides 3 flags: linkMode.mRxOnWhenIdle, linkMode.mDeviceType, linkMode.mNetworkData.
+
+C1: All configurations
+C2: linkMode.mNetworkData = true
+C3: linkMode.mNetworkData = false
+C4: linkMode.mRxOnWhenIdle = true (NB! The malicious packet should contain the correct MODE TLV, i.e. the one that matches the provided linkMode)
+C5: linkMode.mDeviceType = true AND linkMode.mRxOnWhenIdle = true (In other words, an FTD)
+C6: linkMode.mNetworkData = true
