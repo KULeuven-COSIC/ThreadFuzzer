@@ -123,8 +123,10 @@ save_checkpoint && (( cur_step++ ))
 if (( last_done_step < cur_step )); then
     echo "Step $cur_step: Compile OpenThread using AFL++"
     cd ${SCRIPT_DIR}
-    ./afl_fuzz_compile.sh afl-clang-lto
+    chmod +x afl_fuzz_compile.sh && ./afl_fuzz_compile.sh afl-clang-lto
 fi
+
+chmod +x run_afl_fuzzing.sh
 
 echo "Setup script has successfully finished!"
 rm -f "$STATE_FILE"
