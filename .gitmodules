@@ -7,3 +7,6 @@
 [submodule "third-party/badthread"]
 	path = third-party/badthread
 	url = https://github.com/openthread/openthread.git
+[submodule "AFL++_Comparison/openthread"]
+	path = AFL++_Comparison/openthread
+	url = https://github.com/openthread/openthread.git
