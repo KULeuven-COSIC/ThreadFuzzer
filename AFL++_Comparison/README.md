@@ -48,9 +48,18 @@ Two fuzzing harnesses are available in `AFL++_Comparison/openthread/tests/improv
 Run AFL++ using the helper script (substitute `X` with 1 or 2):
 
 ```bash
-chmod +x AFL++_Comparison/run_afl_fuzzing.sh
-./AFL++_Comparison/run_afl_fuzzing.sh universal_mle_fuzzer-X
+./run_afl_fuzzing.sh universal_mle_fuzzer-X
 ```
 
 Seeds are taken from: `corpora/universal_mle_fuzzer-X/`  
 Output is saved to: `universal_mle_fuzzer-X_out/`
+
+---
+
+## Deduplicating the crashes
+
+The repository includes a helper script to distinguish the crashes: `dedup_afl_crashes.py`, which shows only unique crashes and checks if any of the encountered crashes matches with Crash 1-6 from the paper.
+Run the following to see the usage manual:
+```bash
+python3 dedup_afl_crashes.py --help
+```
