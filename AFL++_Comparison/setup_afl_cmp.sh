@@ -87,8 +87,11 @@ fi
 save_checkpoint && (( cur_step++ ))
 
 if (( last_done_step < cur_step )); then
-    echo "Step $cur_step: Install AFL++"
-    cd AFLplusplus && make all && sudo make install
+    if ! command -v afl-clang-lto &> /dev/null; then
+        # If afl-clang-lto is not installed
+        echo "Step $cur_step: Install AFL++"
+        cd AFLplusplus && make all && sudo make install
+    fi
 fi
 save_checkpoint && (( cur_step++ ))
 
