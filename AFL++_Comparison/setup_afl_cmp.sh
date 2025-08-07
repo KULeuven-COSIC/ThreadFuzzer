@@ -85,15 +85,18 @@ if ! command -v afl-clang-lto --version &> /dev/null; then
         echo "Step $cur_step: Cloning AFL++"
         git clone https://github.com/AFLplusplus/AFLplusplus
     fi
-    save_checkpoint && (( cur_step++ ))
+fi
+save_checkpoint && (( cur_step++ ))
 
+if ! command -v afl-clang-lto --version &> /dev/null; then
     if (( last_done_step < cur_step )); then
         # If afl-clang-lto is not installed
         echo "Step $cur_step: Install AFL++"
         cd AFLplusplus && make all && sudo make install
     fi
-    save_checkpoint && (( cur_step++ ))
 fi
+save_checkpoint && (( cur_step++ ))
+
 
 # Make sure that the submodules are updated
 # git submodule update --init --recursive
