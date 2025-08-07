@@ -194,7 +194,7 @@ save_checkpoint && (( cur_step++ ))
 # Install Clang
 if (( last_done_step < cur_step )); then
     echo "Step $cur_step: Installing clang"
-    wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 18
+    wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 18 && rm llvm.sh
 fi
 save_checkpoint && (( cur_step++ ))
 
