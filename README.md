@@ -87,6 +87,13 @@ Use the appropriate script to generate figures:
 
 ## Notes
 
+### Ensuring stability of fuzzing
+Due to a known ASan issue (see [this Stack Overflow thread](https://stackoverflow.com/questions/78293129/c-programs-fail-with-asan-addresssanitizerdeadlysignal) for details), address space layout randomization (ASLR) should be disabled to ensure stable fuzzing runs.
+Run the following command before starting the fuzzer, regardless of whether you are using Docker or a native setup:
+```bash
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+```
+
 ### Working with WDissector
 
 WDissector is buggy, unorganized, and potentially unsafe. Always run with AddressSanitizer enabled due to possible memory leaks.
