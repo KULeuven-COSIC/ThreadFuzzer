@@ -74,6 +74,10 @@ RUN apt install -y dbus-x11 python3 udo psmisc nano procps libcanberra-gtk-modul
 # Install spdlog
 RUN git clone https://github.com/crayzeewulf/libserial.git && cd libserial && ./compile.sh && cd build && make -j15 install
 
+# Set the correct path to shm config file
+ARG fuzz_config_file_path=/app/ThreadFuzzer/common/shm/config.json
+RUN sed -i "s|FUZZ_CONFIG_PATH_PLACEHOLDER|$fuzz_config_file_path|g" common/shm/fuzz_config.h
+
 # Install NLOHMANN JSON
 RUN git clone https://github.com/nlohmann/json.git && cd json && git checkout tags/v3.12.0 && mkdir -p build && cd build && cmake .. && make -j15 && make install && ldconfig
 RUN cd common/shm/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j15
@@ -84,10 +88,6 @@ RUN git clone https://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh 
 
 # Install cppzmq
 RUN git clone https://github.com/zeromq/cppzmq.git && cd cppzmq && mkdir -p build && cd build && cmake -DCPPZMQ_BUILD_TESTS=OFF .. && make -j15 && make install
-
-# Set the correct path to shm config file
-ARG fuzz_config_file_path=/app/ThreadFuzzer/common/shm/config.json
-RUN sed -i "s|FUZZ_CONFIG_PATH_PLACEHOLDER|$fuzz_config_file_path|g" common/shm/fuzz_config.h
 
 # Build common dir
 RUN cd common/Coverage_Instrumentation/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j15
