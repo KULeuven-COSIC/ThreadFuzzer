@@ -190,7 +190,7 @@ int RebootCntFuzzer::prepare_new_iteration() {
         statistics_g.dut_crash_counter++;
         current_state = State::NORMAL;
         break;
-      } else if (false) { // is_unique_crash()) {
+      } else if (is_unique_crash() && fuzz_strategy_config_g.use_refinement) {
         statistics_g.refinement_runs++;
         refinement = true;
         predefined_patches = std::vector<std::shared_ptr<Patch>>(

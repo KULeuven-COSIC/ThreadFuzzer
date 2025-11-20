@@ -83,6 +83,8 @@ public:
 
   bool chip_recommissioning_step = false;
 
+  bool use_refinement = false;
+
   int epoch_size = 20;
 
   /* TLV inserter options */
@@ -108,4 +110,4 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     fields_not_to_fuzz, fields_to_fuzz, iterations_per_state,
     state_to_start_fuzz_from, states_to_fuzz, states_not_to_fuzz,
     fuzzing_stop_states, skip_rules,
-    chip_recommissioning_step, epoch_size, use_probability_resets, adjust_TLV_lengths_prob)
+    use_refinement, chip_recommissioning_step, epoch_size, use_probability_resets, adjust_TLV_lengths_prob)
