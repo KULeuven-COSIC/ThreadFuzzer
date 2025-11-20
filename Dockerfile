@@ -184,7 +184,7 @@ RUN mkdir -p build
 
 
 ## Preparation for the runtime
-COPY common/ ./common/
+COPY common/shm/config.json ./common/shm/config.json
 COPY configs/ ./configs/
 COPY seeds/ ./seeds/
 COPY scripts/ ./scripts/
@@ -192,5 +192,5 @@ COPY bin/ ./bin/
 COPY coverage_log/ ./coverage_log/
 
 
-RUN chmod +x scripts/docker_entrypoint.sh
+RUN chmod +x scripts/*.sh
 ENTRYPOINT ["scripts/docker_entrypoint.sh"]

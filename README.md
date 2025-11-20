@@ -78,11 +78,18 @@ sudo docker run -v /var/run/dbus/:/var/run/dbus/:z --privileged --name=threadfuz
 a slightly safer (non-privileged) way:
 
 ```
-sudo docker run --security-opt apparmor=unconfined
+sudo docker run --security-opt apparmor=unconfined -v build:/app/ThreadFuzzer/build -v /var:/var -v /proc:/proc -v /run/dbus:/run/dbus -v logs:/app/ThreadFuzzer/logs --device=/dev/net/tun --device=/dev/ttyACM0 --device=/dev/ttyUSB0 --cap-add=NET_ADMIN --cap-add=SYS_PTRACE --name=threadfuzzer --rm -it thread_fuzzer
+```
+
+Or more readable:
+
+```
+sudo docker run --security-opt apparmor=unconfined \ 
+                -v build:/app/ThreadFuzzer/build \
                 -v /var:/var \
                 -v /proc:/proc \
-                -v /run/dbus:/run/dbus \
-                -v logs:/app/ThreadFuzzer/logs
+                -v /run/dbus:/run/dbus \ 
+                -v logs:/app/ThreadFuzzer/logs \
                 --device=/dev/net/tun \
                 --device=/dev/ttyACM0 \
                 --device=/dev/ttyUSB0 \
@@ -91,12 +98,8 @@ sudo docker run --security-opt apparmor=unconfined
                 --name=threadfuzzer --rm -it thread_fuzzer
 ```
 
-```
-sudo docker build --pull --progress=plain -t thread_fuzzer:latest . && sudo docker run --security-opt apparmor=unconfined -v /var:/var -v /proc:/proc -v /run/dbus:/run/dbus -v logs:/app/ThreadFuzzer/logs --device=/dev/net/tun --device=/dev/ttyACM0 --device=/dev/ttyUSB0 --cap-add=NET_ADMIN --cap-add=SYS_PTRACE --name=threadfuzzer --rm -it thread_fuzzer
-```
 
-
-In here, `ttyACM0` is the RCP, `ttyUSB0` the controller for the physical device, `/dev/net/tun` and the volumes are needed for the otbr. `--cap-add` is needed for creating a dummy0 network interface. Note that this includes the otbr settings, therefore they persist after the container is shut down.
+In here, `ttyACM0` is the RCP, `ttyUSB0` the controller for the physical device, a simple arduino. `/dev/net/tun` and the volumes are needed for the otbr. `--cap-add` is needed for creating a dummy0 network interface. Note that the volumes include the otbr settings, therefore they persist after the container is shut down.
 
 > Note for Ubuntu 24.04 If `apparmor` starts complaining about rsyslogd on the host (see `dmesg`), then disable it (on the host):
 
