@@ -25,20 +25,10 @@ OpenThread_Stack::OpenThread_Stack() {
     packet_generator_ = OT_Packet_Generator_Factory::get_OT_packet_generator_by_name(main_config_g.packet_generator_name);
 }
 
-bool OpenThread_Stack::start()
-{
-    if (!packet_generator_->reset()) {
-        std::cerr << "Failed to start OT protocol stack HELP!!" << std::endl;
-        my_logger_g.logger->error("Failed to start OT protocol stack");
-        return false;
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-
-    /* Check if everything is running fine */
-    if (!packet_generator_->is_running()) {
-        my_logger_g.logger->error("OT protocol stack is not alive");
-        return false;
+bool OpenThread_Stack::start() {
+    if (!packet_generator_->start()) {
+      my_logger_g.logger->warn("Failed to start OT protocol stack");
+      return false;
     }
 
     return true;

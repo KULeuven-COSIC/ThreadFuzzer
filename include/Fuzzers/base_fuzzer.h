@@ -20,7 +20,7 @@ public:
 
     virtual bool init();
     virtual bool fuzz(Packet&) = 0;
-    virtual bool prepare_new_iteration();
+    virtual int prepare_new_iteration();
     virtual bool apply_predefined_patches(Packet&);
 
 public:

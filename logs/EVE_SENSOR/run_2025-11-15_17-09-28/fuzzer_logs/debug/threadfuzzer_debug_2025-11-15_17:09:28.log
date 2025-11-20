@@ -1,0 +1,907 @@
+[2025-11-15 17:09:28.225] [logger] [debug] BR application gets restarted
+[2025-11-15 17:09:28.225] [logger] [info] Starting MLE thread
+[2025-11-15 17:09:28.225] [logger] [info] Inited communication
+[2025-11-15 17:09:28.308] [logger] [debug] BR application is stopped
+[2025-11-15 17:09:29.481] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 CF 4A AC 90 06 D5 C2 94 00 00 
+[2025-11-15 17:09:29.481] [logger] [debug] Initializing packet: LinkRequest,BadFCS (len=47)
+[2025-11-15 17:09:29.481] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:29.481] [logger] [debug] Field mle has bit-length 160
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle: len=20, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.version: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:29.482] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=31, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=33, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=34, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:29.482] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=35, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=35, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=36, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:29.482] [logger] [debug] Field mle.tlv.challenge has bit-length 64
+[2025-11-15 17:09:29.482] [logger] [debug] Init field mle.tlv.challenge: len=8, align=0, offset=37, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:29.482] [logger] [debug] Inited 12 fields
+[2025-11-15 17:09:29.482] [logger] [debug] Inited 3 group fields
+[2025-11-15 17:09:29.482] [logger] [debug] Setting probs to value 0.25
+[2025-11-15 17:09:29.482] [logger] [info] ---> Dissector's summary: Link Request, Bad FCS
+[2025-11-15 17:09:29.482] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 CF 4A AC 90 06 D5 C2 94 00 00  (type LinkRequest,BadFCS)
+[2025-11-15 17:09:29.482] [logger] [info] 
+[2025-11-15 17:09:32.083] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 F8 54 13 47 F3 6B 9B 35 0E 01 80 12 02 00 04 00 00 
+[2025-11-15 17:09:32.083] [logger] [debug] Initializing packet: ParentRequest,BadFCS (len=49)
+[2025-11-15 17:09:32.083] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:32.083] [logger] [debug] Field mle has bit-length 176
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle: len=22, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv: len=3, align=0, offset=27, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.mode.nwk_data: len=1, align=0, offset=29, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.mode.device_type: len=1, align=0, offset=29, mask=2, mask_offset=6, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.mode.sec_data_req: len=1, align=0, offset=29, mask=4, mask_offset=5, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.mode.idle_rx: len=1, align=0, offset=29, mask=8, mask_offset=4, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.083] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=30, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=30, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Field mle.tlv.challenge has bit-length 64
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.challenge: len=8, align=0, offset=32, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.083] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv: len=3, align=0, offset=40, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.scan_mask.r: len=1, align=0, offset=42, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.scan_mask.e: len=1, align=0, offset=42, mask=40, mask_offset=1, max_value=2
+[2025-11-15 17:09:32.083] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=43, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=43, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=44, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.083] [logger] [debug] Init field mle.tlv.version: len=2, align=0, offset=45, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.083] [logger] [debug] Inited 18 fields
+[2025-11-15 17:09:32.083] [logger] [debug] Inited 4 group fields
+[2025-11-15 17:09:32.083] [logger] [debug] Setting probs to value 0.16666666666666666
+[2025-11-15 17:09:32.083] [logger] [info] ---> Dissector's summary: Parent Request, Bad FCS
+[2025-11-15 17:09:32.083] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 F8 54 13 47 F3 6B 9B 35 0E 01 80 12 02 00 04 00 00  (type ParentRequest,BadFCS)
+[2025-11-15 17:09:32.083] [logger] [info] 
+[2025-11-15 17:09:32.834] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 CF CD 36 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 FC 92 00 00 
+[2025-11-15 17:09:32.835] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=61)
+[2025-11-15 17:09:32.835] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle: len=34, align=0, offset=25, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Field mle.tlv has bit-length 64
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv: len=8, align=0, offset=51, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_nwd: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:32.835] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:32.835] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:32.835] [logger] [debug] Inited 23 fields
+[2025-11-15 17:09:32.835] [logger] [debug] Inited 6 group fields
+[2025-11-15 17:09:32.835] [logger] [debug] Setting probs to value 0.13043478260869565
+[2025-11-15 17:09:32.835] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:32.835] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 CF CD 36 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 FC 92 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:32.835] [logger] [info] 
+[2025-11-15 17:09:33.543] [logger] [debug] BR is configured and running
+[2025-11-15 17:09:33.543] [logger] [debug] BR application is started
+[2025-11-15 17:09:33.543] [logger] [debug] BR application is restarted
+[2025-11-15 17:09:33.561] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 00 00 
+[2025-11-15 17:09:33.561] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=77)
+[2025-11-15 17:09:33.562] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:33.562] [logger] [debug] Field mle has bit-length 144
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle: len=50, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Field mle.tlv has bit-length 192
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv: len=24, align=0, offset=51, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:33.562] [logger] [debug] Field thread_nwd has bit-length 176
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd: len=22, align=0, offset=53, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Field thread_nwd.tlv has bit-length 128
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv: len=16, align=0, offset=59, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=59, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=59, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=60, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=61, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=61, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=62, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=63, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=64, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:33.562] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:33.562] [logger] [debug] Field thread_nwd.tlv has bit-length 88
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=64, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=64, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=65, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=66, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:33.562] [logger] [debug] Init field thread_nwd.tlv.server.data: len=7, align=0, offset=68, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:33.562] [logger] [debug] Inited 35 fields
+[2025-11-15 17:09:33.562] [logger] [debug] Inited 9 group fields
+[2025-11-15 17:09:33.562] [logger] [debug] Setting probs to value 0.08571428571428572
+[2025-11-15 17:09:33.562] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:33.562] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:33.562] [logger] [info] 
+[2025-11-15 17:09:33.794] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00 
+[2025-11-15 17:09:33.795] [logger] [debug] Initializing packet: Advertisement,BadFCS (len=55)
+[2025-11-15 17:09:33.795] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:33.795] [logger] [debug] Field mle has bit-length 224
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle: len=28, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:33.795] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.795] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:33.795] [logger] [debug] Field mle.tlv has bit-length 96
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv: len=12, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64.id_seq: len=1, align=0, offset=43, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Field mle.tlv.route64.id_mask has bit-length 64
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64.id_mask: len=8, align=0, offset=44, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:33.795] [logger] [debug] Group field: mle.tlv.route64
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64.nbr_out: len=1, align=0, offset=52, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64.nbr_in: len=1, align=0, offset=52, mask=30, mask_offset=2, max_value=4
+[2025-11-15 17:09:33.795] [logger] [debug] Init field mle.tlv.route64.cost: len=1, align=0, offset=52, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:33.795] [logger] [debug] Inited 19 fields
+[2025-11-15 17:09:33.795] [logger] [debug] Inited 4 group fields
+[2025-11-15 17:09:33.795] [logger] [debug] Setting probs to value 0.15789473684210525
+[2025-11-15 17:09:33.795] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-15 17:09:33.795] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-15 17:09:33.795] [logger] [info] 
+[2025-11-15 17:09:34.043] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-15 17:09:34.043] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 17:09:34.043] [logger] [debug] calling to the pipe
+[2025-11-15 17:09:34.057] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 17:09:34.077] [logger] [debug] command returned: 0
+[2025-11-15 17:09:34.909] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00 
+[2025-11-15 17:09:34.910] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-15 17:09:34.910] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D0 CE 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-15 17:09:34.910] [logger] [info] 
+[2025-11-15 17:09:35.432] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D1 CF 36 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 00 00 
+[2025-11-15 17:09:35.433] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=99)
+[2025-11-15 17:09:35.433] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:35.433] [logger] [debug] Field mle has bit-length 64
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle: len=72, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field mle.tlv has bit-length 112
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv: len=46, align=0, offset=51, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd has bit-length 96
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd: len=44, align=0, offset=53, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd.tlv has bit-length 128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=16, align=0, offset=59, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=59, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=59, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=60, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=61, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=61, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=62, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=63, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=64, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd.tlv has bit-length 88
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=64, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=64, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=65, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=66, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.server.data: len=7, align=0, offset=68, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd.tlv has bit-length 176
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=22, align=0, offset=75, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=75, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=75, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=76, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=77, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=78, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 64
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.prefix: len=8, align=0, offset=79, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=87, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:35.433] [logger] [debug] Field thread_nwd has bit-length 80
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd: len=10, align=0, offset=87, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=87, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=87, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=87, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=88, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv.border_router
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router: len=1, align=0, offset=89, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.16: len=2, align=0, offset=89, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.pref: len=1, align=0, offset=91, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.p: len=1, align=0, offset=91, mask=20, mask_offset=2, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.s: len=1, align=0, offset=91, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.d: len=1, align=0, offset=91, mask=8, mask_offset=4, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.c: len=1, align=0, offset=91, mask=4, mask_offset=5, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.r: len=1, align=0, offset=91, mask=2, mask_offset=6, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.o: len=1, align=0, offset=91, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.n: len=1, align=0, offset=92, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv: len=4, align=0, offset=93, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=93, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=93, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=94, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Group field: thread_nwd.tlv.6co.flag
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.6co.flag: len=1, align=0, offset=95, mask=ff, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.6co.flag.reserved: len=1, align=0, offset=95, mask=e0, mask_offset=0, max_value=8
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.6co.flag.c: len=1, align=0, offset=95, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.6co.flag.cid: len=1, align=0, offset=95, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:35.433] [logger] [debug] Init field thread_nwd.tlv.6co.context_length: len=1, align=0, offset=96, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:35.434] [logger] [debug] Inited 60 fields
+[2025-11-15 17:09:35.434] [logger] [debug] Inited 15 group fields
+[2025-11-15 17:09:35.434] [logger] [debug] Setting probs to value 0.05
+[2025-11-15 17:09:35.434] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:35.434] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D1 CF 36 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:35.434] [logger] [info] 
+[2025-11-15 17:09:37.077] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-15 17:09:37.077] [logger] [debug] calling to the pipe
+[2025-11-15 17:09:37.092] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-15 17:09:37.112] [logger] [debug] command returned: 0
+[2025-11-15 17:09:37.112] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-15 17:09:37.821] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D2 D0 36 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 00 00 
+[2025-11-15 17:09:37.822] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=120)
+[2025-11-15 17:09:37.822] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:37.822] [logger] [debug] Field mle has bit-length 232
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle: len=93, align=0, offset=25, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv: len=67, align=0, offset=51, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd: len=65, align=0, offset=53, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd.tlv has bit-length 128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=16, align=0, offset=59, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=59, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=59, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=60, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=61, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=61, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=62, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=63, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=64, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd.tlv has bit-length 88
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=64, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=64, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=65, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=66, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.server.data: len=7, align=0, offset=68, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd.tlv has bit-length 176
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=22, align=0, offset=75, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=75, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=75, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=76, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=77, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=78, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 64
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.prefix: len=8, align=0, offset=79, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=87, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd has bit-length 80
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd: len=10, align=0, offset=87, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=87, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=87, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=87, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=88, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv.border_router
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router: len=1, align=0, offset=89, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.16: len=2, align=0, offset=89, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.pref: len=1, align=0, offset=91, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.p: len=1, align=0, offset=91, mask=20, mask_offset=2, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.s: len=1, align=0, offset=91, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.d: len=1, align=0, offset=91, mask=8, mask_offset=4, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.c: len=1, align=0, offset=91, mask=4, mask_offset=5, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.r: len=1, align=0, offset=91, mask=2, mask_offset=6, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.o: len=1, align=0, offset=91, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.n: len=1, align=0, offset=92, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=4, align=0, offset=93, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=93, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=93, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=94, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv.6co.flag
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.6co.flag: len=1, align=0, offset=95, mask=ff, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.6co.flag.reserved: len=1, align=0, offset=95, mask=e0, mask_offset=0, max_value=8
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.6co.flag.c: len=1, align=0, offset=95, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.6co.flag.cid: len=1, align=0, offset=95, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.6co.context_length: len=1, align=0, offset=96, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.822] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.822] [logger] [debug] Field thread_nwd.tlv has bit-length 168
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv: len=21, align=0, offset=97, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.822] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=97, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=97, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=98, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=99, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=100, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 96
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.prefix: len=12, align=0, offset=101, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:37.823] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=113, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=113, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=114, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Group field: thread_nwd.tlv.has_route
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.has_route: len=1, align=0, offset=115, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.has_route.br_16: len=2, align=0, offset=115, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:37.823] [logger] [debug] Init field thread_nwd.tlv.has_route.pref: len=1, align=0, offset=117, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:37.823] [logger] [debug] Inited 71 fields
+[2025-11-15 17:09:37.823] [logger] [debug] Inited 19 group fields
+[2025-11-15 17:09:37.823] [logger] [debug] Setting probs to value 0.04225352112676056
+[2025-11-15 17:09:37.823] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:37.823] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D2 D0 36 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:37.823] [logger] [info] 
+[2025-11-15 17:09:37.939] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D2 D0 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00 
+[2025-11-15 17:09:37.939] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-15 17:09:37.939] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D2 D0 36 09 0A 8B 00 00 00 00 00 00 02 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-15 17:09:37.939] [logger] [info] 
+[2025-11-15 17:09:43.500] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D3 D1 36 16 08 00 00 00 00 00 01 00 00 0C 4B 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 03 08 00 07 FC 01 03 D8 00 00 00 00 
+[2025-11-15 17:09:43.500] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=130)
+[2025-11-15 17:09:43.500] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle: len=103, align=0, offset=25, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Field mle.tlv has bit-length 104
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv: len=77, align=0, offset=51, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:43.500] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd: len=75, align=0, offset=53, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.500] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.500] [logger] [debug] Field thread_nwd.tlv has bit-length 128
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv: len=16, align=0, offset=59, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=59, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=59, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=60, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.500] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=61, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=61, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=62, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=63, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=64, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv has bit-length 88
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=64, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=64, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=65, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=66, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.server.data: len=7, align=0, offset=68, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv has bit-length 176
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=22, align=0, offset=75, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=75, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=75, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=76, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=77, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=78, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 64
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix: len=8, align=0, offset=79, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=87, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd has bit-length 80
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd: len=10, align=0, offset=87, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=87, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=87, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=87, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=88, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.border_router
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router: len=1, align=0, offset=89, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.16: len=2, align=0, offset=89, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.pref: len=1, align=0, offset=91, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.p: len=1, align=0, offset=91, mask=20, mask_offset=2, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.s: len=1, align=0, offset=91, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.d: len=1, align=0, offset=91, mask=8, mask_offset=4, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.c: len=1, align=0, offset=91, mask=4, mask_offset=5, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.r: len=1, align=0, offset=91, mask=2, mask_offset=6, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.o: len=1, align=0, offset=91, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.n: len=1, align=0, offset=92, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=4, align=0, offset=93, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=93, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=93, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=94, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.6co.flag
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.6co.flag: len=1, align=0, offset=95, mask=ff, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.6co.flag.reserved: len=1, align=0, offset=95, mask=e0, mask_offset=0, max_value=8
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.6co.flag.c: len=1, align=0, offset=95, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.6co.flag.cid: len=1, align=0, offset=95, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.6co.context_length: len=1, align=0, offset=96, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv has bit-length 168
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=21, align=0, offset=97, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=97, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=97, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=98, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=99, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=100, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 96
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix: len=12, align=0, offset=101, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=113, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=113, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=114, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.has_route
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route: len=1, align=0, offset=115, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route.br_16: len=2, align=0, offset=115, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route.pref: len=1, align=0, offset=117, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Field thread_nwd.tlv has bit-length 80
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=10, align=0, offset=118, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=118, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=118, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=119, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=120, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=121, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.prefix: len=1, align=0, offset=122, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd: len=5, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv: len=5, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=123, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=123, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=124, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Group field: thread_nwd.tlv.has_route
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route: len=1, align=0, offset=125, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route.br_16: len=2, align=0, offset=125, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:43.501] [logger] [debug] Init field thread_nwd.tlv.has_route.pref: len=1, align=0, offset=127, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:43.501] [logger] [debug] Inited 82 fields
+[2025-11-15 17:09:43.501] [logger] [debug] Inited 23 group fields
+[2025-11-15 17:09:43.501] [logger] [debug] Setting probs to value 0.036585365853658534
+[2025-11-15 17:09:43.501] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:43.501] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D3 D1 36 16 08 00 00 00 00 00 01 00 00 0C 4B 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 03 08 00 07 FC 01 03 D8 00 00 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:43.501] [logger] [info] 
+[2025-11-15 17:09:44.558] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 16 08 00 00 00 00 00 01 00 00 0C 66 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 03 08 00 07 FC 01 03 D8 00 00 0B 19 81 01 5D 0D 14 D8 00 FD 1E 23 4F CC A6 18 3B 77 A3 E2 4A 44 20 C1 A1 D1 1F 00 00 
+[2025-11-15 17:09:44.558] [logger] [debug] Initializing packet: DataResponse,BadFCS (len=157)
+[2025-11-15 17:09:44.558] [logger] [debug] Layer field: mle
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle: len=130, align=0, offset=25, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.sec_suite: len=1, align=0, offset=25, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.cmd: len=1, align=0, offset=26, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv: len=4, align=0, offset=27, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=27, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=28, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.source_addr: len=2, align=0, offset=29, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=31, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=31, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=32, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.leader_data.partition_id: len=4, align=0, offset=33, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.leader_data.weighting: len=1, align=0, offset=37, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.leader_data.data_version: len=1, align=0, offset=38, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.leader_data.stable_data_version: len=1, align=0, offset=39, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.leader_data.router_id: len=1, align=0, offset=40, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Field mle.tlv has bit-length 80
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv: len=10, align=0, offset=41, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=41, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=42, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Field mle.tlv.active_tstamp has bit-length 64
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.active_tstamp: len=8, align=0, offset=43, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: mle.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Field mle.tlv has bit-length 64
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv: len=104, align=0, offset=51, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.type: len=1, align=0, offset=51, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field mle.tlv.len: len=1, align=0, offset=52, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd: len=102, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=53, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=53, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=53, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=54, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Layer field: thread_meshcop
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_meshcop: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: thread_meshcop.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_meshcop.tlv: len=4, align=0, offset=55, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_meshcop.tlv.type: len=1, align=0, offset=55, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_meshcop.tlv.len8: len=1, align=0, offset=56, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_meshcop.tlv.commissioner_sess_id: len=2, align=0, offset=57, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.558] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.558] [logger] [debug] Field thread_nwd.tlv has bit-length 128
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv: len=16, align=0, offset=59, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.558] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=59, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=59, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=60, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=61, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=61, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=62, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=63, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=64, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd has bit-length 88
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 88
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=11, align=0, offset=64, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=64, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=64, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=65, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=66, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.server.data: len=7, align=0, offset=68, mask=0, mask_offset=0, max_value=16777216
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 176
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=22, align=0, offset=75, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=75, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=75, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=76, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=77, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=78, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 64
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix: len=8, align=0, offset=79, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=87, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd has bit-length 80
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd: len=10, align=0, offset=87, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=6, align=0, offset=87, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=87, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=87, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=88, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.border_router
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router: len=1, align=0, offset=89, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.16: len=2, align=0, offset=89, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.pref: len=1, align=0, offset=91, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.p: len=1, align=0, offset=91, mask=20, mask_offset=2, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.s: len=1, align=0, offset=91, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.d: len=1, align=0, offset=91, mask=8, mask_offset=4, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.c: len=1, align=0, offset=91, mask=4, mask_offset=5, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.r: len=1, align=0, offset=91, mask=2, mask_offset=6, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.o: len=1, align=0, offset=91, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.border_router.flag.n: len=1, align=0, offset=92, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=4, align=0, offset=93, mask=0, mask_offset=0, max_value=1
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=93, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=93, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=94, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.6co.flag
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.6co.flag: len=1, align=0, offset=95, mask=ff, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.6co.flag.reserved: len=1, align=0, offset=95, mask=e0, mask_offset=0, max_value=8
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.6co.flag.c: len=1, align=0, offset=95, mask=10, mask_offset=3, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.6co.flag.cid: len=1, align=0, offset=95, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.6co.context_length: len=1, align=0, offset=96, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 168
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=21, align=0, offset=97, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=97, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=97, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=98, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=99, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=100, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv.prefix has bit-length 96
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix: len=12, align=0, offset=101, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=5, align=0, offset=113, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=113, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=113, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=114, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.has_route
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route: len=1, align=0, offset=115, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route.br_16: len=2, align=0, offset=115, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route.pref: len=1, align=0, offset=117, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 80
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=10, align=0, offset=118, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=118, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=118, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=119, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.domain_id: len=1, align=0, offset=120, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix.length: len=1, align=0, offset=121, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.prefix: len=1, align=0, offset=122, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd: len=5, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=5, align=0, offset=123, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=123, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=123, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=124, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.has_route
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route: len=1, align=0, offset=125, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route.br_16: len=2, align=0, offset=125, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.has_route.pref: len=1, align=0, offset=127, mask=c0, mask_offset=0, max_value=4
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 216
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=27, align=0, offset=128, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=128, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=128, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=129, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.t: len=1, align=0, offset=130, mask=80, mask_offset=0, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_id: len=1, align=0, offset=130, mask=f, mask_offset=4, max_value=16
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_data_len: len=1, align=0, offset=131, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.service.s_data: len=1, align=0, offset=132, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv.sub_tlvs
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.sub_tlvs: len=1, align=0, offset=133, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Layer field: thread_nwd
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd has bit-length 176
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd: len=22, align=0, offset=133, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Group field: thread_nwd.tlv
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv has bit-length 176
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv: len=22, align=0, offset=133, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.type: len=1, align=0, offset=133, mask=fe, mask_offset=0, max_value=128
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.stable: len=1, align=0, offset=133, mask=1, mask_offset=7, max_value=2
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.len: len=1, align=0, offset=134, mask=0, mask_offset=0, max_value=256
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.server.16: len=2, align=0, offset=135, mask=0, mask_offset=0, max_value=65536
+[2025-11-15 17:09:44.559] [logger] [debug] Field thread_nwd.tlv.server.data has bit-length 144
+[2025-11-15 17:09:44.559] [logger] [debug] Init field thread_nwd.tlv.server.data: len=18, align=0, offset=137, mask=0, mask_offset=0, max_value=0
+[2025-11-15 17:09:44.559] [logger] [debug] Inited 94 fields
+[2025-11-15 17:09:44.559] [logger] [debug] Inited 26 group fields
+[2025-11-15 17:09:44.559] [logger] [debug] Setting probs to value 0.031914893617021274
+[2025-11-15 17:09:44.559] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-15 17:09:44.560] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 16 08 00 00 00 00 00 01 00 00 0C 66 08 04 0B 02 FC 92 0B 0E 80 01 01 0D 09 D8 00 06 00 05 00 00 0E 10 03 14 00 40 FD 4F 9F 3D 6A F5 00 01 05 04 D8 00 F1 00 07 02 11 40 03 13 00 60 FD 4F 9F 3D 6A F5 00 02 00 00 00 00 01 03 D8 00 E0 03 08 00 07 FC 01 03 D8 00 00 0B 19 81 01 5D 0D 14 D8 00 FD 1E 23 4F CC A6 18 3B 77 A3 E2 4A 44 20 C1 A1 D1 1F 00 00  (type DataResponse,BadFCS)
+[2025-11-15 17:09:44.560] [logger] [info] 
+[2025-11-15 17:09:44.640] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 09 0A 8C 00 00 00 00 00 00 02 00 01 00 00 
+[2025-11-15 17:09:44.640] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-15 17:09:44.640] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 09 0A 8C 00 00 00 00 00 00 02 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-15 17:09:44.640] [logger] [info] 
+[2025-11-15 17:09:47.112] [logger] [debug] [DUT]: EVE: FR
+[2025-11-15 17:09:47.112] [logger] [debug] calling to the pipe
+[2025-11-15 17:09:47.126] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-15 17:09:47.145] [logger] [debug] command returned: 0
+[2025-11-15 17:09:55.921] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 09 0A 8D 00 00 00 00 00 00 02 00 01 00 00 
+[2025-11-15 17:09:55.922] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-15 17:09:55.922] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 D8 00 0B 08 27 C8 00 99 40 D4 D2 36 09 0A 8D 00 00 00 00 00 00 02 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-15 17:09:55.922] [logger] [info] 
+[2025-11-15 17:10:07.145] [logger] [debug] calling to the pipe
+[2025-11-15 17:10:07.158] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-15 17:10:07.178] [logger] [debug] command returned: 0
+[2025-11-15 17:10:07.178] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-15 17:10:12.178] [logger] [info] restarts succesfull
+[2025-11-15 17:10:12.178] [logger] [info] starting communication
+[2025-11-15 17:10:12.178] [logger] [info] calling chip_pair
+[2025-11-15 17:10:13.421] [logger] [warning] Command "./connectedhomeip/out/chip-tool pairing ble-thread 6 hex:0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c617950656e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed4a 80049749 3070 --bypass-attestation-verifier true | tail" failed with exit code: 2
+[2025-11-15 17:10:13.421] [logger] [error] Failed to prepare new fuzzing sprint
+[2025-11-15 17:10:13.421] [logger] [info] terminate fuzzing
+[2025-11-15 17:10:13.421] [logger] [error] killing everything
+[2025-11-15 17:10:18.752] [logger] [debug] BR application is stopped
+[2025-11-15 17:10:18.752] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 17:10:18.752] [logger] [debug] calling to the pipe
+[2025-11-15 17:10:18.765] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 17:10:18.784] [logger] [debug] command returned: 0

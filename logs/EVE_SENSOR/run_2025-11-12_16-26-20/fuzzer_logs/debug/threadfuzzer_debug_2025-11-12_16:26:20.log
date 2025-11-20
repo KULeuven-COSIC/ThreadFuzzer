@@ -1,0 +1,35 @@
+[2025-11-12 16:26:20.545] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-12 16:26:20.545] [logger] [debug] calling to the pipe
+[2025-11-12 16:26:20.558] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-12 16:26:20.578] [logger] [debug] command returned: 0
+[2025-11-12 16:26:30.578] [logger] [debug] [DUT]: EVE: FR
+[2025-11-12 16:26:30.578] [logger] [debug] calling to the pipe
+[2025-11-12 16:26:30.592] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-12 16:26:30.612] [logger] [debug] command returned: 0
+[2025-11-12 16:26:50.612] [logger] [debug] calling to the pipe
+[2025-11-12 16:26:50.626] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-12 16:26:50.646] [logger] [debug] command returned: 0
+[2025-11-12 16:26:50.646] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-12 16:27:00.647] [logger] [info] Starting MLE thread
+[2025-11-12 16:27:00.648] [logger] [info] Inited communication
+[2025-11-12 16:27:04.654] [logger] [debug] BR is configured and running
+[2025-11-12 16:27:04.654] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-12 16:27:04.654] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-12 16:27:04.654] [logger] [debug] calling to the pipe
+[2025-11-12 16:27:04.668] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-12 16:27:04.685] [logger] [debug] command returned: 0
+[2025-11-12 16:27:07.686] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-12 16:27:07.686] [logger] [debug] calling to the pipe
+[2025-11-12 16:27:07.699] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-12 16:27:07.718] [logger] [debug] command returned: 0
+[2025-11-12 16:27:07.718] [logger] [info] restarts succesfull
+[2025-11-12 16:27:07.718] [logger] [info] starting communication
+[2025-11-12 16:27:07.719] [logger] [info] calling chip_pair
+[2025-11-12 16:28:12.210] [logger] [warning] Command "./connectedhomeip/out/chip-tool pairing ble-thread 6 hex:0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c617950656e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed4a 80049749 3070 --bypass-attestation-verifier true" failed with exit code: 256
+[2025-11-12 16:28:12.210] [logger] [error] Failed to prepare new fuzzing sprint
+[2025-11-12 16:28:12.210] [logger] [info] terminate fuzzing
+[2025-11-12 16:28:12.210] [logger] [error] killing everything
+[2025-11-12 16:28:12.211] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-12 16:28:12.211] [logger] [debug] calling to the pipe
+[2025-11-12 16:28:12.224] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-12 16:28:12.242] [logger] [debug] command returned: 0

@@ -1,0 +1,104 @@
+[2025-11-15 16:30:00.512] [logger] [debug] BR application gets restarted
+[2025-11-15 16:30:00.598] [logger] [debug] BR application is stopped
+[2025-11-15 16:30:05.844] [logger] [debug] BR is configured and running
+[2025-11-15 16:30:05.844] [logger] [debug] BR application is started
+[2025-11-15 16:30:05.844] [logger] [debug] BR application is restarted
+[2025-11-15 16:30:06.345] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-15 16:30:06.345] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 16:30:06.345] [logger] [debug] calling to the pipe
+[2025-11-15 16:30:06.358] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 16:30:06.376] [logger] [debug] command returned: 0
+[2025-11-15 16:30:09.377] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-15 16:30:09.377] [logger] [debug] calling to the pipe
+[2025-11-15 16:30:09.391] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-15 16:30:09.410] [logger] [debug] command returned: 0
+[2025-11-15 16:30:09.410] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-15 16:30:19.410] [logger] [debug] [DUT]: EVE: FR
+[2025-11-15 16:30:19.410] [logger] [debug] calling to the pipe
+[2025-11-15 16:30:19.425] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-15 16:30:19.444] [logger] [debug] command returned: 0
+[2025-11-15 16:30:39.444] [logger] [debug] calling to the pipe
+[2025-11-15 16:30:39.458] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-15 16:30:39.477] [logger] [debug] command returned: 0
+[2025-11-15 16:30:39.477] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-15 16:30:44.477] [logger] [info] restarts succesfull
+[2025-11-15 16:30:44.477] [logger] [info] starting communication
+[2025-11-15 16:30:44.478] [logger] [info] calling chip_pair
+[2025-11-15 16:31:00.019] [logger] [info] chip-pair succesfull!
+[2025-11-15 16:31:00.020] [logger] [debug] fetching rbt cnt
+[2025-11-15 16:31:03.901] [logger] [info] COLLECTED RBT CNT: 1
+[2025-11-15 16:31:03.908] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 16:31:03.908] [logger] [debug] calling to the pipe
+[2025-11-15 16:31:03.922] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 16:31:03.941] [logger] [debug] command returned: 0
+[2025-11-15 16:31:03.941] [logger] [debug] BR application get reset
+[2025-11-15 16:31:03.958] [logger] [debug] BR is stopped and factoryreset
+[2025-11-15 16:31:06.977] [logger] [debug] BR is configured and running
+[2025-11-15 16:31:06.977] [logger] [debug] BR application is reset
+[2025-11-15 16:31:06.977] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-15 16:31:06.977] [logger] [debug] calling to the pipe
+[2025-11-15 16:31:06.991] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-15 16:31:07.010] [logger] [debug] command returned: 0
+[2025-11-15 16:31:07.010] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-15 16:31:17.010] [logger] [info] ================ START OF A NEW FUZZING ITERATION 0 ================
+[2025-11-15 16:31:18.012] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:19.013] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:20.014] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:21.017] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:22.018] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:23.020] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:24.022] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:25.024] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:26.025] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:27.026] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:28.027] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:29.029] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:30.031] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:31.033] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:32.035] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:33.037] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:34.038] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:35.039] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:36.041] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:37.042] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:38.044] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:39.045] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:40.046] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:41.047] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:42.049] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:43.050] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:44.051] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:45.053] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:46.055] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:47.057] [logger] [warning] DUT stays silent...
+[2025-11-15 16:31:47.058] [logger] [info] Iteration time: 30
+[2025-11-15 16:31:47.058] [logger] [info] Renewing fuzzing iteration
+[2025-11-15 16:31:47.058] [logger] [info] [RBTCNT_FUZZER]: NORMAL
+[2025-11-15 16:31:47.058] [logger] [info] vvvvvvvvvvvvvvvvvvvvvvvvv SAVED PATCHES vvvvvvvvvvvvvvvvvvvvvvvvv
+[2025-11-15 16:31:47.058] [logger] [info] ^^^^^^^^^^^^^^^^^^^^^^^^^ SAVED PATCHES ^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-11-15 16:31:47.058] [logger] [debug] BR application get reset
+[2025-11-15 16:31:47.078] [logger] [debug] BR is stopped and factoryreset
+[2025-11-15 16:31:50.099] [logger] [debug] BR is configured and running
+[2025-11-15 16:31:50.099] [logger] [debug] BR application is reset
+[2025-11-15 16:31:50.099] [logger] [debug] [DUT]: EVE: RESETTING
+[2025-11-15 16:31:50.099] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 16:31:50.099] [logger] [debug] calling to the pipe
+[2025-11-15 16:31:50.113] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 16:31:50.133] [logger] [debug] command returned: 0
+[2025-11-15 16:31:53.134] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-15 16:31:53.134] [logger] [debug] calling to the pipe
+[2025-11-15 16:31:53.147] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-15 16:31:53.166] [logger] [debug] command returned: 0
+[2025-11-15 16:31:53.166] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-15 16:32:03.166] [logger] [debug] Number of mutated fields in this iteration: 0
+[2025-11-15 16:32:03.166] [logger] [info] ================ START OF A NEW FUZZING ITERATION 1 ================
+[2025-11-15 16:32:04.048] [logger] [warning] Called SIGINT handler!
+[2025-11-15 16:32:04.168] [logger] [warning] DUT stays silent...
+[2025-11-15 16:32:04.168] [logger] [info] Iteration time: 1
+[2025-11-15 16:32:04.168] [logger] [info] terminate fuzzing
+[2025-11-15 16:32:04.168] [logger] [error] killing everything
+[2025-11-15 16:32:09.525] [logger] [debug] BR application is stopped
+[2025-11-15 16:32:09.525] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 16:32:09.525] [logger] [debug] calling to the pipe
+[2025-11-15 16:32:09.538] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 16:32:09.557] [logger] [debug] command returned: 0

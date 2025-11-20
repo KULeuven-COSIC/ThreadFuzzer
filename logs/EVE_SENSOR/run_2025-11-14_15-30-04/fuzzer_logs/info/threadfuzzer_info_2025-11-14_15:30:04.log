@@ -1,0 +1,5 @@
+[2025-11-14 15:31:03.618] [logger] [info] restarts succesfull
+[2025-11-14 15:31:03.618] [logger] [info] starting communication
+[2025-11-14 15:31:03.618] [logger] [info] calling chip_pair
+[2025-11-14 15:32:03.409] [logger] [info] chip-pair succesfull!
+[2025-11-14 15:32:48.509] [logger] [warning] Caught an exception: basic_string::substr: __pos (which is 13) > this->size() (which is 0)

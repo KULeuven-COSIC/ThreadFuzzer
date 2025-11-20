@@ -1,0 +1,7 @@
+[2025-11-14 15:23:27.365] [logger] [info] restarts succesfull
+[2025-11-14 15:23:27.365] [logger] [info] starting communication
+[2025-11-14 15:23:27.365] [logger] [info] calling chip_pair
+[2025-11-14 15:24:29.055] [logger] [warning] Command "./connectedhomeip/out/chip-tool pairing ble-thread 6 hex:0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c617950656e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed4a 80049749 3070 --bypass-attestation-verifier true" failed with exit code: 256
+[2025-11-14 15:24:29.055] [logger] [error] Failed to prepare new fuzzing sprint
+[2025-11-14 15:24:29.055] [logger] [info] terminate fuzzing
+[2025-11-14 15:24:29.055] [logger] [error] killing everything

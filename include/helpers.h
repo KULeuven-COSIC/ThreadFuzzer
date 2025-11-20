@@ -12,6 +12,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "DUT/DUT_names.h"
 #include "packet.h"
 
 #include "Configs/Fuzzing_Settings/main_config.h"
@@ -79,8 +80,11 @@ bool send_udp_heartbeat(int port);
 bool send_udp_request(const std::string, int port);
 bool run_udp_cli_commands(const std::vector<std::string> cli_commands,
                           int port);
-int chip_pair(const std::string &device);
+int chip_pair();
 bool chip_unpair(const std::string &device);
+int chip_check_diagnostics();
+std::string ask_chip(const char *cmd);
+
 std::string shell_command(const std::string cmd);
 
 template <typename T>

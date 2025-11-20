@@ -1,0 +1,731 @@
+From e10c150dc4c9d84cbb77fd36c4249c8bcbd6eece Mon Sep 17 00:00:00 2001
+From: JakoCrafter <j.heirweghjh.jh@gmail.com>
+Date: Thu, 13 Nov 2025 21:15:50 +0100
+Subject: [PATCH] new_otbr
+
+---
+ CMakeLists.txt                          |  5 +--
+ script/_dhcpv6_pd                       | 52 ++++++++++++------------
+ script/_disable_services                | 18 ++++-----
+ script/_dns64                           | 38 ++++++++---------
+ script/_firewall                        | 14 +++----
+ script/_nat64                           | 32 +++++++--------
+ script/_network_manager                 | 25 ++++++------
+ script/_otbr                            | 50 +++++++++++------------
+ script/console                          |  6 +--
+ script/server                           | 48 +++++++++++-----------
+ src/agent/CMakeLists.txt                | 21 ++++++++++
+ src/agent/coverage_listener/zmq_cov.cpp | 54 +++++++++++++++++++++++++
+ src/agent/coverage_listener/zmq_cov.h   | 12 ++++++
+ src/agent/main.cpp                      | 39 ++++++++++++++++++
+ 14 files changed, 270 insertions(+), 144 deletions(-)
+ create mode 100644 src/agent/coverage_listener/zmq_cov.cpp
+ create mode 100644 src/agent/coverage_listener/zmq_cov.h
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4fefd279..02772bb8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,8 +29,7 @@
+ cmake_minimum_required(VERSION 3.10.2)
+ project(openthread-br VERSION 0.3.0)
+ 
+-add_compile_options(-Wall -Wextra -Werror -Wfatal-errors -Wuninitialized -Wno-missing-braces)
+-
++add_compile_options(-Wall -Wextra -Werror -Wfatal-errors -Wuninitialized -Wno-missing-braces -Wno-unused-result -Wno-unused-but-set-variable -Wno-documentation -Wno-vla-extension -fexceptions)
+ add_library(otbr-config INTERFACE)
+ 
+ set(OTBR_INFRA_IF_NAME "wlan0" CACHE STRING "The infrastructure interface name")
+@@ -52,7 +51,7 @@ if(NOT CMAKE_C_STANDARD)
+ endif()
+ 
+ if(NOT CMAKE_CXX_STANDARD)
+-    set(CMAKE_CXX_STANDARD 11)
++    set(CMAKE_CXX_STANDARD 14) # THREADFUZZ: use 14 instead of 11 
+     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ endif()
+ 
+diff --git a/script/_dhcpv6_pd b/script/_dhcpv6_pd
+index b2e9e920..37c7cdc1 100644
+--- a/script/_dhcpv6_pd
++++ b/script/_dhcpv6_pd
+@@ -311,34 +311,34 @@ dhcpv6_pd_install()
+     create_dhcpcd_reloader_script
+     sudo chmod +x ${DHCPCD_RELOADER}
+ 
+-    if have systemctl; then
+-        create_ncp_state_notifier_service
++    # if have systemctl; then
++    #     create_ncp_state_notifier_service
+ 
+-        sudo systemctl daemon-reload
++    #     sudo systemctl daemon-reload
+ 
+-        if systemctl is-active NetworkManager; then
+-            sudo systemctl restart NetworkManager || die "Unable to restart NetworkManager!"
+-        fi
++    #     if systemctl is-active NetworkManager; then
++    #         sudo systemctl restart NetworkManager || die "Unable to restart NetworkManager!"
++    #     fi
+ 
+-        if systemctl is-active dhcpcd; then
+-            sudo systemctl restart dhcpcd || die 'Unable to restart dhcpcd!'
+-        fi
++    #     if systemctl is-active dhcpcd; then
++    #         sudo systemctl restart dhcpcd || die 'Unable to restart dhcpcd!'
++    #     fi
+ 
+-        sudo systemctl start ${NCP_STATE_NOTIFIER_SERVICE_NAME} || die "Unable to start ${NCP_STATE_NOTIFIER_SERVICE_NAME}!"
+-        sudo systemctl enable ${NCP_STATE_NOTIFIER_SERVICE_NAME} || die "Unable to enable ${NCP_STATE_NOTIFIER_SERVICE_NAME}!"
+-    fi
++    #     sudo systemctl start ${NCP_STATE_NOTIFIER_SERVICE_NAME} || die "Unable to start ${NCP_STATE_NOTIFIER_SERVICE_NAME}!"
++    #     sudo systemctl enable ${NCP_STATE_NOTIFIER_SERVICE_NAME} || die "Unable to enable ${NCP_STATE_NOTIFIER_SERVICE_NAME}!"
++    # fi
+ }
+ 
+ dhcpv6_pd_uninstall()
+ {
+     with DHCPV6_PD || return 0
+ 
+-    if have systemctl; then
+-        sudo systemctl disable ${NCP_STATE_NOTIFIER_SERVICE_NAME} || true
+-        sudo systemctl stop ${NCP_STATE_NOTIFIER_SERVICE_NAME} || true
++    # if have systemctl; then
++    #     sudo systemctl disable ${NCP_STATE_NOTIFIER_SERVICE_NAME} || true
++    #     sudo systemctl stop ${NCP_STATE_NOTIFIER_SERVICE_NAME} || true
+ 
+-        sudo rm ${NCP_STATE_NOTIFIER_SERVICE} || true
+-    fi
++    #     sudo rm ${NCP_STATE_NOTIFIER_SERVICE} || true
++    # fi
+ 
+     sudo rm ${NCP_STATE_NOTIFIER} || true
+     sudo rm ${DHCPCD_RELOADER} || true
+@@ -349,15 +349,15 @@ dhcpv6_pd_uninstall()
+     sudo mv ${DHCPCD_CONF_BACKUP} ${DHCPCD_CONF} || true
+ 
+     # Restart dhcpcd or NetworkManager
+-    if have systemctl; then
+-        sudo systemctl daemon-reload
++    # if have systemctl; then
++    #     sudo systemctl daemon-reload
+ 
+-        if systemctl is-active NetworkManager; then
+-            sudo systemctl restart NetworkManager || true
+-        fi
++    #     if systemctl is-active NetworkManager; then
++    #         sudo systemctl restart NetworkManager || true
++    #     fi
+ 
+-        if systemctl is-active dhcpcd; then
+-            sudo systemctl restart dhcpcd || true
+-        fi
+-    fi
++    #     if systemctl is-active dhcpcd; then
++    #         sudo systemctl restart dhcpcd || true
++    #     fi
++    # fi
+ }
+diff --git a/script/_disable_services b/script/_disable_services
+index d5697978..6f4f2e99 100644
+--- a/script/_disable_services
++++ b/script/_disable_services
+@@ -44,15 +44,15 @@ bbb_disable_services()
+     SERVICE_LIST="${SERVICE_LIST} nodered.service"
+     SERVICE_LIST="${SERVICE_LIST} dnsmasq.service" # Disable well before bind9
+ 
+-    if have systemctl; then
+-        for service in $SERVICE_LIST; do
+-            if [ "$(sudo systemctl is-active "$service")" != "inactive" ]; then
+-                for action in stop disable; do
+-                    sudo systemctl "$action" "$service"
+-                done
+-            fi
+-        done
+-    fi
++    # if have systemctl; then
++    #     for service in $SERVICE_LIST; do
++    #         if [ "$(sudo systemctl is-active "$service")" != "inactive" ]; then
++    #             for action in stop disable; do
++    #                 sudo systemctl "$action" "$service"
++    #             done
++    #         fi
++    #     done
++    # fi
+ 
+     # stop avahi from advertising for cloud9 and nodered
+     sudo rm -rf /etc/avahi/services
+diff --git a/script/_dns64 b/script/_dns64
+index 8dc01578..34f4e66e 100644
+--- a/script/_dns64
++++ b/script/_dns64
+@@ -90,13 +90,13 @@ dns64_install()
+         sudo sh -c "echo \"nameserver $DNS64_NAMESERVER_ADDR\" >> $RESOLV_CONF_HEAD"
+     fi
+ 
+-    if have systemctl; then
+-        sudo systemctl stop dnsmasq || true
+-        sudo systemctl disable dnsmasq || true
+-        sudo systemctl enable "${service_name}" || true
+-        sudo systemctl is-enabled "${service_name}" || die 'Failed to enable bind9!'
+-        sudo systemctl start "${service_name}" || die 'Failed to start bind9!'
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl stop dnsmasq || true
++    #     sudo systemctl disable dnsmasq || true
++    #     sudo systemctl enable "${service_name}" || true
++    #     sudo systemctl is-enabled "${service_name}" || die 'Failed to enable bind9!'
++    #     sudo systemctl start "${service_name}" || die 'Failed to start bind9!'
++    # fi
+ 
+     if without DOCKER; then
+         dns64_update_resolvconf
+@@ -124,10 +124,10 @@ dns64_uninstall()
+         dns64_update_resolvconf
+     fi
+ 
+-    if have systemctl; then
+-        sudo systemctl stop "${service_name}" || true
+-        sudo systemctl disable "${service_name}" || true
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl stop "${service_name}" || true
++    #     sudo systemctl disable "${service_name}" || true
++    # fi
+ }
+ 
+ dns64_start()
+@@ -136,11 +136,11 @@ dns64_start()
+ 
+     service_name="$(_detect_service_name)"
+ 
+-    if have systemctl; then
+-        sudo systemctl start "${service_name}" || die 'Failed to start bind9!'
+-    elif command -v service; then
++    # if have systemctl; then
++    #     sudo systemctl start "${service_name}" || die 'Failed to start bind9!'
++    # elif command -v service; then
+         sudo service "${service_name}" start || die 'Failed to start bind9!'
+-    fi
++    # fi
+ }
+ 
+ dns64_stop()
+@@ -149,9 +149,9 @@ dns64_stop()
+ 
+     service_name="$(_detect_service_name)"
+ 
+-    if have systemctl; then
+-        sudo systemctl stop "${service_name}" || true
+-    elif command -v service; then
++    # if have systemctl; then
++    #     sudo systemctl stop "${service_name}" || true
++    # elif command -v service; then
+         sudo service "${service_name}" stop || true
+-    fi
++    # fi
+ }
+diff --git a/script/_firewall b/script/_firewall
+index 0a29c369..e7cd92ca 100755
+--- a/script/_firewall
++++ b/script/_firewall
+@@ -34,9 +34,9 @@ sudo modprobe ip6table_filter || true
+ firewall_uninstall()
+ {
+     firewall_stop
+-    if have systemctl; then
+-        sudo systemctl disable otbr-firewall || true
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl disable otbr-firewall || true
++    # fi
+     # systemctl disable doesn't remove sym-links
+     if have update-rc.d; then
+         sudo update-rc.d otbr-firewall remove || true
+@@ -48,10 +48,10 @@ firewall_install()
+ {
+     sudo cp script/otbr-firewall $FIREWALL_SERVICE
+     sudo chmod a+x $FIREWALL_SERVICE
+-    if have systemctl; then
+-        sudo systemctl enable otbr-firewall || die 'Failed to enable firewall service!'
+-        sudo systemctl start otbr-firewall || die 'Failed to start firewall service!'
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl enable otbr-firewall || die 'Failed to enable firewall service!'
++    #     sudo systemctl start otbr-firewall || die 'Failed to start firewall service!'
++    # fi
+ }
+ 
+ firewall_start()
+diff --git a/script/_nat64 b/script/_nat64
+index 521c4d22..69e4220f 100644
+--- a/script/_nat64
++++ b/script/_nat64
+@@ -58,10 +58,10 @@ tayga_install()
+     sudo sed -i 's/^dynamic-pool /##dynamic-pool /' $TAYGA_CONF
+     sudo sed -i '/^##dynamic-pool /a dynamic-pool '"$DYNAMIC_POOL" $TAYGA_CONF
+ 
+-    if have systemctl; then
+-        sudo systemctl restart tayga || die 'Unable to restart taga service!'
+-        sudo systemctl enable tayga || die 'Unable to enable taga service!'
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl restart tayga || die 'Unable to restart taga service!'
++    #     sudo systemctl enable tayga || die 'Unable to enable taga service!'
++    # fi
+ }
+ 
+ tayga_uninstall()
+@@ -85,9 +85,9 @@ tayga_start()
+ {
+     if with DOCKER; then
+         service tayga start || die 'Failed to start tayga'
+-    elif have systemctl; then
+-        sudo systemctl start tayga || die 'Failed to start tayga!'
+-        sudo systemctl enable tayga || die 'Failed to enable tayga!'
++    # elif have systemctl; then
++    #     sudo systemctl start tayga || die 'Failed to start tayga!'
++    #     sudo systemctl enable tayga || die 'Failed to enable tayga!'
+     fi
+ }
+ 
+@@ -95,8 +95,8 @@ tayga_stop()
+ {
+     if with DOCKER; then
+         service tayga stop || true
+-    elif have systemctl; then
+-        sudo systemctl stop tayga || true
++     #elif have systemctl; then
++     #    sudo systemctl stop tayga || true
+     fi
+ }
+ 
+@@ -181,17 +181,17 @@ EOF
+ esac
+ EOF
+     sudo chmod a+x $NAT44_SERVICE
+-    if have systemctl; then
+-        sudo systemctl enable otbr-nat44 || die 'Unable to enable nat44 service!'
+-        sudo systemctl start otbr-nat44 || die 'Failed to start nat44 service!'
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl enable otbr-nat44 || die 'Unable to enable nat44 service!'
++    #     sudo systemctl start otbr-nat44 || die 'Failed to start nat44 service!'
++    # fi
+ }
+ 
+ nat44_uninstall()
+ {
+-    if have systemctl; then
+-        sudo systemctl disable otbr-nat44 || true
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl disable otbr-nat44 || true
++    # fi
+ 
+     # systemctl disable doesn't remove sym-links
+     if have update-rc.d; then
+diff --git a/script/_network_manager b/script/_network_manager
+index 1bbdc5b9..15051237 100644
+--- a/script/_network_manager
++++ b/script/_network_manager
+@@ -329,10 +329,11 @@ network_manager_install()
+ {
+     with NETWORK_MANAGER || return 0
+ 
+-    if ! have systemctl; then
+-        echo "This script requires systemctl!"
+-        return 0
+-    fi
++    return 0
++    # if ! have systemctl; then
++    #     echo "This script requires systemctl!"
++    #     return 0
++    # fi
+ 
+     if with DNS64; then
+         # bind9 provides DNS service
+@@ -383,20 +384,20 @@ network_manager_uninstall()
+     with NETWORK_MANAGER || return 0
+ 
+     if with DNS64; then
+-        sudo systemctl stop dnsmasq
++        # sudo systemctl stop dnsmasq
+         # revert changes to dnsmasq
+         sudo sed -i 's/^port=0/#port=5353/g' /etc/dnsmasq.conf
+     fi
+ 
+-    if ! have systemctl; then
+-        echo "This script requires systemctl!"
++    # if ! have systemctl; then
++    #     echo "This script requires systemctl!"
+         return 0
+-    fi
++    # fi
+ 
+-    if ! systemctl is-active NetworkManager; then
+-        sudo systemctl daemon-reload
+-        sudo systemctl start NetworkManager
+-    fi
++    # if ! systemctl is-active NetworkManager; then
++    #     sudo systemctl daemon-reload
++    #     sudo systemctl start NetworkManager
++    # fi
+ 
+     if [ "$PLATFORM" = raspbian ] || with NETWORK_MANAGER_WIFI; then
+         sudo nmcli c down ${AP_CONN} || true
+diff --git a/script/_otbr b/script/_otbr
+index 790ab10a..5f2ada62 100644
+--- a/script/_otbr
++++ b/script/_otbr
+@@ -38,14 +38,14 @@ readonly REFERENCE_DEVICE
+ 
+ otbr_uninstall()
+ {
+-    if have systemctl; then
+-        sudo systemctl stop otbr-web || true
+-        sudo systemctl stop otbr-agent || true
+-        sudo systemctl disable otbr-web || true
+-        sudo systemctl disable otbr-agent || true
+-        ! sudo systemctl is-enabled otbr-web
+-        ! sudo systemctl is-enabled otbr-agent
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl stop otbr-web || true
++    #     sudo systemctl stop otbr-agent || true
++    #     sudo systemctl disable otbr-web || true
++    #     sudo systemctl disable otbr-agent || true
++    #     ! sudo systemctl is-enabled otbr-web
++    #     ! sudo systemctl is-enabled otbr-agent
++    # fi
+     sudo killall otbr-web otbr-agent || true
+ 
+     (
+@@ -54,9 +54,9 @@ otbr_uninstall()
+             sudo xargs rm <install_manifests.txt || true
+         fi
+     )
+-    if have systemctl; then
+-        sudo systemctl daemon-reload
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl daemon-reload
++    # fi
+ }
+ 
+ otbr_install()
+@@ -133,21 +133,21 @@ otbr_install()
+         && ninja \
+         && sudo ninja install)
+ 
+-    if have systemctl; then
+-        sudo systemctl reload dbus
+-        sudo systemctl daemon-reload
+-        without WEB_GUI || sudo systemctl enable otbr-web || true
+-        sudo systemctl enable otbr-agent || true
+-        sudo systemctl is-enabled otbr-agent || die 'Failed to enable otbr-agent!'
+-        without WEB_GUI || sudo systemctl is-enabled otbr-web || die 'Failed to enable otbr-web!'
+-
+-        if [[ ${REFERENCE_DEVICE} == "1" ]]; then
+-            sudo systemctl enable testharness-discovery || true
+-            sudo systemctl is-enabled testharness-discovery || die 'Failed to enable otbr-agent!'
+-        fi
+-    else
++    # if have systemctl; then
++    #     sudo systemctl reload dbus
++    #     sudo systemctl daemon-reload
++    #     without WEB_GUI || sudo systemctl enable otbr-web || true
++    #     sudo systemctl enable otbr-agent || true
++    #     sudo systemctl is-enabled otbr-agent || die 'Failed to enable otbr-agent!'
++    #     without WEB_GUI || sudo systemctl is-enabled otbr-web || die 'Failed to enable otbr-web!'
++
++    #     if [[ ${REFERENCE_DEVICE} == "1" ]]; then
++    #         sudo systemctl enable testharness-discovery || true
++    #         sudo systemctl is-enabled testharness-discovery || die 'Failed to enable otbr-agent!'
++    #     fi
++    # else
+         echo >&2 ' *** WARNING: systemctl not found. otbr cannot start on boot.'
+-    fi
++    # fi
+ }
+ 
+ otbr_update()
+diff --git a/script/console b/script/console
+index 416dd024..54016172 100755
+--- a/script/console
++++ b/script/console
+@@ -60,9 +60,9 @@ main()
+ {
+     # shellcheck source=/dev/null
+     . "$BEFORE_HOOK"
+-    if have systemctl; then
+-        sudo systemctl stop otbr-web otbr-agent || true
+-    fi
++    # if have systemctl; then
++    #     sudo systemctl stop otbr-web otbr-agent || true
++    # fi
+     killall_services
+ 
+     trap on_exit INT TERM EXIT
+diff --git a/script/server b/script/server
+index b4eaedfb..09ec07f1 100755
+--- a/script/server
++++ b/script/server
+@@ -44,23 +44,23 @@ startup()
+     nat64_start || die 'Failed to start NAT64!'
+     dns64_start || die 'Failed to start DNS64!'
+     firewall_start || die 'Failed to start firewall'
+-    if have systemctl; then
+-        systemctl is-active rsyslog || sudo systemctl start rsyslog || die 'Failed to start rsyslog!'
+-        systemctl is-active dbus || sudo systemctl start dbus || die 'Failed to start dbus!'
+-        systemctl is-active avahi-daemon || sudo systemctl start avahi-daemon || die 'Failed to start avahi!'
+-        without WEB_GUI || systemctl is-active otbr-web || sudo systemctl start otbr-web || die 'Failed to start otbr-web!'
+-        systemctl is-active otbr-agent || sudo systemctl start otbr-agent || die 'Failed to start otbr-agent!'
+-    elif have service; then
+-        sudo service rsyslog status || sudo service rsyslog start || die 'Failed to start rsyslog!'
+-        sudo service dbus status || sudo service dbus start || die 'Failed to start dbus!'
++    # if have systemctl; then
++    #     systemctl is-active rsyslog || sudo systemctl start rsyslog || die 'Failed to start rsyslog!'
++    #     systemctl is-active dbus || sudo systemctl start dbus || die 'Failed to start dbus!'
++    #     systemctl is-active avahi-daemon || sudo systemctl start avahi-daemon || die 'Failed to start avahi!'
++    #     without WEB_GUI || systemctl is-active otbr-web || sudo systemctl start otbr-web || die 'Failed to start otbr-web!'
++    #     systemctl is-active otbr-agent || sudo systemctl start otbr-agent || die 'Failed to start otbr-agent!'
++    # elif have service; then
++        # sudo service rsyslog status || sudo service rsyslog start || die 'Failed to start rsyslog!'
++        # sudo service dbus status || sudo service dbus start || die 'Failed to start dbus!'
+         # Tolerate the mdns failure as it is installed for only CI docker.
+         sudo service mdns status || sudo service mdns start || echo "service mdns is not available!"
+         sudo service avahi-daemon status || sudo service avahi-daemon start || die 'Failed to start avahi!'
+         sudo service otbr-agent status || sudo service otbr-agent start || die 'Failed to start otbr-agent!'
+         without WEB_GUI || sudo service otbr-web status || sudo service otbr-web start || die 'Failed to start otbr-web!'
+-    else
+-        die 'Unable to find service manager. Try script/console to start in console mode!'
+-    fi
++    # else
++    #     die 'Unable to find service manager. Try script/console to start in console mode!'
++    # fi
+     # shellcheck source=/dev/null
+     . "$AFTER_HOOK"
+ }
+@@ -70,22 +70,22 @@ shutdown()
+     nat64_stop || echo 'Failed to stop NAT64!'
+     dns64_stop || echo 'Failed to stop DNS64!'
+     firewall_stop || echo 'Failed to stop firewall'
+-    if have systemctl; then
+-        systemctl is-active rsyslog && sudo systemctl stop rsyslog || echo 'Failed to stop rsyslog!'
+-        systemctl is-active dbus && sudo systemctl stop dbus || echo 'Failed to stop dbus!'
+-        systemctl is-active avahi-daemon && sudo systemctl stop avahi-daemon || echo 'Failed to stop avahi!'
+-        without WEB_GUI || systemctl is-active otbr-web && sudo systemctl stop otbr-web || echo 'Failed to stop otbr-web!'
+-        systemctl is-active otbr-agent && sudo systemctl stop otbr-agent || echo 'Failed to stop otbr-agent!'
+-    elif have service; then
+-        sudo service rsyslog status && sudo service rsyslog stop || echo 'Failed to stop rsyslog!'
+-        sudo service dbus status && sudo service dbus stop || echo 'Failed to stop dbus!'
++    # if have systemctl; then
++    #     systemctl is-active rsyslog && sudo systemctl stop rsyslog || echo 'Failed to stop rsyslog!'
++    #     systemctl is-active dbus && sudo systemctl stop dbus || echo 'Failed to stop dbus!'
++    #     systemctl is-active avahi-daemon && sudo systemctl stop avahi-daemon || echo 'Failed to stop avahi!'
++    #     without WEB_GUI || systemctl is-active otbr-web && sudo systemctl stop otbr-web || echo 'Failed to stop otbr-web!'
++    #     systemctl is-active otbr-agent && sudo systemctl stop otbr-agent || echo 'Failed to stop otbr-agent!'
++    # elif have service; then
++        # sudo service rsyslog status && sudo service rsyslog stop || echo 'Failed to stop rsyslog!'
++        # sudo service dbus status && sudo service dbus stop || echo 'Failed to stop dbus!'
+         sudo service mdns status && sudo service mdns stop || echo "service mdns is not available!"
+         sudo service avahi-daemon status && sudo service avahi-daemon stop || echo 'Failed to stop avahi!'
+         sudo service otbr-agent status && sudo service otbr-agent stop || echo 'Failed to stop otbr-agent!'
+         without WEB_GUI || sudo service otbr-web status && sudo service otbr-web stop || echo 'Failed to stop otbr-web!'
+-    else
+-        echo 'Unable to find service manager. Try script/console to stop in console mode!'
+-    fi
++    # else
++    #     echo 'Unable to find service manager. Try script/console to stop in console mode!'
++    # fi
+ }
+ 
+ main()
+diff --git a/src/agent/CMakeLists.txt b/src/agent/CMakeLists.txt
+index 9a8b7102..b59ee453 100644
+--- a/src/agent/CMakeLists.txt
++++ b/src/agent/CMakeLists.txt
+@@ -26,7 +26,24 @@
+ #  POSSIBILITY OF SUCH DAMAGE.
+ #
+ 
++# THREADFUZZ: INCLUDE DIRECTORIES (START)
++include_directories(
++    ../../../../common/
++    ../../../../common/Coverage_Instrumentation/include
++    ../../../../common/ZMQ/ZMQ_Server/include
++)
++# THREADFUZZ: INCLUDE DIRECTORIES (END)
++
++# THREADFUZZ: LINK DIRECTORIES (START)
++link_directories(
++    ../../../../common/shm/build
++    ../../../../common/Coverage_Instrumentation/build
++    ../../../../common/ZMQ/ZMQ_Server/build
++)
++# THREADFUZZ: LINK DIRECTORIES (END)
++
+ add_executable(otbr-agent
++    coverage_listener/zmq_cov.cpp # THREADFUZZ: ADD ZMQ_COV.CPP
+     application.cpp
+     main.cpp
+     uris.hpp
+@@ -34,6 +51,10 @@ add_executable(otbr-agent
+ )
+ 
+ target_link_libraries(otbr-agent PRIVATE
++    shared_memory # THREADFUZZ: LINK SHARED_MEMORY LIBRARY TO OTBR-AGENT
++    instr # THREADFUZZ: LINK INSTRUMENTATION LIBRARY TO OTBR-AGENT
++    zmq_server_lib # THREADFUZZ: LINK ZMQ SERVER LIBRARY TO OTBR-AGENT
++    zmq # THREADFUZZ: LINK ZMQ LIBRARY TO OTBR-AGENT
+     $<$<BOOL:${OTBR_BORDER_AGENT}>:otbr-border-agent>
+     $<$<BOOL:${OTBR_BACKBONE_ROUTER}>:otbr-backbone-router>
+     $<$<BOOL:${OTBR_DBUS}>:otbr-dbus-server>
+diff --git a/src/agent/coverage_listener/zmq_cov.cpp b/src/agent/coverage_listener/zmq_cov.cpp
+new file mode 100644
+index 00000000..eca0114b
+--- /dev/null
++++ b/src/agent/coverage_listener/zmq_cov.cpp
+@@ -0,0 +1,54 @@
++#include "zmq_cov.h"
++
++#include "zmq_server.h"
++#include "instrumentation.h"
++
++#include <iostream>
++#include <zmq.hpp>
++#include <string>
++
++extern feedback_t feedback;
++
++namespace zmq_cov {
++
++    // Private part
++    static ZMQ_Server zmq_server;
++
++    static std::string recv_message() {
++        boost::optional<zmq::message_t> msg = zmq_server.recv();
++        if (msg) {
++            return msg.value().to_string();
++        }
++        return {};
++    }
++
++    static bool send_bitmap_data() {
++        return zmq_server.send(static_cast<void*>(feedback.guard_map.get()), feedback.guard_count);
++    }
++
++    static void reset_bitmap() {
++        memset(feedback.guard_map.get(), 0, feedback.guard_count);
++    }
++
++    // Public function
++    void worker_loop() {
++        zmq_server.bind("tcp://*:5567");
++        std::string msg;
++        while (msg != "OVER") {
++            msg = recv_message();
++            if (msg == "GET_COVERAGE_MAP") {
++                if (send_bitmap_data()) {
++                    printf("Sent bitmap data successfully!\n");
++                } else {
++                    printf("Sending bitmap data failed!\n");
++                }
++            } else if (msg == "RESET_COVERAGE_MAP") {
++                reset_bitmap();
++                zmq_server.send("OK");
++            } else if (msg == "GET_COVERAGE_MAP_SIZE") {
++                zmq_server.send(std::to_string(feedback.guard_count));
++            }
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/agent/coverage_listener/zmq_cov.h b/src/agent/coverage_listener/zmq_cov.h
+new file mode 100644
+index 00000000..f5f5857e
+--- /dev/null
++++ b/src/agent/coverage_listener/zmq_cov.h
+@@ -0,0 +1,12 @@
++#ifndef ZMQ_COV_H_
++#define ZMQ_COV_H_
++
++#include <cstdint>
++
++namespace zmq_cov {
++
++    void worker_loop();
++
++};
++
++#endif //ZMQ_COV_H_
+\ No newline at end of file
+diff --git a/src/agent/main.cpp b/src/agent/main.cpp
+index bc082ca6..8a3dc70a 100644
+--- a/src/agent/main.cpp
++++ b/src/agent/main.cpp
+@@ -58,6 +58,34 @@
+ #include "common/types.hpp"
+ #include "ncp/ncp_openthread.hpp"
+ 
++// THREADFUZZ: INCLUDE SHM (START)
++#include "shm/shared_memory.h"
++// THREADFUZZ: INCLUDE SHM (END)
++
++// THREADFUZZ: INCLUDE SHM_HELPER (START)
++#include "shm/shm_helper.h"
++// THREADFUZZ: INCLUDE SHM_HELPER (END)
++
++// THREADFUZZ: INCLUDE COV_INSTR (START)
++#include "instrumentation.h"
++// THREADFUZZ: INCLUDE COV_INSTR (END)
++
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (START)
++#include "shm/fuzz_config.h"
++// THREADFUZZ: INCLUDE FUZZ_CONFIG (END)
++
++// THREADFUZZ: INCLUDE COV LISTENER (START)
++#include "coverage_listener/zmq_cov.h"
++// THREADFUZZ: INCLUDE COV LISTENER (START)
++
++// THREADFUZZ: DECLARE SHM_HELPER_G (START)
++std::unique_ptr<SHM_Helper> shm_helper_g;
++// THREADFUZZ: DECLARE SHM_HELPER_G (END)
++
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (START)
++extern Fuzz_Config fuzz_config_g;
++// THREADFUZZ: EXTERN FUZZ_CONFIG_G (END)
++
+ static const char kSyslogIdent[]          = "otbr-agent";
+ static const char kDefaultInterfaceName[] = "wpan0";
+ 
+@@ -290,6 +318,16 @@ static int realmain(int argc, char *argv[])
+         assert(false);
+     }
+ 
++    // THREADFUZZ: INIT SHARED MEMORY (START)
++    if (!parse_fuzz_config()) return -1;
++    if (fuzz_config_g.fuzz()) {
++        SHM::keep_running = 1;
++        //shm_g = std::make_unique<SHM>(SHM_CLIENT, SHM_NAME, SHM_MSG_MAX_SIZE);
++        shm_helper_g = std::make_unique<SHM_Helper>(SHM_NAME);
++    }
++    std::thread(zmq_cov::worker_loop).detach();
++    // THREADFUZZ: INIT SHARED MEMORY (END)
++
+     {
+         otbr::Application app(interfaceName, backboneInterfaceNames, radioUrls, enableAutoAttach, restListenAddress,
+                               restListenPort);
+@@ -305,6 +343,7 @@ static int realmain(int argc, char *argv[])
+     otbrLogDeinit();
+ 
+ exit:
++
+     return ret;
+ }
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,7 @@
+[2025-11-14 17:01:41.486] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:41.638] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:41.638] [logger] [error] Failed to start a protocol stack
+[2025-11-14 17:01:41.638] [logger] [info] terminate fuzzing
+[2025-11-14 17:01:41.638] [logger] [error] killing everything
+[2025-11-14 17:01:46.869] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:46.869] [logger] [warning] Failed to stop OT protocol stack

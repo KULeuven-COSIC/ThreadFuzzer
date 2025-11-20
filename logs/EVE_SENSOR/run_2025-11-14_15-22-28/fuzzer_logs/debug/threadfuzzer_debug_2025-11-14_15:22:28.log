@@ -1,0 +1,42 @@
+[2025-11-14 15:22:28.192] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-14 15:22:28.192] [logger] [debug] calling to the pipe
+[2025-11-14 15:22:28.206] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-14 15:22:28.225] [logger] [debug] command returned: 0
+[2025-11-14 15:22:28.225] [logger] [debug] [DUT]: EVE: waiting 5 seconds for stability
+[2025-11-14 15:22:43.225] [logger] [debug] [DUT]: EVE: FR
+[2025-11-14 15:22:43.225] [logger] [debug] calling to the pipe
+[2025-11-14 15:22:43.238] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-14 15:22:43.258] [logger] [debug] command returned: 0
+[2025-11-14 15:23:03.258] [logger] [debug] calling to the pipe
+[2025-11-14 15:23:03.272] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-14 15:23:03.291] [logger] [debug] command returned: 0
+[2025-11-14 15:23:03.291] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-14 15:23:13.292] [logger] [debug] BR application gets restarted
+[2025-11-14 15:23:13.294] [logger] [debug] BR is stopped and factoryreset
+[2025-11-14 15:23:13.294] [logger] [debug] BR application is stopped
+[2025-11-14 15:23:19.300] [logger] [debug] BR is configured and running
+[2025-11-14 15:23:19.300] [logger] [debug] BR application is started
+[2025-11-14 15:23:19.300] [logger] [debug] BR application is restarted
+[2025-11-14 15:23:19.300] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-14 15:23:19.300] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-14 15:23:19.300] [logger] [debug] calling to the pipe
+[2025-11-14 15:23:19.313] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-14 15:23:19.332] [logger] [debug] command returned: 0
+[2025-11-14 15:23:22.332] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-14 15:23:22.332] [logger] [debug] calling to the pipe
+[2025-11-14 15:23:22.346] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-14 15:23:22.365] [logger] [debug] command returned: 0
+[2025-11-14 15:23:22.365] [logger] [debug] [DUT]: EVE: waiting 5 seconds for stability
+[2025-11-14 15:23:27.365] [logger] [info] restarts succesfull
+[2025-11-14 15:23:27.365] [logger] [info] starting communication
+[2025-11-14 15:23:27.365] [logger] [info] calling chip_pair
+[2025-11-14 15:24:29.055] [logger] [warning] Command "./connectedhomeip/out/chip-tool pairing ble-thread 6 hex:0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c617950656e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed4a 80049749 3070 --bypass-attestation-verifier true" failed with exit code: 256
+[2025-11-14 15:24:29.055] [logger] [error] Failed to prepare new fuzzing sprint
+[2025-11-14 15:24:29.055] [logger] [info] terminate fuzzing
+[2025-11-14 15:24:29.055] [logger] [error] killing everything
+[2025-11-14 15:24:29.056] [logger] [debug] BR is stopped and factoryreset
+[2025-11-14 15:24:29.057] [logger] [debug] BR application is stopped
+[2025-11-14 15:24:29.057] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-14 15:24:29.057] [logger] [debug] calling to the pipe
+[2025-11-14 15:24:29.070] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-14 15:24:29.088] [logger] [debug] command returned: 0

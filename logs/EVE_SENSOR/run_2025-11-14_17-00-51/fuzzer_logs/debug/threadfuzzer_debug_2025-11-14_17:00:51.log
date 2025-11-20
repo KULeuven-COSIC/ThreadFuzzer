@@ -1,0 +1,25 @@
+[2025-11-14 17:00:51.295] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-14 17:00:51.295] [logger] [debug] calling to the pipe
+[2025-11-14 17:00:51.309] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-14 17:00:51.328] [logger] [debug] command returned: 0
+[2025-11-14 17:00:51.328] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-14 17:01:11.328] [logger] [debug] [DUT]: EVE: FR
+[2025-11-14 17:01:11.328] [logger] [debug] calling to the pipe
+[2025-11-14 17:01:11.342] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-14 17:01:11.361] [logger] [debug] command returned: 0
+[2025-11-14 17:01:31.361] [logger] [debug] calling to the pipe
+[2025-11-14 17:01:31.376] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-14 17:01:31.394] [logger] [debug] command returned: 0
+[2025-11-14 17:01:31.394] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-14 17:01:41.395] [logger] [debug] BR application gets restarted
+[2025-11-14 17:01:41.486] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:41.638] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:41.638] [logger] [error] Failed to start a protocol stack
+[2025-11-14 17:01:41.638] [logger] [info] terminate fuzzing
+[2025-11-14 17:01:41.638] [logger] [error] killing everything
+[2025-11-14 17:01:46.869] [logger] [error] Failed to start BR server
+[2025-11-14 17:01:46.869] [logger] [warning] Failed to stop OT protocol stack
+[2025-11-14 17:01:46.869] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-14 17:01:46.869] [logger] [debug] calling to the pipe
+[2025-11-14 17:01:46.883] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-14 17:01:46.902] [logger] [debug] command returned: 0
