@@ -1,0 +1,6 @@
+[2025-11-15 13:40:52.939] [logger] [info] restarts succesfull
+[2025-11-15 13:40:52.940] [logger] [info] starting communication
+[2025-11-15 13:40:52.940] [logger] [info] calling chip_pair
+[2025-11-15 13:41:52.856] [logger] [info] chip-pair succesfull!
+[2025-11-15 13:42:33.664] [logger] [warning] Called SIGINT handler!
+[2025-11-15 13:42:33.669] [logger] [warning] Caught an exception: basic_string::substr: __pos (which is 13) > this->size() (which is 0)

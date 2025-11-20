@@ -261,14 +261,17 @@ void Base_Coordinator::fuzzing_loop()
         thread_coap = std::make_unique<std::thread>(&Base_Coordinator::layer_fuzzing_loop, this, SHM_MUTEX_COAP);
     }
 
-    std::cout << "BLUG: CALLING RESET ON NODES" << std::endl;
+    std::cout << "BLUG: CALLING RESTART ON NODES" << std::endl;
 
+    std::cout << "BLUG: RESTARTING BR" << std::endl;
     if (!protocol_stack->restart()) {
         std::cout << "Failed to start a protocol stack" << std::endl;
         my_logger_g.logger->error("Failed to start a protocol stack");
         Base_Coordinator::terminate_fuzzing();
         goto exit;
     }
+
+    std::cout << "BLUG: RESTARTING DUT" << std::endl;
 
     if (!dut->restart()) {
         std::cout << "Failed to start a DUT" << std::endl;
@@ -438,7 +441,7 @@ void Base_Coordinator::print_statistics() {
     std::cout << std::endl;
 
     std::cout << std::setw(40) << std::left << RED "\tCrashes (PS/DUT): " + std::to_string(statistics_g.protocol_stack_crash_counter) + "/"
-        + std::to_string(statistics_g.dut_crash_counter);
+        + std::to_string(statistics_g.dut_crash_counter) << BLUE "\tnon-unique: " << std::to_string(statistics_g.dut_nonunique_crash_counter);
     std::cout << std::setw(30) << std::left << RED "Failed fuzz iterations: " + std::to_string(statistics_g.failed_fuzz_iterations_counter) + std::string(CRESET) << std::endl;
     std::cout << std::setw(30) << std::left
               << RED "\thangs: " + std::to_string(statistics_g.long_silence) +

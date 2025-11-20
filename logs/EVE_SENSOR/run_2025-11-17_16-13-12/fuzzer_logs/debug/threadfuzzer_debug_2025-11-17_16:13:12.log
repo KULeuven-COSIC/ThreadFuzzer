@@ -1,0 +1,45 @@
+[2025-11-17 16:13:12.980] [logger] [debug] BR application gets restarted
+[2025-11-17 16:13:12.980] [logger] [info] Starting MLE thread
+[2025-11-17 16:13:12.981] [logger] [info] Inited communication
+[2025-11-17 16:13:13.064] [logger] [debug] BR application is stopped
+[2025-11-17 16:13:18.038] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:18.274] [logger] [debug] BR is configured and running
+[2025-11-17 16:13:18.274] [logger] [debug] BR application is started
+[2025-11-17 16:13:18.274] [logger] [debug] BR application is restarted
+[2025-11-17 16:13:18.775] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-17 16:13:18.775] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-17 16:13:18.775] [logger] [debug] calling to the pipe
+[2025-11-17 16:13:18.789] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-17 16:13:18.808] [logger] [debug] command returned: 0
+[2025-11-17 16:13:19.758] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:21.095] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:21.810] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-17 16:13:21.810] [logger] [debug] calling to the pipe
+[2025-11-17 16:13:21.823] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-17 16:13:21.842] [logger] [debug] command returned: 0
+[2025-11-17 16:13:21.842] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-17 16:13:22.102] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:24.566] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:25.262] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:31.843] [logger] [debug] [DUT]: EVE: FR
+[2025-11-17 16:13:31.843] [logger] [debug] calling to the pipe
+[2025-11-17 16:13:31.857] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-17 16:13:31.876] [logger] [debug] command returned: 0
+[2025-11-17 16:13:32.942] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:51.876] [logger] [debug] calling to the pipe
+[2025-11-17 16:13:51.890] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-17 16:13:51.910] [logger] [debug] command returned: 0
+[2025-11-17 16:13:51.910] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-17 16:13:56.910] [logger] [info] restarts succesfull
+[2025-11-17 16:13:56.910] [logger] [info] starting communication
+[2025-11-17 16:13:57.446] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:13:57.511] [logger] [info] calling chip_pair
+[2025-11-17 16:13:58.544] [logger] [warning] Command "./connectedhomeip/out/chip-tool pairing ble-thread 6 hex:0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c617950656e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed4a 80049749 3070 --bypass-attestation-verifier true | tail" failed with exit code: 2
+[2025-11-17 16:13:58.544] [logger] [error] Failed to prepare new fuzzing sprint
+[2025-11-17 16:13:58.544] [logger] [info] terminate fuzzing
+[2025-11-17 16:13:58.544] [logger] [error] killing everything
+[2025-11-17 16:13:58.880] [logger] [debug] BR application is stopped
+[2025-11-17 16:13:58.880] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-17 16:13:58.880] [logger] [debug] calling to the pipe
+[2025-11-17 16:13:58.893] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-17 16:13:58.912] [logger] [debug] command returned: 0

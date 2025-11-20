@@ -1,0 +1,26 @@
+[2025-11-15 13:44:47.705] [logger] [debug] BR application gets restarted
+[2025-11-15 13:44:47.790] [logger] [debug] BR application is stopped
+[2025-11-15 13:44:52.962] [logger] [debug] BR is configured and running
+[2025-11-15 13:44:52.962] [logger] [debug] BR application is started
+[2025-11-15 13:44:52.962] [logger] [debug] BR application is restarted
+[2025-11-15 13:44:53.462] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-15 13:44:53.462] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 13:44:53.462] [logger] [debug] calling to the pipe
+[2025-11-15 13:44:53.476] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 13:44:53.495] [logger] [debug] command returned: 0
+[2025-11-15 13:44:56.495] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-15 13:44:56.496] [logger] [debug] calling to the pipe
+[2025-11-15 13:44:56.509] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-15 13:44:56.528] [logger] [debug] command returned: 0
+[2025-11-15 13:44:56.528] [logger] [debug] [DUT]: EVE: waiting 10 seconds for stability
+[2025-11-15 13:45:06.528] [logger] [info] restarts succesfull
+[2025-11-15 13:45:06.528] [logger] [info] starting communication
+[2025-11-15 13:45:06.528] [logger] [info] calling chip_pair
+[2025-11-15 13:46:08.413] [logger] [info] chip-pair succesfull!
+[2025-11-15 13:46:08.413] [logger] [debug] fetching rbt cnt
+[2025-11-15 13:46:53.512] [logger] [warning] Caught an exception: basic_string::substr: __pos (which is 13) > this->size() (which is 0)
+[2025-11-15 13:46:58.873] [logger] [debug] BR application is stopped
+[2025-11-15 13:46:58.873] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-15 13:46:58.873] [logger] [debug] calling to the pipe
+[2025-11-15 13:46:58.886] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-15 13:46:58.905] [logger] [debug] command returned: 0

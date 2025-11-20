@@ -16,7 +16,7 @@ class SkipFuzzer : public RandomFuzzer {
 public:
     virtual ~SkipFuzzer() {}
     virtual bool fuzz(Packet& packet) override;
-    virtual bool prepare_new_iteration() override;
+    virtual int prepare_new_iteration() override;
 
 private:
     void clean_packet_counter_map();

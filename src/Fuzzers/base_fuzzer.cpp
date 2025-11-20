@@ -42,10 +42,10 @@ bool Base_Fuzzer::init()
     return true;
 }
 
-bool Base_Fuzzer::prepare_new_iteration() {
+int Base_Fuzzer::prepare_new_iteration() {
     previous_seed = current_seed;
 	current_seed = std::make_shared<Seed>();
-	return true;
+	return 1;
 }
 
 bool Base_Fuzzer::apply_predefined_patches(Packet& packet)

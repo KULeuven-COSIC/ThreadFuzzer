@@ -1,0 +1,8 @@
+[2025-11-13 13:48:14.051] [logger] [info] Starting MLE thread
+[2025-11-13 13:48:14.051] [logger] [info] Inited communication
+[2025-11-13 13:48:26.125] [logger] [info] restarts succesfull
+[2025-11-13 13:48:26.125] [logger] [info] starting communication
+[2025-11-13 13:48:26.125] [logger] [info] calling chip_pair
+[2025-11-13 13:49:08.577] [logger] [info] chip-pair succesfull!
+[2025-11-13 13:49:12.470] [logger] [info] COLLECTED RBT CNT: 2
+[2025-11-13 13:49:20.541] [logger] [info] ================ START OF A NEW FUZZING ITERATION 0 ================

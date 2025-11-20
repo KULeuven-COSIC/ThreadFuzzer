@@ -6,7 +6,7 @@
 extern Fuzz_Strategy_Config fuzz_strategy_config_g;
 extern My_Logger my_logger_g;
 
-bool SkipFuzzer::prepare_new_iteration() {
+int SkipFuzzer::prepare_new_iteration() {
     clean_packet_counter_map();
     return RandomFuzzer::prepare_new_iteration();
 }

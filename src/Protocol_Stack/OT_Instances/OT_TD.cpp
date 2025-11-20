@@ -364,15 +364,15 @@ bool OT_TD::factoryreset() {
 }
 
 void OT_TD::log_clean_up() {
-  if (!helpers::set_permissions_if_path_exists(error_file_, std::filesystem::perms::all)) {
-      my_logger_g.logger->warn("Failed to set permissions to the {}", error_file_);
-  }
-  if (!helpers::set_permissions_if_path_exists(asan_file_, std::filesystem::perms::all)) {
-      my_logger_g.logger->warn("Failed to set permissions to the {}", asan_file_);
-  }
-  if (!helpers::set_permissions_if_path_exists(ot_log_file_, std::filesystem::perms::all)) {
-      my_logger_g.logger->warn("Failed to set permissions to the {}", ot_log_file_);
-  }
+  // if (!helpers::set_permissions_if_path_exists(error_file_, std::filesystem::perms::all)) {
+  //     my_logger_g.logger->warn("Failed to set permissions to the {}", error_file_);
+  // }
+  // if (!helpers::set_permissions_if_path_exists(asan_file_, std::filesystem::perms::all)) {
+  //     my_logger_g.logger->warn("Failed to set permissions to the {}", asan_file_);
+  // }
+  // if (!helpers::set_permissions_if_path_exists(ot_log_file_, std::filesystem::perms::all)) {
+  //     my_logger_g.logger->warn("Failed to set permissions to the {}", ot_log_file_);
+  // }
 
   helpers::delete_if_file_is_empty(error_file_); /* Avoid keeping empty files */
 }

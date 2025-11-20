@@ -1,0 +1,251 @@
+[2025-11-17 16:14:25.794] [logger] [info] Starting MLE thread
+[2025-11-17 16:14:25.794] [logger] [info] Inited communication
+[2025-11-17 16:14:27.048] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 B1 B3 0B 75 8D 01 DD 7E 00 00 
+[2025-11-17 16:14:27.049] [logger] [info] ---> Dissector's summary: Link Request, Bad FCS
+[2025-11-17 16:14:27.049] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 B1 B3 0B 75 8D 01 DD 7E 00 00  (type LinkRequest,BadFCS)
+[2025-11-17 16:14:27.049] [logger] [info] 
+[2025-11-17 16:14:29.700] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 EC 6F 1C 6A A2 43 48 29 0E 01 80 12 02 00 04 00 00 
+[2025-11-17 16:14:29.700] [logger] [info] ---> Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:14:29.700] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 EC 6F 1C 6A A2 43 48 29 0E 01 80 12 02 00 04 00 00  (type ParentRequest,BadFCS)
+[2025-11-17 16:14:29.700] [logger] [info] 
+[2025-11-17 16:14:30.451] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 98 F2 1A 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 A7 91 00 00 
+[2025-11-17 16:14:30.452] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:30.452] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 98 F2 1A 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 A7 91 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:30.452] [logger] [info] 
+[2025-11-17 16:14:30.781] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 00 00 
+[2025-11-17 16:14:30.782] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:30.782] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:30.782] [logger] [info] 
+[2025-11-17 16:14:31.193] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:14:31.194] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:14:31.194] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:14:31.194] [logger] [info] 
+[2025-11-17 16:14:32.458] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:14:32.459] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:14:32.459] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 99 F3 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:14:32.459] [logger] [info] 
+[2025-11-17 16:14:33.988] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9A F4 1A 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 00 00 
+[2025-11-17 16:14:33.989] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:33.989] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9A F4 1A 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:33.989] [logger] [info] 
+[2025-11-17 16:14:35.264] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9B F5 1A 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 00 00 
+[2025-11-17 16:14:35.265] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:35.265] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9B F5 1A 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:35.265] [logger] [info] 
+[2025-11-17 16:14:36.661] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9B F5 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:14:36.662] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:14:36.662] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9B F5 1A 09 0A C9 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:14:36.662] [logger] [info] 
+[2025-11-17 16:14:40.990] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9C F6 1A 16 08 00 00 00 00 00 01 00 00 0C 5C 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 0B 19 81 01 5D 0D 14 68 00 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 00 00 
+[2025-11-17 16:14:40.992] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:40.992] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9C F6 1A 16 08 00 00 00 00 00 01 00 00 0C 5C 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 0B 19 81 01 5D 0D 14 68 00 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:40.992] [logger] [info] 
+[2025-11-17 16:14:42.062] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 16 08 00 00 00 00 00 01 00 00 0C 66 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 0B 19 81 01 5D 0D 14 68 00 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 03 08 00 07 FC 01 03 68 00 00 00 00 
+[2025-11-17 16:14:42.064] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:14:42.064] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 16 08 00 00 00 00 00 01 00 00 0C 66 08 04 0B 02 A7 91 0B 0E 80 01 01 0D 09 68 00 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 68 00 E0 0B 19 81 01 5D 0D 14 68 00 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 03 08 00 07 FC 01 03 68 00 00 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:14:42.064] [logger] [info] 
+[2025-11-17 16:14:42.192] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CA 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:14:42.192] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:14:42.192] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CA 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:14:42.192] [logger] [info] 
+[2025-11-17 16:14:58.560] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CB 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:14:58.561] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:14:58.561] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CB 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:14:58.561] [logger] [info] 
+[2025-11-17 16:15:09.743] [logger] [info] restarts succesfull
+[2025-11-17 16:15:09.743] [logger] [info] starting communication
+[2025-11-17 16:15:10.344] [logger] [info] calling chip_pair
+[2025-11-17 16:15:20.515] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 52 E7 8B 58 59 F3 12 71 0E 01 80 12 02 00 04 00 00 
+[2025-11-17 16:15:20.515] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:20.515] [logger] [info] 
+[2025-11-17 16:15:20.780] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 05 04 00 00 00 06 08 04 00 00 00 0C 04 08 52 E7 8B 58 59 F3 12 71 56 02 FF FF 03 08 E1 27 05 D9 C7 21 73 CE 10 01 42 0F 0A 00 00 00 00 00 CD 01 05 00 01 12 02 00 04 00 00 
+[2025-11-17 16:15:20.781] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2025-11-17 16:15:20.781] [logger] [info] [RBT_CNT_FUZZER]: PACKET WAS NOT FUZZED
+[2025-11-17 16:15:20.781] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 05 04 00 00 00 06 08 04 00 00 00 0C 04 08 52 E7 8B 58 59 F3 12 71 56 02 FF FF 03 08 E1 27 05 D9 C7 21 73 CE 10 01 42 0F 0A 00 00 00 00 00 CD 01 05 00 01 12 02 00 04 00 00  (type ParentResponse,BadFCS)
+[2025-11-17 16:15:20.781] [logger] [info] 
+[2025-11-17 16:15:21.282] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0C 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 16 08 00 00 00 00 00 01 00 00 0A 02 68 01 0C 60 0B 0E 80 01 01 0D 09 FC 10 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 FF FE E0 0B 19 81 01 5D 0D 14 FC 11 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 03 08 00 07 FC 01 03 FF FE 00 13 00 00 00 
+[2025-11-17 16:15:21.284] [logger] [info] ---> Dissector's summary: Child ID Response, Bad FCS
+[2025-11-17 16:15:21.284] [logger] [info] [RBT_CNT_FUZZER]: PACKET WAS NOT FUZZED
+[2025-11-17 16:15:21.284] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0C 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 16 08 00 00 00 00 00 01 00 00 0A 02 68 01 0C 60 0B 0E 80 01 01 0D 09 FC 10 1E 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 3B 40 82 8D 03 00 02 00 00 00 00 01 03 FF FE E0 0B 19 81 01 5D 0D 14 FC 11 FD 1E 23 4F CC A6 18 3B 55 85 08 05 6F 55 7D B7 D1 1F 03 08 00 07 FC 01 03 FF FE 00 13 00 00 00  (type ChildIDResponse,BadFCS)
+[2025-11-17 16:15:21.284] [logger] [info] 
+[2025-11-17 16:15:21.284] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0B 04 08 E1 27 05 D9 C7 21 73 CE 05 04 00 00 00 00 08 04 00 00 00 01 01 01 04 02 04 00 00 00 F0 12 02 00 04 13 09 80 56 86 E5 C2 BA 5C BC 46 0D 02 0A 0C 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:21.284] [logger] [info] <--- Dissector's summary: Child ID Request, Bad FCS
+[2025-11-17 16:15:21.284] [logger] [info] 
+[2025-11-17 16:15:21.636] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 68 00 01 01 04 0B 08 22 5A 03 24 40 9D F7 1A 13 09 81 55 47 4A 12 54 37 04 08 02 04 00 00 00 F0 00 00 
+[2025-11-17 16:15:21.637] [logger] [info] ---> Dissector's summary: Child Update Response, Bad FCS
+[2025-11-17 16:15:21.637] [logger] [info] [RBT_CNT_FUZZER]: PACKET WAS NOT FUZZED
+[2025-11-17 16:15:21.637] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 68 00 01 01 04 0B 08 22 5A 03 24 40 9D F7 1A 13 09 81 55 47 4A 12 54 37 04 08 02 04 00 00 00 F0 00 00  (type ChildUpdateResponse,BadFCS)
+[2025-11-17 16:15:21.637] [logger] [info] 
+[2025-11-17 16:15:21.637] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 00 02 68 01 0B 08 22 5A 03 24 40 9D F7 1A 02 04 00 00 00 F0 13 12 80 56 86 E5 C2 BA 5C BC 46 81 55 47 4A 12 54 37 04 08 00 00 
+[2025-11-17 16:15:21.637] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:21.637] [logger] [info] 
+[2025-11-17 16:15:25.565] [logger] [info] chip-pair succesfull!
+[2025-11-17 16:15:28.580] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CE 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:15:28.580] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:15:28.580] [logger] [info] [RBT_CNT_FUZZER]: PACKET WAS NOT FUZZED
+[2025-11-17 16:15:28.580] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 22 5A 03 24 40 9D F7 1A 09 0A CE 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:15:28.580] [logger] [info] 
+[2025-11-17 16:15:29.459] [logger] [info] COLLECTED RBT CNT: 1
+[2025-11-17 16:15:30.530] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 3A F8 EE C4 A7 AE 31 DD 00 00 
+[2025-11-17 16:15:30.530] [logger] [info] ---> Dissector's summary: Link Request, Bad FCS
+[2025-11-17 16:15:30.531] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.challenge (index=0): Old value=4249408776818274781; New value=4249408776818274781; Iteration=-1
+[2025-11-17 16:15:30.531] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 3A F8 EE C4 A7 AE 31 DD 00 00  (type LinkRequest,BadFCS)
+[2025-11-17 16:15:30.531] [logger] [info] 
+[2025-11-17 16:15:35.484] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 0A 07 69 BC 50 CA 60 75 00 00 
+[2025-11-17 16:15:35.484] [logger] [info] ---> Dissector's summary: Link Request, Bad FCS
+[2025-11-17 16:15:35.485] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.version (index=0): Old value=4; New value=65535; Iteration=-1
+[2025-11-17 16:15:35.485] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.len (index=2): Old value=8; New value=216; Iteration=-1
+[2025-11-17 16:15:35.485] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 FF FF 0D 02 0A 09 03 D8 0A 07 69 BC 50 CA 60 75 00 00  (type LinkRequest[MalformedPacket],BadFCS)
+[2025-11-17 16:15:35.485] [logger] [info] 
+[2025-11-17 16:15:36.485] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 03 08 06 85 E9 09 66 73 7C 67 13 09 80 56 86 E5 C2 BA 5C BC 46 00 00 
+[2025-11-17 16:15:36.486] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:36.486] [logger] [info] 
+[2025-11-17 16:15:37.460] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 03 08 6E 26 5D 9C 41 0B A3 2A 13 09 80 56 86 E5 C2 BA 5C BC 46 00 00 
+[2025-11-17 16:15:37.461] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:37.461] [logger] [info] 
+[2025-11-17 16:15:38.461] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 03 08 94 18 74 06 B8 4A E2 2F 13 09 80 56 86 E5 C2 BA 5C BC 46 00 00 
+[2025-11-17 16:15:38.461] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:38.461] [logger] [info] 
+[2025-11-17 16:15:39.460] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 03 08 E4 4B 7E 4E BE 96 4E EA 13 09 80 56 86 E5 C2 BA 5C BC 46 00 00 
+[2025-11-17 16:15:39.460] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:39.460] [logger] [info] 
+[2025-11-17 16:15:40.462] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 03 08 5C D2 03 76 41 17 31 EA 13 09 80 56 86 E5 C2 BA 5C BC 46 00 00 
+[2025-11-17 16:15:40.462] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:40.462] [logger] [info] 
+[2025-11-17 16:15:40.769] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 12 02 00 04 0D 02 0A 09 03 08 B7 13 EC 38 45 93 83 3F 00 00 
+[2025-11-17 16:15:40.769] [logger] [info] ---> Dissector's summary: Link Request, Bad FCS
+[2025-11-17 16:15:40.770] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.type (index=0): Old value=18; New value=255; Iteration=-1
+[2025-11-17 16:15:40.770] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.len (index=2): Old value=8; New value=7; Iteration=-1
+[2025-11-17 16:15:40.770] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 00 FF 02 00 04 0D 02 0A 09 03 07 B7 13 EC 38 45 93 83 3F 00 00  (type LinkRequest[MalformedPacket],BadFCS)
+[2025-11-17 16:15:40.770] [logger] [info] 
+[2025-11-17 16:15:41.811] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 8F 87 FB BD 7E 83 F4 10 0E 01 80 12 02 00 04 00 00 
+[2025-11-17 16:15:41.811] [logger] [info] ---> Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:41.812] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field mle.tlv.type (index=1): Old value=3; New value=0; Iteration=-1
+[2025-11-17 16:15:41.812] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.len (index=1): Old value=8; New value=7; Iteration=-1
+[2025-11-17 16:15:41.812] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 00 07 8F 87 FB BD 7E 83 F4 10 0E 01 80 12 02 00 04 00 00  (type ParentRequest[MalformedPacket],BadFCS)
+[2025-11-17 16:15:41.812] [logger] [info] 
+[2025-11-17 16:15:42.563] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C2 C6 1A 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 A7 92 00 00 
+[2025-11-17 16:15:42.564] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:15:42.565] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.cmd (index=0): Old value=8; New value=9; Iteration=-1
+[2025-11-17 16:15:42.565] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.leader_data.router_id (index=0): Old value=26; New value=255; Iteration=-1
+[2025-11-17 16:15:42.565] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 00 02 68 00 0B 08 36 4A DC EF 40 C2 C6 FF 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 A7 92 00 00  (type ParentRequest,BadFCS)
+[2025-11-17 16:15:42.565] [logger] [info] 
+[2025-11-17 16:15:42.565] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C2 C6 1A 0C 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:42.566] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:42.567] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.active_tstamp (index=0): Old value=65536; New value=65536; Iteration=-1
+[2025-11-17 16:15:42.567] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C2 C6 1A 0C 00 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:42.567] [logger] [info] 
+[2025-11-17 16:15:42.570] [logger] [info] ================ START OF A NEW FUZZING ITERATION 0 ================
+[2025-11-17 16:15:42.812] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C2 C6 1A 0C 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:42.812] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:42.813] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.source_addr (index=0): Old value=26624; New value=26623; Iteration=-1
+[2025-11-17 16:15:42.813] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.leader_data.stable_data_version (index=0): Old value=198; New value=197; Iteration=-1
+[2025-11-17 16:15:42.813] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.len (index=2): Old value=0; New value=255; Iteration=-1
+[2025-11-17 16:15:42.813] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 67 FF 0B 08 36 4A DC EF 40 C2 C5 1A 0C FF 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:42.813] [logger] [info] 
+[2025-11-17 16:15:42.814] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 A7 92 0B 0E 80 01 01 0D 09 68 00 1F 00 05 00 00 0E 10 00 00 
+[2025-11-17 16:15:42.814] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:15:42.816] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.tlv.leader_data.router_id (index=0): Old value=26; New value=27; Iteration=-1
+[2025-11-17 16:15:42.816] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field thread_nwd.tlv.type (index=2): Old value=6; New value=127; Iteration=-1
+[2025-11-17 16:15:42.816] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field thread_nwd.tlv.len (index=2): Old value=9; New value=8; Iteration=-1
+[2025-11-17 16:15:42.816] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1B 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 A7 92 0B 0E 80 01 01 FF 08 68 00 1F 00 05 00 00 0E 10 00 00  (type DataResponse[MalformedPacket],BadFCS)
+[2025-11-17 16:15:42.816] [logger] [info] 
+[2025-11-17 16:15:42.816] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 0C 10 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:42.817] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:42.819] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.leader_data.weighting (index=0): Old value=64; New value=255; Iteration=-1
+[2025-11-17 16:15:42.819] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field mle.tlv.leader_data.router_id (index=0): Old value=26; New value=255; Iteration=-1
+[2025-11-17 16:15:42.819] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field thread_nwd.tlv.server.data (index=0): Old value=8725745752870416; New value=27147576324338851; Iteration=-1
+[2025-11-17 16:15:42.819] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.len (index=3): Old value=8; New value=165; Iteration=-1
+[2025-11-17 16:15:42.819] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF FF C3 C7 FF 0C 10 0B 0E 80 01 01 0D 09 FC 10 60 72 93 AB 53 34 A3 16 A5 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest[MalformedPacket],BadFCS)
+[2025-11-17 16:15:42.819] [logger] [info] 
+[2025-11-17 16:15:42.960] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 63 AD 42 AA 2D 09 D5 10 0E 01 80 12 02 00 04 00 00 
+[2025-11-17 16:15:42.960] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:42.960] [logger] [info] 
+[2025-11-17 16:15:43.109] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 09 0A CF 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:15:43.109] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:15:43.111] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.tlv.leader_data.router_id (index=0): Old value=26; New value=27; Iteration=-1
+[2025-11-17 16:15:43.111] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1B 09 0A CF 00 00 00 20 00 00 00 00 01 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:15:43.111] [logger] [info] 
+[2025-11-17 16:15:43.160] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 05 04 00 00 00 28 08 04 00 00 00 19 04 08 63 AD 42 AA 2D 09 D5 10 56 02 FF FF 03 08 08 5C 07 CB 25 CF 2A 74 10 01 42 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00 
+[2025-11-17 16:15:43.160] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2025-11-17 16:15:43.163] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.tlv.type (index=1): Old value=11; New value=12; Iteration=-1
+[2025-11-17 16:15:43.163] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field mle.tlv.leader_data.weighting (index=0): Old value=64; New value=0; Iteration=-1
+[2025-11-17 16:15:43.163] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.tlv.len (index=3): Old value=4; New value=5; Iteration=-1
+[2025-11-17 16:15:43.163] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.conn.sed_dgram_cnt (index=0): Old value=1; New value=212; Iteration=-1
+[2025-11-17 16:15:43.163] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.len (index=9): Old value=2; New value=73; Iteration=-1
+[2025-11-17 16:15:43.163] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0C 08 36 4A DC EF 00 C3 C7 1A 05 04 00 00 00 28 08 05 00 00 00 19 04 08 63 AD 42 AA 2D 09 D5 10 56 02 FF FF 03 08 08 5C 07 CB 25 CF 2A 74 10 01 42 0F 0A 00 00 00 00 00 CF 01 05 00 D4 12 49 00 04 00 00  (type ParentResponse[MalformedPacket],BadFCS)
+[2025-11-17 16:15:43.163] [logger] [info] 
+[2025-11-17 16:15:43.713] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 B2 23 32 C7 34 84 3A F6 0E 01 C0 12 02 00 04 00 00 
+[2025-11-17 16:15:43.713] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:43.713] [logger] [info] 
+[2025-11-17 16:15:43.813] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 0C 10 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:43.814] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:43.815] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 0C 10 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:43.815] [logger] [info] 
+[2025-11-17 16:15:44.520] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 05 04 00 00 00 28 08 04 00 00 00 1B 04 08 B2 23 32 C7 34 84 3A F6 56 02 FF FF 03 08 A2 D3 B1 E5 D8 98 DB 5E 10 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00 
+[2025-11-17 16:15:44.521] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2025-11-17 16:15:44.524] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field mle.tlv.len (index=5): Old value=2; New value=3; Iteration=-1
+[2025-11-17 16:15:44.524] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field mle.tlv.type (index=7): Old value=16; New value=0; Iteration=-1
+[2025-11-17 16:15:44.524] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 05 04 00 00 00 28 08 04 00 00 00 1B 04 08 B2 23 32 C7 34 84 3A F6 56 03 FF FF 03 08 A2 D3 B1 E5 D8 98 DB 5E 00 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00  (type ParentResponse[MalformedPacket],BadFCS)
+[2025-11-17 16:15:44.524] [logger] [info] 
+[2025-11-17 16:15:44.661] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 09 0A CF 00 00 00 20 00 00 00 00 01 00 00 
+[2025-11-17 16:15:44.661] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2025-11-17 16:15:44.662] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.route64.cost (index=0): Old value=1; New value=14; Iteration=-1
+[2025-11-17 16:15:44.662] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 09 0A CF 00 00 00 20 00 00 00 00 0E 00 00  (type Advertisement,BadFCS)
+[2025-11-17 16:15:44.662] [logger] [info] 
+[2025-11-17 16:15:44.817] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 0C 10 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:44.818] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:44.819] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field mle.tlv.leader_data.weighting (index=0): Old value=64; New value=0; Iteration=-1
+[2025-11-17 16:15:44.819] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field thread_nwd.tlv.service.s_data_len (index=0): Old value=1; New value=230; Iteration=-1
+[2025-11-17 16:15:44.820] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 00 C3 C7 1A 0C 10 0B 0E 80 E6 01 0D 09 FC 10 1F 00 05 00 00 0E 10 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest[MalformedPacket],BadFCS)
+[2025-11-17 16:15:44.820] [logger] [info] 
+[2025-11-17 16:15:44.963] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 85 59 05 C6 D5 CE A8 2F 0E 01 C0 12 02 00 04 00 00 
+[2025-11-17 16:15:44.963] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:44.963] [logger] [info] 
+[2025-11-17 16:15:45.154] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C4 C8 1A 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 A7 92 0B 0E 80 01 01 0D 09 68 00 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 00 00 
+[2025-11-17 16:15:45.155] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:15:45.159] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field thread_meshcop.tlv.type (index=0): Old value=11; New value=0; Iteration=-1
+[2025-11-17 16:15:45.159] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C4 C8 1A 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 00 02 A7 92 0B 0E 80 01 01 0D 09 68 00 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:15:45.159] [logger] [info] 
+[2025-11-17 16:15:45.159] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C4 C8 1A 0C 26 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:45.160] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:45.164] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field thread_nwd.tlv.service.t (index=0): Old value=1; New value=1; Iteration=-1
+[2025-11-17 16:15:45.164] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field thread_nwd.tlv.stable (index=3): Old value=1; New value=1; Iteration=-1
+[2025-11-17 16:15:45.164] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C4 C8 1A 0C 26 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:45.164] [logger] [info] 
+[2025-11-17 16:15:45.275] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 16 08 00 00 00 00 00 01 00 00 0C 36 08 04 0B 02 A7 92 0B 0E 80 01 01 0D 09 68 00 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 68 00 F1 00 07 02 11 40 03 08 00 07 FC 01 03 68 00 00 00 00 
+[2025-11-17 16:15:45.277] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2025-11-17 16:15:45.281] [logger] [info] Mutator: MAX MUTATOR; Fuzzed field thread_nwd.tlv.prefix.length (index=0): Old value=64; New value=255; Iteration=-1
+[2025-11-17 16:15:45.281] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field thread_nwd.tlv.border_router.flag.s (index=0): Old value=1; New value=0; Iteration=-1
+[2025-11-17 16:15:45.281] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field thread_nwd.tlv.6co.flag.cid (index=0): Old value=1; New value=0; Iteration=-1
+[2025-11-17 16:15:45.281] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field thread_nwd.tlv.has_route.pref (index=0): Old value=0; New value=0; Iteration=-1
+[2025-11-17 16:15:45.282] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 16 08 00 00 00 00 00 01 00 00 0C 36 08 04 0B 02 A7 92 0B 0E 80 01 01 0D 09 68 00 1F 00 05 00 00 0E 10 03 14 00 FF FD 3B 40 82 8D 03 00 01 05 04 68 00 E1 00 07 02 10 40 03 08 00 07 FC 01 03 68 00 00 00 00  (type DataResponse,BadFCS)
+[2025-11-17 16:15:45.282] [logger] [info] 
+[2025-11-17 16:15:45.282] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 0C 30 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:45.283] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:45.287] [logger] [info] Mutator: MIN MUTATOR; Fuzzed field thread_nwd.tlv.type (index=2): Old value=1; New value=0; Iteration=-1
+[2025-11-17 16:15:45.287] [logger] [info] Mutator: ADD MUTATOR; Fuzzed field thread_nwd.tlv.6co.context_length (index=0): Old value=64; New value=65; Iteration=-1
+[2025-11-17 16:15:45.288] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 0C 30 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 01 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 41 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:45.288] [logger] [info] 
+[2025-11-17 16:15:45.481] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 05 04 00 00 00 28 08 04 00 00 00 1F 04 08 85 59 05 C6 D5 CE A8 2F 56 02 FF FF 03 08 F7 C4 02 3B 0E CD D9 71 10 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00 
+[2025-11-17 16:15:45.481] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2025-11-17 16:15:45.484] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.len (index=5): Old value=2; New value=115; Iteration=-1
+[2025-11-17 16:15:45.484] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C3 C7 1A 05 04 00 00 00 28 08 04 00 00 00 1F 04 08 85 59 05 C6 D5 CE A8 2F 56 73 FF FF 03 08 F7 C4 02 3B 0E CD D9 71 10 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00  (type ParentResponse[MalformedPacket],BadFCS)
+[2025-11-17 16:15:45.484] [logger] [info] 
+[2025-11-17 16:15:45.818] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 0C 30 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2025-11-17 16:15:45.818] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2025-11-17 16:15:45.822] [logger] [info] Mutator: RANDOM MUTATOR; Fuzzed field mle.tlv.len (index=2): Old value=48; New value=66; Iteration=-1
+[2025-11-17 16:15:45.822] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 0C 42 0B 0E 80 01 01 0D 09 FC 10 1F 00 05 00 00 0E 10 03 14 00 40 FD 3B 40 82 8D 03 00 01 05 04 FF FE F1 00 07 02 11 40 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00  (type ChildUpdateRequest,BadFCS)
+[2025-11-17 16:15:45.822] [logger] [info] 
+[2025-11-17 16:15:46.213] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 89 8B 47 E3 70 C6 E4 E1 0E 01 C0 12 02 00 04 00 00 
+[2025-11-17 16:15:46.213] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2025-11-17 16:15:46.213] [logger] [info] 
+[2025-11-17 16:15:46.365] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EF 40 C5 C9 1A 05 04 00 00 00 28 08 04 00 00 00 25 04 08 89 8B 47 E3 70 C6 E4 E1 56 02 FF FF 03 08 DD 7A 1B CF 46 3D 0A D6 10 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00 
+[2025-11-17 16:15:46.365] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2025-11-17 16:15:46.368] [logger] [info] Mutator: SUB MUTATOR; Fuzzed field mle.tlv.leader_data.partition_id (index=0): Old value=910875887; New value=910875886; Iteration=-1
+[2025-11-17 16:15:46.368] [logger] [info] Fuzzed packet: 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 68 00 0B 08 36 4A DC EE 40 C5 C9 1A 05 04 00 00 00 28 08 04 00 00 00 25 04 08 89 8B 47 E3 70 C6 E4 E1 56 02 FF FF 03 08 DD 7A 1B CF 46 3D 0A D6 10 01 41 0F 0A 00 00 00 00 00 CF 01 05 00 01 12 02 00 04 00 00  (type ParentResponse,BadFCS)
+[2025-11-17 16:15:46.368] [logger] [info] 
+[2025-11-17 16:15:46.392] [logger] [warning] Called SIGINT handler!
+[2025-11-17 16:15:46.576] [logger] [info] Iteration time: 4
+[2025-11-17 16:15:46.576] [logger] [info] terminate fuzzing
+[2025-11-17 16:15:46.576] [logger] [error] killing everything

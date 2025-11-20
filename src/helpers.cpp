@@ -1,5 +1,8 @@
 #include "helpers.h"
 
+#include "DUT/DUT_base.h"
+#include "DUT/DUT_factory.h"
+#include "DUT/DUT_names.h"
 #include "shm/shared_memory.h"
 
 #include "Configs/Fuzzing_Settings/technical_config.h"
@@ -13,15 +16,20 @@
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
+#include <functional>
+#include <ios>
 #include <iostream>
 #include <random>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <thread>
 #include <unistd.h>
+
+#include <fstream>
 
 // #include <sys/wait.h>
 
@@ -354,7 +362,7 @@ bool is_process_alive(const std::string &process_name) {
 bool signal_service(const std::string &service_name,
                     const std::string &signal) {
   const std::string cmd =
-      "sudo systemctl kill --signal=" + signal + " " + service_name;
+      "sudo pkill -" + signal + " " + service_name;
   if (exec_system_cmd_with_default_timeout(cmd) != 0) {
     return false;
   }
@@ -374,7 +382,8 @@ bool check_if_path_exists(const std::filesystem::path &path) {
 }
 
 bool delete_if_file_is_empty(const std::filesystem::path &path) {
-  if (!std::filesystem::exists(path) || !std::filesystem::is_regular_file(path)) {
+  if (!std::filesystem::exists(path) ||
+      !std::filesystem::is_regular_file(path)) {
     return false;
   }
 
@@ -390,7 +399,8 @@ bool delete_if_file_is_empty(const std::filesystem::path &path) {
   return true;
 }
 
-bool set_permissions_if_path_exists(const std::filesystem::path &path, std::filesystem::perms perms) {
+bool set_permissions_if_path_exists(const std::filesystem::path &path,
+                                    std::filesystem::perms perms) {
   try {
     if (std::filesystem::exists(path)) {
       std::filesystem::permissions(path, perms);
@@ -399,9 +409,11 @@ bool set_permissions_if_path_exists(const std::filesystem::path &path, std::file
       return false;
     }
   } catch (std::exception &ex) {
-    my_logger_g.logger->warn("Caught exception during set_permissions_if_path_exists() {}", ex.what());
-    std::cerr << "Caught exception during set_permissions_if_path_exists(): " << ex.what()
-              << std::endl;
+    my_logger_g.logger->warn(
+        "Caught exception during set_permissions_if_path_exists() {}",
+        ex.what());
+    std::cerr << "Caught exception during set_permissions_if_path_exists(): "
+              << ex.what() << std::endl;
     return false;
   }
   return true;
@@ -513,7 +525,8 @@ double URD(double start, double end) {
 
 uint64_t UR(uint64_t start, uint64_t end) {
   static std::random_device rd;
-  std::uniform_int_distribution<long long unsigned> distribution(start, end - 1);
+  std::uniform_int_distribution<long long unsigned> distribution(start,
+                                                                 end - 1);
   return (uint64_t)distribution(rd);
 }
 
@@ -597,15 +610,109 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
   throw std::runtime_error("Cannot get dissector: Unsupported protocol");
 }
 
-int chip_pair(const std::string &device) {
-  std::string cmd = "sudo ../connectedhomeip/chip_pair.sh " + device;
+int chip_pair() {
+  std::cerr << "calling chip-pair" << std::endl;
+  my_logger_g.logger->info("calling chip_pair");
+  // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
+  std::string cmd =
+      "./connectedhomeip/out/chip-tool "
+      "pairing ble-thread 6 "
+      "hex:"
+      "0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6"
+      "183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c61795065"
+      "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
+      "4a " +
+      main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
+      " " + "--bypass-attestation-verifier true | tail";
+
+  std::cerr << cmd << std::endl;
+
   int ret = std::system(cmd.c_str());
-  if (ret == TIMEOUT_CODE)
+  if (ret == TIMEOUT_CODE) {
     my_logger_g.logger->warn("Command \"{}\" timed out", cmd);
-  else if (ret)
+  } else if (ret) {
     my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}", cmd,
                              ret);
+  } else {
+    std::cerr << "chip_pair succesfull!" << std::endl;
+    my_logger_g.logger->info("chip-pair succesfull!");
+  }
+
   return ret;
+}
+
+int chip_check_diagnostics() {
+  std::cout << "fetching rbt cnt..." << std::endl;
+  my_logger_g.logger->debug("fetching rbt cnt");
+  // int current_reboot_count = std::atoi(
+  //       ask_chip("/home/jakob/Documents/uni/doc/project/connectedhomeip/"
+  //                "OWN_BUILD_DIR/chip-tool generaldiagnostics read "
+  //                "active-network-faults 6 0 | grep -o \"ActiveNetworkFaults:
+  //                .*\"")
+  //           .substr(21)
+  //           .c_str());
+  int current_reboot_count =
+      std::stoi(ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
+                         "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
+                    .substr(13)
+                    .c_str());
+  std::cout << "diag count: " << std::to_string(current_reboot_count)
+            << std::endl;
+  my_logger_g.logger->info("COLLECTED RBT CNT: {}", current_reboot_count);
+
+  // if (main_config_g.chip_rbt_cnt_no_reset) {
+  //   /* code to manipulate read/store the rbt count */
+      //   std::fstream rbt_file_in;
+  //   rbt_file_in.open("rbt_cnt_val", std::ios::in);
+
+  //   if (!rbt_file_in.is_open()) {
+  //     std::cerr << "file for rbt cnt cannot be opened" << std::endl;
+  //     my_logger_g.logger->error(
+  //         "cannot read rbt cnt from file!! File cannot be opened");
+  //   }
+
+  //   std::string saved_rbt_cnt;
+  //   rbt_file_in >> saved_rbt_cnt;
+
+  //   std::cerr << "difference: "
+  //             << (current_reboot_count - std::stoi(saved_rbt_cnt)) << std::endl;
+
+  //   std::cout << "saved count: " << current_reboot_count << std::endl;
+
+  //   rbt_file_in.close();
+
+  //   std::fstream rbt_file_out;
+  //   rbt_file_out.open("rbt_cnt_val", std::ios::out | std::ios::trunc);
+
+  //   rbt_file_out << current_reboot_count;
+  //   rbt_file_out.close();
+
+  //   return current_reboot_count - std::stoi(saved_rbt_cnt);
+  // } else {
+  std::cerr << "fetch rbt count success" << std::endl;
+    return current_reboot_count;
+}
+
+std::string ask_chip(const char *cmd) {
+  std::array<char, 128> buffer;
+  std::string result;
+  std::unique_ptr<FILE, void (*)(FILE *)> pipe(popen(cmd, "r"),
+                                               [](FILE *f) -> void {
+                                                 // wrapper to ignore the return
+                                                 // value from pclose() is
+                                                 // needed with newer versions
+                                                 // of gnu g++
+                                                 std::ignore = pclose(f);
+                                               });
+
+  if (!pipe) {
+    throw std::runtime_error("popen() failed!");
+  }
+  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) !=
+         nullptr) {
+    result += buffer.data();
+  }
+  return result;
 }
 
 bool chip_unpair(const std::string &device) {

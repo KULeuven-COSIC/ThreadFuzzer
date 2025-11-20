@@ -10,6 +10,8 @@
     "gen_log_file": "gen_log_output.txt",
     "technical_config_path": "configs/Fuzzing_Settings/phys_technical_config.json",
     "timers_config_path": "configs/Fuzzing_Settings/timers_config.json",
+    "chip_passcode": "80049749",
+    "chip_discriminator": "3070",
     "pg_cli_args": [
         "ifconfig up",
         "thread start"

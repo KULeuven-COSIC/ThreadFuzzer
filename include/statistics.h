@@ -5,6 +5,7 @@
 #include <string>
 
 struct Statistics {
+  bool fuzz_lock = false;
   size_t hang_counter = 0;
   size_t crash_counter = 0;
   size_t empty_iterations = 0;
@@ -22,6 +23,7 @@ struct Statistics {
 
   size_t protocol_stack_crash_counter = 0;
   size_t dut_crash_counter = 0;
+  size_t dut_nonunique_crash_counter = 0;
 
   size_t dut_become_router_counter = 0;
   double avg_iteration_time_s = 0.0;

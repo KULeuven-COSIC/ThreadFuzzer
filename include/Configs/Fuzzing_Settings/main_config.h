@@ -28,8 +28,11 @@ public:
 
   std::string technical_config_path =
       "";
-  std::string timers_config_path =
-      "";
+  std::string timers_config_path = "";
+
+  std::string chip_passcode = "";
+  std::string chip_discriminator = "";
+  bool chip_rbt_cnt_no_reset = false;
 
 public:
   std::ostream &dump(std::ostream &os) const;
@@ -40,4 +43,4 @@ std::ostream &operator<<(std::ostream &os, const Main_Config &path_config);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     Main_Config, protocol_stack_name, packet_generator_name, dut_name, rcp_name,
     coordinator_name, asan_log_path, use_monitor, dut_log_file, gen_log_file,
-    dut_cli_args, pg_cli_args, technical_config_path, timers_config_path)
+    dut_cli_args, pg_cli_args, technical_config_path, timers_config_path, chip_discriminator, chip_passcode, chip_rbt_cnt_no_reset)

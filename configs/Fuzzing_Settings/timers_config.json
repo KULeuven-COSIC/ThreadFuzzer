@@ -1,6 +1,6 @@
 {
     "iteration_length_ms": 100,
-    "iteration_length_s": 70,
+    "iteration_length_s": 15,
     "empty_iteration_length_s": 100,
     "router_selection_jitter_s": 1,
     "speed": 100,

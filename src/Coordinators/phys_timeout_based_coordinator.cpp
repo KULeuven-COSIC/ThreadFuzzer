@@ -31,12 +31,7 @@ bool Phys_Timeout_Based_Coordinator::init(
     return false;
   }
 
-  /* put the device into pairing mode */
-  bool start = dut->start();
-  std::this_thread::sleep_for(std::chrono::seconds(5));
-  bool reset = dut->factoryreset();
-
-  return start && reset;
+  return true;
 }
 
 void Phys_Timeout_Based_Coordinator::deinit() { return; }
@@ -53,6 +48,18 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       break;
     }
 
+    /* put the device into pairing mode */
+    // protocol_stack->stop();
+    // dut->start(); // will wait for stability sake
+    // dut->factoryreset(); // will put node in right state
+    // std::cout << "DONE FACTORY RESET OF THE NODE MUHAHAHAHAA" << std::endl;//
+    // protocol_stack->reset(); //
+    // dut->start();
+    // protocol_stack->start();
+    dut->stop();
+    protocol_stack->reset();
+    dut->start();
+
     while (SHM_Layer_Communication::is_active) {
 
       my_logger_g.logger->info("================ START OF A NEW FUZZING "
@@ -61,6 +68,13 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       my_logger_g.logger->flush();
 
       int counter = timers_config_g.iteration_length_s;
+
+      /* very shady trick to make the snd iteration waay shorter */
+      // if (global_iteration == 1) {
+      //   std::cerr << "warning: running shorter iteration" << std::endl;
+      //   counter = 60;
+      // }
+
       int iteration_time = 0;
 
       int current_silent_time = 0;
@@ -161,7 +175,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* check whether the device has crashed */
   if (!dut->is_running()) {
-    need_to_restart_dut += 1; //
+    need_to_restart_dut = true; //
   }
 
   std::cout << "DUT CHECK COMPLETE" << std::endl;
@@ -219,11 +233,31 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* Check if any of the fuzzers requests finish of the fuzzing */
   for (size_t i = 0; i < fuzzers.size(); i++) {
-    bool need_to_finish_local = !fuzzers[i]->prepare_new_iteration();
-    need_to_finish |= need_to_finish_local;
-    if (need_to_finish_local)
+    int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
+    need_to_finish |= !need_to_finish_local;
+    if (need_to_finish_local == 0) {
       my_logger_g.logger->info("Fuzzer indexed {} requested finishing fuzzing",
                                i);
+      print_statistics();
+    }
+    // check if we need to schedule a hard reset
+    if (need_to_finish_local == 2) {
+      statistics_g.fuzz_lock = true;
+      bool pstop = protocol_stack->stop();
+      bool start = dut->start();
+      std::this_thread::sleep_for(std::chrono::seconds(10));
+      my_logger_g.logger->debug("WE ARE HERE NOW");
+      bool reset = dut->factoryreset();
+      bool pstart = protocol_stack->start();
+      helpers::chip_pair();
+      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
+      std::cout << "AND HERE WE ARE DONE!" << std::endl;
+      if (!(start && reset && pstart && pstop)) {
+        my_logger_g.logger->error("scheduling a hard reset failed!");
+        return false;
+      }
+      statistics_g.fuzz_lock = false;
+    }
   }
 
   need_to_finish |= (static_cast<int>(local_iteration) >=
@@ -246,23 +280,36 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       return false;
     } else {
       my_logger_g.logger->warn("Protocol stack restarted successfully");
+      // reset is performed in restart already!
+      // if (!protocol_stack->reset()) {
+      //   my_logger_g.logger->error(
+      //       "Protocol stack cannot be reconfigured after restart");
+      //   return false;
+      // }
+      my_logger_g.logger->warn("Protocol stack reconfigured successfully after restart");
     }
   }
 
   /* End of epoch means factoryreset of the dut */
-  if (statistics_g.epochs > epoch_cnt_) {
-    std::cout << "EPOCH DONE, DOING FR INSTEAD OF RESET" << std::endl;
-    /* every device has its custom way of entering pairing-mode */
-    bool reset = dut->factoryreset();
-    /* we don't want the br to interfere, so reset it */
-    bool p_reset = protocol_stack->reset();
-    /* then we re-pair the device */
-    std::cout << "PAIRING the device using CHIP" << std::endl;
-    helpers::chip_pair(fuzz_strategy_config_g.chip_device_name);
-    if (!reset || !p_reset) return false;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    epoch_cnt_ = statistics_g.epochs;
-  } else if (global_iteration > 1 && (need_to_restart_dut || !dut->reset())) {
+  // if (statistics_g.epochs > epoch_cnt_) {
+  //   std::cout << "EPOCH DONE, DOING FR INSTEAD OF RESET" << std::endl;
+  //   /* every device has its custom way of entering pairing-mode */
+  //   bool reset = dut->factoryreset();
+  //   /* we don't want the br to interfere, so reset it */
+  //   bool p_reset = protocol_stack->reset();
+  //   /* then we re-pair the device */
+  //   std::cout << "PAIRING the device using CHIP" << std::endl;
+  //   helpers::chip_pair();
+  //   if (!reset || !p_reset)
+  //     return false;
+  //   std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  //   /* reset the dut just in case */
+  //   dut->reset();
+
+  //   epoch_cnt_ = statistics_g.epochs;
+  // } else
+  if ((need_to_restart_dut || !dut->reset())) {
     my_logger_g.logger->warn("Failed to reset a DUT. Restarting...");
     if (!dut->restart()) {
       my_logger_g.logger->error("DUT cannot be restarted");
@@ -270,7 +317,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     } else {
       my_logger_g.logger->warn("DUT restarted successfully");
     }
-  } /* only restart when we are not in the first iteration, as factoryreset takes care of that */
+  } /* only restart when we are not in the first iteration, as factoryreset
+       takes care of that */
 
   my_logger_g.logger->debug("Number of mutated fields in this iteration: {}",
                             Base_Fuzzer::mutated_fields_num);

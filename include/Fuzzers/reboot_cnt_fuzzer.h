@@ -14,7 +14,7 @@ public:
   virtual ~RebootCntFuzzer() {}
   virtual bool init() override;
   virtual bool fuzz(Packet &packet) override;
-  virtual bool prepare_new_iteration() override;
+  virtual int prepare_new_iteration() override;
   virtual bool apply_predefined_patches(Packet &packet) override;
 
 private:

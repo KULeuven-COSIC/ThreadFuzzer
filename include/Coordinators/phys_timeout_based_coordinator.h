@@ -18,5 +18,5 @@ private:
     std::string name_ = "Physical Timeout-Based Coordinator";
     bool need_to_restart_protocol_stack = false;
     bool need_to_restart_dut = false;
-  int epoch_cnt_ = 0;
+  // int epoch_cnt_ = 0;
 };

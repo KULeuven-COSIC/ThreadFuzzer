@@ -1,0 +1,47 @@
+[2025-11-13 13:47:28.951] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-13 13:47:28.951] [logger] [debug] calling to the pipe
+[2025-11-13 13:47:28.965] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-13 13:47:28.983] [logger] [debug] command returned: 0
+[2025-11-13 13:47:28.983] [logger] [debug] [DUT]: EVE: waiting 5 seconds for stability
+[2025-11-13 13:47:43.984] [logger] [debug] [DUT]: EVE: FR
+[2025-11-13 13:47:43.984] [logger] [debug] calling to the pipe
+[2025-11-13 13:47:43.998] [logger] [debug] command: sudo sh -c "echo 'FR ON' > /dev/ttyUSB0"
+[2025-11-13 13:47:44.017] [logger] [debug] command returned: 0
+[2025-11-13 13:48:04.017] [logger] [debug] calling to the pipe
+[2025-11-13 13:48:04.031] [logger] [debug] command: sudo sh -c "echo 'FR OFF' > /dev/ttyUSB0"
+[2025-11-13 13:48:04.050] [logger] [debug] command returned: 0
+[2025-11-13 13:48:04.050] [logger] [debug] [DUT]: EVE: FR complete!
+[2025-11-13 13:48:14.050] [logger] [debug] BR application gets restarted
+[2025-11-13 13:48:14.051] [logger] [info] Starting MLE thread
+[2025-11-13 13:48:14.051] [logger] [info] Inited communication
+[2025-11-13 13:48:14.052] [logger] [debug] BR is stopped and factoryreset
+[2025-11-13 13:48:14.053] [logger] [debug] BR application is stopped
+[2025-11-13 13:48:18.058] [logger] [debug] BR is configured and running
+[2025-11-13 13:48:18.058] [logger] [debug] BR application is started
+[2025-11-13 13:48:18.058] [logger] [debug] BR application is restarted
+[2025-11-13 13:48:18.058] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-13 13:48:18.058] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-13 13:48:18.058] [logger] [debug] calling to the pipe
+[2025-11-13 13:48:18.072] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-13 13:48:18.091] [logger] [debug] command returned: 0
+[2025-11-13 13:48:21.091] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-13 13:48:21.092] [logger] [debug] calling to the pipe
+[2025-11-13 13:48:21.105] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-13 13:48:21.125] [logger] [debug] command returned: 0
+[2025-11-13 13:48:21.125] [logger] [debug] [DUT]: EVE: waiting 5 seconds for stability
+[2025-11-13 13:48:26.125] [logger] [info] restarts succesfull
+[2025-11-13 13:48:26.125] [logger] [info] starting communication
+[2025-11-13 13:48:26.125] [logger] [info] calling chip_pair
+[2025-11-13 13:49:08.577] [logger] [info] chip-pair succesfull!
+[2025-11-13 13:49:12.470] [logger] [info] COLLECTED RBT CNT: 2
+[2025-11-13 13:49:12.477] [logger] [debug] [DUT]: EVE: RESTARTING
+[2025-11-13 13:49:12.477] [logger] [debug] [DUT]: EVE: STOPPING
+[2025-11-13 13:49:12.477] [logger] [debug] calling to the pipe
+[2025-11-13 13:49:12.490] [logger] [debug] command: sudo sh -c "echo 'OFF' > /dev/ttyUSB0"
+[2025-11-13 13:49:12.508] [logger] [debug] command returned: 0
+[2025-11-13 13:49:15.509] [logger] [debug] [DUT]: EVE: STARTING
+[2025-11-13 13:49:15.509] [logger] [debug] calling to the pipe
+[2025-11-13 13:49:15.522] [logger] [debug] command: sudo sh -c "echo 'ON' > /dev/ttyUSB0"
+[2025-11-13 13:49:15.541] [logger] [debug] command returned: 0
+[2025-11-13 13:49:15.541] [logger] [debug] [DUT]: EVE: waiting 5 seconds for stability
+[2025-11-13 13:49:20.541] [logger] [info] ================ START OF A NEW FUZZING ITERATION 0 ================
