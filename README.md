@@ -21,6 +21,10 @@ chmod +x setup.sh && sudo ./setup.sh
 ```bash
 sudo docker build --pull --progress=plain -t thread_fuzzer:latest .
 ```
+> Building the container might cause the following error: 
+> "/usr/bin/ld: warning: ../libs/libpcap/libpcap.a(pcap-linux.o) has a section extending past end of file". 
+> This means that the libpcap.a file downloaded from the repo (in third-party/wdissector/libs/libpcap) is broken. 
+> It should be about 2.7MB big, not 3.3MB. Try downloading it on its own, or try getting the correct libpcap.a from the libpcap repo.
 
 #### 2. Run the Container Interactively
 
@@ -156,6 +160,7 @@ Run the following command before starting the fuzzer, regardless of whether you 
 ```bash
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 ```
+
 
 ### Working with WDissector
 

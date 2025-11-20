@@ -5,9 +5,9 @@
 #include "patch.h"
 
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 class RebootCntFuzzer : public RandomFuzzer {
 public:
@@ -18,19 +18,16 @@ public:
   virtual bool apply_predefined_patches(Packet &packet) override;
 
 private:
-  enum State {
-    PRE_INIT,
-    INIT,
-    NORMAL,
-    EPOCH_IT,
-    REFINEMENT
-  };
+  bool is_unique_crash();
+  bool mutation_contains(std::shared_ptr<Mutation> m1,
+                         std::vector<std::shared_ptr<Mutation>> mutations);
+  enum State { PRE_INIT, INIT, NORMAL, EPOCH_IT, REFINEMENT };
 
   bool refinement;
 
   State current_state;
 
-  //std::set<std::string> epoch_field_set;
+  // std::set<std::string> epoch_field_set;
   int it_cnt;
   bool first_epoch;
   bool epoch_it;
@@ -38,12 +35,11 @@ private:
 
   std::set<std::shared_ptr<Patch>> saved_patches;
   std::set<std::shared_ptr<Patch>> tried_patches;
-
-  bool left;
+  std::set<std::shared_ptr<Patch>> saved_crashes;
 
   int chip_check_diagnostics();
 
-  std::string ask_chip(const char * cmd);
+  std::string ask_chip(const char *cmd);
 
   void ring_dinnerbell();
 
@@ -52,6 +48,7 @@ private:
 
   void draw_saved_patches();
   std::vector<unsigned long int> to_draw_patch_list;
-  std::vector<unsigned long int> drawn_patch_list = std::vector<unsigned long int>(300);
+  std::vector<unsigned long int> drawn_patch_list =
+      std::vector<unsigned long int>(300);
   long unsigned int draw_size = 0;
-  };
+};
