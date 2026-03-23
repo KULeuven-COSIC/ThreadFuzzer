@@ -72,27 +72,27 @@ RUN apt install -y libspdlog-dev
 RUN apt install -y dbus-x11 python3 udo psmisc nano procps libcanberra-gtk-module libcanberra-gtk3-module bear ninja-build
 
 # Install spdlog
-RUN git clone https://github.com/crayzeewulf/libserial.git && cd libserial && ./compile.sh && cd build && make install
+RUN git clone https://github.com/crayzeewulf/libserial.git && cd libserial && ./compile.sh && cd build && make -j3 install
 
 # Set the correct path to shm config file
 ARG fuzz_config_file_path=/app/ThreadFuzzer/common/shm/config.json
 RUN sed -i "s|FUZZ_CONFIG_PATH_PLACEHOLDER|$fuzz_config_file_path|g" common/shm/fuzz_config.h
 
 # Install NLOHMANN JSON
-RUN git clone https://github.com/nlohmann/json.git && cd json && git checkout tags/v3.12.0 && mkdir -p build && cd build && cmake .. && make  && make install && ldconfig
-RUN cd common/shm/ && rm -rf build && mkdir -p build && cd build && cmake .. && make 
+RUN git clone https://github.com/nlohmann/json.git && cd json && git checkout tags/v3.12.0 && mkdir -p build && cd build && cmake .. && make -j3 && make install && ldconfig
+RUN cd common/shm/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3 
 
 # Install libzmq
 RUN apt install --no-install-recommends -y automake 
-RUN git clone https://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make  && make install && ldconfig
+RUN git clone https://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j3 && make install && ldconfig
 
 # Install cppzmq
-RUN git clone https://github.com/zeromq/cppzmq.git && cd cppzmq && mkdir -p build && cd build && cmake -DCPPZMQ_BUILD_TESTS=OFF .. && make  && make install
+RUN git clone https://github.com/zeromq/cppzmq.git && cd cppzmq && mkdir -p build && cd build && cmake -DCPPZMQ_BUILD_TESTS=OFF .. && make -j3 && make install
 
 # Build common dir
-RUN cd common/Coverage_Instrumentation/ && rm -rf build && mkdir -p build && cd build && cmake .. && make 
-RUN cd common/ZMQ/ZMQ_Client/ && rm -rf build && mkdir -p build && cd build && cmake .. && make 
-RUN cd common/ZMQ/ZMQ_Server/ && rm -rf build && mkdir -p build && cd build && cmake .. && make 
+RUN cd common/Coverage_Instrumentation/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3 
+RUN cd common/ZMQ/ZMQ_Client/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3
+RUN cd common/ZMQ/ZMQ_Server/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3
 
 COPY third-party/ ./third-party/
 
@@ -126,10 +126,10 @@ RUN apt install --no-install-recommends -y libglib2.0-dev libc-ares-dev qtbase5-
 
 # Build wireshark
 RUN apt install -y libgcrypt-dev flex libpcap-dev
-RUN cd third-party/wdissector/libs/wireshark && rm -rf build && mkdir -p build && cd build && cmake .. && make 
+RUN cd third-party/wdissector/libs/wireshark && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3 
 
 # Build WDissector
-RUN cd third-party/wdissector/ && rm -rf build && mkdir -p build && cd build && cmake .. && make 
+RUN cd third-party/wdissector/ && rm -rf build && mkdir -p build && cd build && cmake .. && make -j3 
 
 # RUN wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 18
 # # Set CMake compiler
@@ -166,7 +166,7 @@ RUN apt install -y python3.11 python3.11-dev python3.11-venv virtualenv && virtu
 
 RUN apt install -y pip python3.11-venv && git clone --depth=1 https://github.com/project-chip/connectedhomeip.git && cd connectedhomeip && ./scripts/checkout_submodules.py --shallow --recursive --platform  linux 
 
-RUN apt install -y curl openssl libssl-dev sudo
+RUN apt install -y curl openssl libssl-dev sudo libevent-dev
 
 RUN . venv/bin/activate && cd connectedhomeip && bash scripts/bootstrap.sh && mkdir out 
 
@@ -191,6 +191,8 @@ COPY scripts/ ./scripts/
 COPY bin/ ./bin/
 COPY coverage_log/ ./coverage_log/
 
+COPY run_experiment.sh ./
 
 RUN chmod +x scripts/*.sh
+RUN chmod +x run_experiment.sh
 ENTRYPOINT ["scripts/docker_entrypoint.sh"]

@@ -17,11 +17,12 @@ Phys_Timeout_Based_Coordinator::Phys_Timeout_Based_Coordinator() {
   if (fuzz_strategy_config_g.use_coverage_logging ||
       fuzz_strategy_config_g.use_coverage_feedback)
     coverage_trackers.emplace_back(std::make_unique<Coverage_Tracker>(
-        "DUT_COVERAGE_TRACKER", "tcp://127.0.0.1:5577"));
-  if (fuzz_strategy_config_g.use_coverage_logging ||
-      fuzz_strategy_config_g.use_coverage_feedback)
-    coverage_trackers.emplace_back(std::make_unique<Coverage_Tracker>(
-        "OTBR_COVERAGE_TRACKER", "tcp://127.0.0.1:5567"));
+        "PG_COVERAGE_TRACKER", "tcp://127.0.0.1:5567"));
+  /* no coverage available for real dut */
+  // if (fuzz_strategy_config_g.use_coverage_logging ||
+  //     fuzz_strategy_config_g.use_coverage_feedback)
+  //   coverage_trackers.emplace_back(std::make_unique<Coverage_Tracker>(
+  //       "DUT_COVERAGE_TRACKER", "tcp://127.0.0.1:5577"));
 }
 
 bool Phys_Timeout_Based_Coordinator::init(
@@ -183,8 +184,12 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   /* Update the coverage information */
   try {
     if (fuzz_strategy_config_g.use_coverage_logging ||
-        fuzz_strategy_config_g.use_coverage_feedback)
+        fuzz_strategy_config_g.use_coverage_feedback) {
       update_coverage_information();
+      /* Update the probabilities of the fields */
+      if (fuzz_strategy_config_g.use_coverage_feedback)
+        update_probabilities(iteration_result.was_new_coverage_found);
+    }
   } catch (std::exception &ex) {
     my_logger_g.logger->warn("Exception during the coverage fetch: {}",
                              ex.what());
@@ -196,9 +201,16 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
   }
 
-  /* Update the probabilities of the fields */
-  if (fuzz_strategy_config_g.use_coverage_feedback)
-    update_probabilities(iteration_result.was_new_coverage_found);
+  Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(Base_Fuzzer::mutated_fields_num);
+
+  if (Base_Fuzzer::mutated_fields_num == 0) {
+    statistics_g.empty_iterations++;
+  }
+
+  my_logger_g.logger->debug("Number of mutated fields in this iteration: {}", Base_Fuzzer::mutated_fields_num);
+  Base_Fuzzer::mutated_fields.clear();
+  Base_Fuzzer::mutated_fields_num = 0;
+
 
   wdissector_mutex.unlock();
 

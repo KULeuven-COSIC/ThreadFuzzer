@@ -3,23 +3,25 @@
         "REBOOT_CNT_FUZZING"
     ],
     "epoch_size": 1,
-    "use_coverage_logging": false, 
-    "coverage_log_path": "coverage_log/random_fuzzing_no_cov_k_3_iter_3s/",
-    "use_coverage_feedback": false,
-    "init_prob_mult_factor": 2,
-    "// init_prob_mult_factor": 0.5,
     "mutation_prob": 100,
     "skip_prob": 0,
-    "total_iterations": 10000,
+    "injection_prob": 0,
+    "total_iterations": 500,
     "fields_not_to_fuzz": [
         "mle.sec_suite"
     ],
     "chip_recommissioning_step": true,
     "use_existing_seeds": false,
     "// seed_paths": [
-        "seeds/crash_seeds/OpenThread_DUT/Crash_1/crash_seed_1_inj.json"
+        "seeds/crash_seeds/Crash_1/crash_seed_1_mut.json"
     ],
-    "// seed_paths": [ "seeds/hang_seeds/hang_seed_1_inj.json"],
-    "// seed_paths": [ "../Virtual_ThreadFuzzer/crash_seed_1_mut.json"]
+    "// seed_paths": [
+    	"seeds/crash_seeds/Crash_9/crash_seed_9_mut.json"
+    ],
+    "use_coverage_logging": true,
+    "use_coverage_feedback": true,
+    "use_probability_resets": true,
+    "beta": 4,
+    "init_prob_mult_factor": 2
 }
 

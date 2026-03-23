@@ -187,6 +187,7 @@ int RebootCntFuzzer::prepare_new_iteration() {
       // NOTE: if this was merely a check -> return!!
       if (fuzz_strategy_config_g.use_existing_seeds) {
         std::cout << "CRASH CHECK SUCCESFUL!" << std::endl;
+        my_logger_g.logger->warn("crash found!");
         statistics_g.dut_crash_counter++;
         current_state = State::NORMAL;
         break;
@@ -201,8 +202,10 @@ int RebootCntFuzzer::prepare_new_iteration() {
         std::cout << "RBT CNT NOW " << current_reboot_count << std::endl;
       } else { // NOT unique crash
         std::cout << "CRASH: BUT PROLLY NOT UNIQUE" << std::endl;
-        current_state = State::NORMAL;
+        my_logger_g.logger->warn("crash but prolly not unique!");
+	current_state = State::NORMAL;
         statistics_g.dut_nonunique_crash_counter++;
+      	
       }
 
     }

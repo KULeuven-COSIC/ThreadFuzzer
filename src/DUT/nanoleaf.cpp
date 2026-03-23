@@ -39,6 +39,8 @@ bool Nanoleaf::stop() {
 
 bool Nanoleaf::restart() {
     restart(timers_config_g.tapo_restart_wait_time_s);
+    // factoryreset();
+    // restart(timers_config_g.tapo_restart_wait_time_s);
     return true;
 }
 
