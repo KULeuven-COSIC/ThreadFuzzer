@@ -306,7 +306,11 @@ double Base_Coordinator::coverage_formula_1(double beta) {
     if (Base_Fuzzer::mutated_fields_num == 0) return 0.0;
     double score = 0;
 
-    double normalized_value = std::min(1.0, (double)local_iteration / 2000);
+    usize lit_adjusted = local_iteration;
+    if (fuzz_strategy_config_g.epoch_size != 0)
+      lit_adjusted = lit_adjusted - lit_adjusted / fuzz_strategy_config_g.epoch_size;
+
+    double normalized_value = std::min(1.0, (double) lit_adjusted / 2000);
     double cov_formula = beta * normalized_value;
 
     if (iteration_result.was_new_coverage_found) score += cov_formula / Base_Fuzzer::mutated_fields_num;

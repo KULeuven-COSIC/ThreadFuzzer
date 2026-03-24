@@ -85,7 +85,7 @@ public:
 
   bool use_refinement = false;
 
-  int epoch_size = 20;
+  int epoch_size = 0;
 
   /* TLV inserter options */
   double adjust_TLV_lengths_prob = 0.5; // Adjust length of the parent TLVs probability
