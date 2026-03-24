@@ -211,8 +211,12 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   Base_Fuzzer::mutated_fields.clear();
   Base_Fuzzer::mutated_fields_num = 0;
 
-
-  wdissector_mutex.unlock();
+  if (fuzz_strategy_config_g.use_probability_resets && Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
+      /* Reset the probabilities. This is done by deleting all the packets in the database.*/
+      Base_Fuzzer::mut_field_num_tracker.reset();
+      my_logger_g.logger->info("Resetting the probabilities");
+      Base_Fuzzer::packet_field_tree_database.clear();
+  }
 
   if (need_to_restart_dut) {
     statistics_g.dut_crash_counter++;
@@ -266,7 +270,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       std::cout << "AND HERE WE ARE DONE!" << std::endl;
       if (!(start && reset && pstart && pstop)) {
         my_logger_g.logger->error("scheduling a hard reset failed!");
-        return false;
+        need_to_finish = true;
+        break;
       }
       statistics_g.fuzz_lock = false;
     }
@@ -277,6 +282,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                           ? INT_MAX
                           : fuzz_strategy_config_g.total_iterations));
 
+  wdissector_mutex.unlock();
+  
   /* Finish the fuzzing if needed */
   if (need_to_finish) {
     my_logger_g.logger->info("Finishing the fuzzing");
@@ -332,10 +339,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   } /* only restart when we are not in the first iteration, as factoryreset
        takes care of that */
 
-  my_logger_g.logger->debug("Number of mutated fields in this iteration: {}",
-                            Base_Fuzzer::mutated_fields_num);
-  Base_Fuzzer::mutated_fields.clear();
-  Base_Fuzzer::mutated_fields_num = 0;
   need_to_restart_protocol_stack = false;
   need_to_restart_dut = false;
   stop_fuzzing_iteration = false;
