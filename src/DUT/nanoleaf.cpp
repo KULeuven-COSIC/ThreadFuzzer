@@ -28,19 +28,37 @@ Nanoleaf::~Nanoleaf() {
 }
 
 bool Nanoleaf::start() {
-    power_on();
-    return true;
+    bool r = echo_to_pipe("on");
+    if (r) {
+      std::cout << "[DUT]: NANOLEAF: started succesfully..." << std::endl;
+      std::cout << "[DUT]: waiting 10 seconds for stability" << std::endl;
+      my_logger_g.logger->debug("[DUT]: NANOLEAF: waiting for 10 seconds for stability");
+      std::this_thread::sleep_for(std::chrono::seconds(10));
+      std::cout << "[DUT]: DonE" << std::endl;
+    }
+    return r;
 }
 
 bool Nanoleaf::stop() {
-    power_off();
-    return true;
+   my_logger_g.logger->debug("[DUT]: NANOLEAF: STOPPING"); 
+   return echo_to_pipe("off");
 }
 
 bool Nanoleaf::restart() {
-    restart(timers_config_g.tapo_restart_wait_time_s);
-    // factoryreset();
-    // restart(timers_config_g.tapo_restart_wait_time_s);
+    my_logger_g.logger->debug("[DUT]: NANOLEAF: RESTARTING");
+    std::cerr << "[DUT]: NANOLEAF: RESTARTING" << std::endl;
+    if (!stop())
+	    return false;
+    for (int i = 0; i < 3; i++) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::cout << "[DUT]: NANOLEAF powered off for: " << i + 1 << std::endl;
+    }
+    if (!start())
+      return false;
+    
+    factoryreset();
+    std::cout << "[DUT]: NANOLEAF RESTART SUCCES" << std::endl;
+    
     return true;
 }
 
@@ -51,7 +69,20 @@ bool Nanoleaf::is_running() {
 // called after each iteration... (no touch-e!!)
 bool Nanoleaf::reset()
 {
-    return restart();
+    my_logger_g.logger->debug("[DUT]: NANOLEAF: RESETTING");
+    std::cerr << "[DUT]: NANOLEAF RESETTING " << std::endl;
+    if (!stop())
+      return false;
+    // std::this_thread::sleep_for(std::chrono::seconds(3));
+    for (int i = 0; i < timers_config_g.tapo_restart_wait_time_s; i++) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::cout << "[DUT]: NANOLEAF powered off for: " << i + 1 << std::endl;
+    }
+    if (!start())
+      return false;
+    std::cout << "[DUT]: NANOLEAF RESET SUCCESS" << std::endl;
+    return true;
+  
 }
 
 // only called at the start (normally)
@@ -59,12 +90,22 @@ bool Nanoleaf::factoryreset()
 {
     std::cout << "[NANOLEAF]: FACTORYRESET" << std::endl;
     std::cout << "going: ";
+    bool tr = true;
     for (int i = 0; i < 5; i++) {
-      restart(1);
+      bool pof = echo_to_pipe("off");
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::cout << "WAITED fOR " << timers_config_g.tapo_restart_wait_time_s << std::endl;
+      bool pon = echo_to_pipe("on");
+      tr = tr && pof && pon;
       std::cout << i << " ";
     }
     std::cout << std::endl;
-    return true;
+    std::cout << "[NANOLEAF]: FR COMPLETE" << std::endl;
+    if (!tr)
+      std::cout << "[DUT]: NANOLEAF: failure detected during restarting!" << std::endl;
+    std::cout << "[DUT]: [NANOLEAF]: give NANOLEAF 20 seconds to settle" << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(20));
+    return tr;
 }
 
 void Nanoleaf::power_on() {
