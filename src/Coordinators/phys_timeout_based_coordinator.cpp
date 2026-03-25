@@ -247,6 +247,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   std::cout << "PRINTED STATS" << std::endl;
 
+  bool need_to_perform_clean_attach = false;
   /* Check if any of the fuzzers requests finish of the fuzzing */
   for (size_t i = 0; i < fuzzers.size(); i++) {
     int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
@@ -258,22 +259,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
     // check if we need to schedule a hard reset
     if (need_to_finish_local == 2) {
-      statistics_g.fuzz_lock = true;
-      bool pstop = protocol_stack->stop();
-      bool start = dut->start();
-      std::this_thread::sleep_for(std::chrono::seconds(10));
-      my_logger_g.logger->debug("WE ARE HERE NOW");
-      bool reset = dut->factoryreset();
-      bool pstart = protocol_stack->start();
-      helpers::chip_pair(); // And what if it fails?
-      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
-      std::cout << "AND HERE WE ARE DONE!" << std::endl;
-      if (!(start && reset && pstart && pstop)) {
-        my_logger_g.logger->error("scheduling a hard reset failed!");
-        need_to_finish = true;
-        break;
-      }
-      statistics_g.fuzz_lock = false;
+      need_to_perform_clean_attach = true;
     }
   }
 
@@ -283,6 +269,27 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                           : fuzz_strategy_config_g.total_iterations));
 
   wdissector_mutex.unlock();
+
+  if (need_to_perform_clean_attach) {
+    statistics_g.fuzz_lock = true;
+    bool pstop = protocol_stack->stop();
+    bool start = dut->start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    my_logger_g.logger->debug("WE ARE HERE NOW");
+    bool reset = dut->factoryreset();
+    bool pstart = protocol_stack->start();
+    if (helpers::chip_pair() == 0) {
+      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
+      std::cout << "AND HERE WE ARE DONE!" << std::endl;
+      if (!(start && reset && pstart && pstop)) {
+        my_logger_g.logger->error("scheduling a hard reset failed!");
+        need_to_finish = true;
+      }
+      statistics_g.fuzz_lock = false;
+    } else {
+      need_to_finish = true;
+    }
+  }
   
   /* Finish the fuzzing if needed */
   if (need_to_finish) {

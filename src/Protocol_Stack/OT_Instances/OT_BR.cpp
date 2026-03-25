@@ -84,6 +84,7 @@ bool OT_BR::start() {
   //                             cli_name_);
   //   return false;
   // }
+  std::this_thread::sleep_for(std::chrono::seconds(2));
   std::system("ot-ctl factoryreset");
   std::this_thread::sleep_for(std::chrono::seconds(2));
   std::cout << "BR: factoryreset executed" << std::endl;
