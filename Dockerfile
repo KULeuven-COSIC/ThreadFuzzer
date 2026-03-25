@@ -175,7 +175,9 @@ RUN . venv/bin/activate && cd connectedhomeip && bash scripts/activate.sh &&  ba
 ################################################################ CLEAN ################################################################
 
 # apply patch to the server script for the mdns and webgui:
+COPY fix_mdns_webgui.patch ./
 RUN cd third-party/ot-br-posix && git apply --ignore-whitespace ../../fix_mdns_webgui.patch
+
 
 # Build ThreadFuzzer
 COPY src/ ./src/
