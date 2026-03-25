@@ -265,7 +265,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       my_logger_g.logger->debug("WE ARE HERE NOW");
       bool reset = dut->factoryreset();
       bool pstart = protocol_stack->start();
-      helpers::chip_pair();
+      helpers::chip_pair(); // And what if it fails?
       statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
       std::cout << "AND HERE WE ARE DONE!" << std::endl;
       if (!(start && reset && pstart && pstop)) {

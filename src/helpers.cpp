@@ -651,11 +651,17 @@ int chip_check_diagnostics() {
   //                .*\"")
   //           .substr(21)
   //           .c_str());
-  int current_reboot_count =
-      std::stoi(ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
+  int current_reboot_count;
+  try {
+    current_reboot_count = std::stoi(ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
                          "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
                     .substr(13)
                     .c_str());
+  } catch (std::exception& ex) {
+    std::cerr << "Exception in the chip_check_diagnostics(): ";
+    std::cerr << ex.what() << std::endl;
+    throw std::runtime_error("");
+  }
   std::cout << "diag count: " << std::to_string(current_reboot_count)
             << std::endl;
   my_logger_g.logger->info("COLLECTED RBT CNT: {}", current_reboot_count);
@@ -706,12 +712,14 @@ std::string ask_chip(const char *cmd) {
                                                });
 
   if (!pipe) {
+    std::cerr << "popen() failed!" << std::endl;
     throw std::runtime_error("popen() failed!");
   }
   while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) !=
          nullptr) {
     result += buffer.data();
   }
+  std::cout << "Ask chip result: " << result << std::endl;
   return result;
 }
 
