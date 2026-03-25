@@ -1,0 +1,94 @@
+From dda1bb3a565ce0fe7864aa8b8a8731eed44125e1 Mon Sep 17 00:00:00 2001
+From: testt est <test@test.com>
+Date: Wed, 25 Mar 2026 13:51:53 +0000
+Subject: [PATCH 2/2] server_fix
+
+---
+ script/server | 60 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
+
+diff --git a/script/server b/script/server
+index 09ec07f1..9e896f70 100755
+--- a/script/server
++++ b/script/server
+@@ -44,23 +44,23 @@ startup()
+     nat64_start || die 'Failed to start NAT64!'
+     dns64_start || die 'Failed to start DNS64!'
+     firewall_start || die 'Failed to start firewall'
+-    # if have systemctl; then
+-    #     systemctl is-active rsyslog || sudo systemctl start rsyslog || die 'Failed to start rsyslog!'
+-    #     systemctl is-active dbus || sudo systemctl start dbus || die 'Failed to start dbus!'
+-    #     systemctl is-active avahi-daemon || sudo systemctl start avahi-daemon || die 'Failed to start avahi!'
+-    #     without WEB_GUI || systemctl is-active otbr-web || sudo systemctl start otbr-web || die 'Failed to start otbr-web!'
+-    #     systemctl is-active otbr-agent || sudo systemctl start otbr-agent || die 'Failed to start otbr-agent!'
+-    # elif have service; then
+-        # sudo service rsyslog status || sudo service rsyslog start || die 'Failed to start rsyslog!'
+-        # sudo service dbus status || sudo service dbus start || die 'Failed to start dbus!'
++    # if have systemctl; then													# THREADFUZZ: dont use systemctl
++    #     systemctl is-active rsyslog || sudo systemctl start rsyslog || die 'Failed to start rsyslog!'                         # THREADFUZZ: dont use systemctl
++    #     systemctl is-active dbus || sudo systemctl start dbus || die 'Failed to start dbus!'                                  # THREADFUZZ: dont use systemctl
++    #     systemctl is-active avahi-daemon || sudo systemctl start avahi-daemon || die 'Failed to start avahi!'                 # THREADFUZZ: dont use systemctl
++    #     without WEB_GUI || systemctl is-active otbr-web || sudo systemctl start otbr-web || die 'Failed to start otbr-web!'   # THREADFUZZ: dont use systemctl
++    #     systemctl is-active otbr-agent || sudo systemctl start otbr-agent || die 'Failed to start otbr-agent!'                # THREADFUZZ: dont use systemctl
++    # elif have service; then                                                                                                   # THREADFUZZ: dont use systemctl
++        # sudo service rsyslog status || sudo service rsyslog start || die 'Failed to start rsyslog!'                           # THREADFUZZ: use custom rsyslog 
++        # sudo service dbus status || sudo service dbus start || die 'Failed to start dbus!'                                    # THREADFUZZ: use dbus from the host
+         # Tolerate the mdns failure as it is installed for only CI docker.
+-        sudo service mdns status || sudo service mdns start || echo "service mdns is not available!"
++        sudo service mdns start || echo "service mdns is not available!"
+         sudo service avahi-daemon status || sudo service avahi-daemon start || die 'Failed to start avahi!'
+         sudo service otbr-agent status || sudo service otbr-agent start || die 'Failed to start otbr-agent!'
+-        without WEB_GUI || sudo service otbr-web status || sudo service otbr-web start || die 'Failed to start otbr-web!'
+-    # else
+-    #     die 'Unable to find service manager. Try script/console to start in console mode!'
+-    # fi
++        # without WEB_GUI || sudo service otbr-web status || sudo service otbr-web start || die 'Failed to start otbr-web!'	# THREADFUZZ: dont use the gui
++    # else                                                                                                                      # THREADFUZZ: dont use systemctl
++    #     die 'Unable to find service manager. Try script/console to start in console mode!'                                    # THREADFUZZ: dont use systemctl
++    # fi                                                                                                                        # THREADFUZZ: dont use systemctl
+     # shellcheck source=/dev/null
+     . "$AFTER_HOOK"
+ }
+@@ -70,22 +70,22 @@ shutdown()
+     nat64_stop || echo 'Failed to stop NAT64!'
+     dns64_stop || echo 'Failed to stop DNS64!'
+     firewall_stop || echo 'Failed to stop firewall'
+-    # if have systemctl; then
+-    #     systemctl is-active rsyslog && sudo systemctl stop rsyslog || echo 'Failed to stop rsyslog!'
+-    #     systemctl is-active dbus && sudo systemctl stop dbus || echo 'Failed to stop dbus!'
+-    #     systemctl is-active avahi-daemon && sudo systemctl stop avahi-daemon || echo 'Failed to stop avahi!'
+-    #     without WEB_GUI || systemctl is-active otbr-web && sudo systemctl stop otbr-web || echo 'Failed to stop otbr-web!'
+-    #     systemctl is-active otbr-agent && sudo systemctl stop otbr-agent || echo 'Failed to stop otbr-agent!'
+-    # elif have service; then
+-        # sudo service rsyslog status && sudo service rsyslog stop || echo 'Failed to stop rsyslog!'
+-        # sudo service dbus status && sudo service dbus stop || echo 'Failed to stop dbus!'
+-        sudo service mdns status && sudo service mdns stop || echo "service mdns is not available!"
+-        sudo service avahi-daemon status && sudo service avahi-daemon stop || echo 'Failed to stop avahi!'
+-        sudo service otbr-agent status && sudo service otbr-agent stop || echo 'Failed to stop otbr-agent!'
+-        without WEB_GUI || sudo service otbr-web status && sudo service otbr-web stop || echo 'Failed to stop otbr-web!'
+-    # else
+-    #     echo 'Unable to find service manager. Try script/console to stop in console mode!'
+-    # fi
++    # if have systemctl; then													# THREADFUZZ: dont use systemctl
++    #     systemctl is-active rsyslog && sudo systemctl stop rsyslog || echo 'Failed to stop rsyslog!'				# THREADFUZZ: dont use systemctl
++    #     systemctl is-active dbus && sudo systemctl stop dbus || echo 'Failed to stop dbus!'					# THREADFUZZ: dont use systemctl
++    #     systemctl is-active avahi-daemon && sudo systemctl stop avahi-daemon || echo 'Failed to stop avahi!'			# THREADFUZZ: dont use systemctl
++    #     without WEB_GUI || systemctl is-active otbr-web && sudo systemctl stop otbr-web || echo 'Failed to stop otbr-web!'	# THREADFUZZ: dont use systemctl
++    #     systemctl is-active otbr-agent && sudo systemctl stop otbr-agent || echo 'Failed to stop otbr-agent!'			# THREADFUZZ: dont use systemctl
++    # elif have service; then													# THREADFUZZ: dont use systemctl
++        # sudo service rsyslog status && sudo service rsyslog stop || echo 'Failed to stop rsyslog!'				# THREADFUZZ: use custom rsyslog 
++        # sudo service dbus status && sudo service dbus stop || echo 'Failed to stop dbus!'					# THREADFUZZ: use dbus from the host
++        sudo service mdns stop || echo "service mdns is not available!"								
++        sudo service avahi-daemon status && sudo service avahi-daemon stop || echo 'Failed to stop avahi!'			
++        sudo service otbr-agent status && sudo service otbr-agent stop || echo 'Failed to stop otbr-agent!'			
++        # without WEB_GUI || sudo service otbr-web status && sudo service otbr-web stop || echo 'Failed to stop otbr-web!'	# THREADFUZZ: dont use the gui
++    # else															# THREADFUZZ: dont use systemctl
++    #     echo 'Unable to find service manager. Try script/console to stop in console mode!'					# THREADFUZZ: dont use systemctl
++    # fi															# THREADFUZZ: dont use systemctl
+ }
+ 
+ main()
+-- 
+2.34.1
+
+
