@@ -177,7 +177,9 @@ int RebootCntFuzzer::prepare_new_iteration() {
           (1 +
            fuzz_strategy_config_g.epoch_size); // || chip_check_diagnostics();
     }
-    std::cout << "rbt_cnt diff: " << current_reboot_count - reboot_count
+    std::cout << "rbt_cnt diff: "
+              << (current_reboot_count - reboot_count) -
+                     (1 + fuzz_strategy_config_g.epoch_size)
               << std::endl;
 
     // NOTE: reboot during epoch, from NORMAL to REFINEMENT
@@ -203,9 +205,8 @@ int RebootCntFuzzer::prepare_new_iteration() {
       } else { // NOT unique crash
         std::cout << "CRASH: BUT PROLLY NOT UNIQUE" << std::endl;
         my_logger_g.logger->warn("crash but prolly not unique!");
-	current_state = State::NORMAL;
+        current_state = State::NORMAL;
         statistics_g.dut_nonunique_crash_counter++;
-      	
       }
 
     }
@@ -341,6 +342,7 @@ int RebootCntFuzzer::prepare_new_iteration() {
       hard_reset = true;
     }
 
+    my_logger_g.logger->info("OLD REBOOTS: {}", reboot_count);
     reboot_count = current_reboot_count;
     // statistics_g.dut_reboot_counter = current_reboot_count;
 
@@ -528,8 +530,9 @@ void RebootCntFuzzer::draw_saved_patches() {
   std::cout << "|" << std::endl;
 }
 
-bool RebootCntFuzzer::mutation_contains(std::shared_ptr<Mutation> m1,
-                       std::vector<std::shared_ptr<Mutation>> mutations) {
+bool RebootCntFuzzer::mutation_contains(
+    std::shared_ptr<Mutation> m1,
+    std::vector<std::shared_ptr<Mutation>> mutations) {
   for (auto m2 : mutations) {
     if ((*m1).field->field_name == (*m2).field->field_name &&
         (*m1).field->index == (*m2).field->index) {
@@ -554,7 +557,7 @@ bool RebootCntFuzzer::is_unique_crash() {
       // TODO: check if command-type, field name and field value match!
       if (sp->get_packet_summary_short() == cp->get_packet_summary_short() &&
           std::any_of(sp->get_mutations().begin(), sp->get_mutations().end(),
-                      [cp,this](std::shared_ptr<Mutation> m) {
+                      [cp, this](std::shared_ptr<Mutation> m) {
                         return mutation_contains(m, cp->get_mutations());
                       })) {
         interesting = false;
