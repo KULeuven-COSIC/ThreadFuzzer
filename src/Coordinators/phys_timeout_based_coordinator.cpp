@@ -305,7 +305,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   /* NOTE: here we'll fetch the reboot count outside the lock, as it otherwise
    * breaks */
   if (need_to_perform_clean_attach) {
-    statistics_g.fuzz_lock = true;
     /* fetch the reboot count */
     std::cout << "[COOR]: fetchin current_reboot_count"  << std::endl;
     my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
@@ -339,7 +338,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         my_logger_g.logger->error("scheduling a hard reset failed!");
         need_to_finish = true;
       }
-      statistics_g.fuzz_lock = false;
     } else {
       need_to_finish = true;
     }

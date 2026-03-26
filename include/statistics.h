@@ -5,7 +5,6 @@
 #include <string>
 
 struct Statistics {
-  bool fuzz_lock = false;
   size_t hang_counter = 0;
   size_t crash_counter = 0;
   size_t empty_iterations = 0;
