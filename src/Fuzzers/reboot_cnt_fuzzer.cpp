@@ -52,32 +52,32 @@ bool RebootCntFuzzer::init() {
   ring_dinnerbell();
   // create the fuzzer we want to call during the epochs
   it_cnt = 0;
-  refinement = false;
+  // refinement = false;
   // first_epoch = true;
   // epoch_it = false; // start with a reboot-cnt
   if (fuzz_strategy_config_g.chip_recommissioning_step) {
     // automatic factory-reset for Nanoleaf lightbulb
-    if (main_config_g.dut_name == DUT_NAME::NANOLEAF ||
-        main_config_g.dut_name == DUT_NAME::EVE_SENSOR) {
-      std::cout << "THE DUT SHOULD BE F_RESET HERE" << std::endl;
-      // NOTE: problem... reset is not controllable from here?
-      // so reset has to be performed somewhere else...
-      // TODO: need to do the same for factoryreset
-    } else {
-      // all other devices, let user perform the factory-reset
-      std::cout << "PRE-INIT step, make sure to put device in pairing mode..."
-                << std::endl;
-      std::this_thread::sleep_for(std::chrono::seconds(3));
-    }
+    // if (main_config_g.dut_name == DUT_NAME::NANOLEAF ||
+    //     main_config_g.dut_name == DUT_NAME::EVE_SENSOR) {
+    //   std::cout << "THE DUT SHOULD BE F_RESET HERE" << std::endl;
+    //   // NOTE: problem... reset is not controllable from here?
+    //   // so reset has to be performed somewhere else...
+    //   // TODO: need to do the same for factoryreset
+    // } else {
+    //   // all other devices, let user perform the factory-reset
+    //   std::cout << "PRE-INIT step, make sure to put device in pairing mode..."
+    //             << std::endl;
+    //   std::this_thread::sleep_for(std::chrono::seconds(3));
+    // }
 
-    std::cout << "PAIRING the device using CHIP" << std::endl;
-    /* crash if chip_pair fails */
-    if (helpers::chip_pair())
-      return false;
+    // std::cout << "PAIRING the device using CHIP" << std::endl;
+    // /* crash if chip_pair fails */
+    // if (helpers::chip_pair())
+    //   return false;
 
-    reboot_count = helpers::chip_check_diagnostics();
-    statistics_g.dut_reboot_counter = reboot_count;
-    std::cout << "FIRST RBT CNT: " << reboot_count << std::endl;
+    // reboot_count = helpers::chip_check_diagnostics();
+    // statistics_g.dut_reboot_counter = reboot_count;
+    // std::cout << "FIRST RBT CNT: " << reboot_count << std::endl;
 
     current_state = State::NORMAL; /* no need to fetch the initial count, it
                                       will be zero anyway */

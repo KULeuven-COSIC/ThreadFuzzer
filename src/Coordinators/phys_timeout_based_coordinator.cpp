@@ -2,6 +2,7 @@
 
 #include "Communication/shm_layer_communication.h"
 #include "Configs/Fuzzing_Settings/timers_config.h"
+#include "DUT/DUT_names.h"
 #include "helpers.h"
 #include "my_logger.h"
 #include "statistics.h"
@@ -60,6 +61,23 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
     dut->stop();
     protocol_stack->reset();
     dut->start();
+
+    if (fuzz_strategy_config_g.chip_recommissioning_step) {
+      if (main_config_g.dut_name == DUT_NAME::NANOLEAF ||
+          main_config_g.dut_name == DUT_NAME::EVE_SENSOR) {
+        std::cout << "[COOR]: assumption that DUT is in pairing mode" << std::endl;
+      } else {
+        std::cout << "[COOR]: giving you 60secs to put DUT in pairing mode" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(60));
+      }
+
+      if (helpers::chip_pair())
+        terminate_fuzzing();
+
+      reboot_count = helpers::chip_check_diagnostics();
+      statistics_g.dut_reboot_counter = reboot_count;
+      std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl; 
+    }
 
     while (SHM_Layer_Communication::is_active) {
 
