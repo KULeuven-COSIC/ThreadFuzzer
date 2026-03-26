@@ -38,8 +38,11 @@ echo "[INFO]: <<< syslog"
 
 # build the project here, makes incremental changes easier
 # when sharing build/ as a volume to the container
-cd build && cmake .. && bear -- make -j15;
+cd build && cmake .. && bear -- make -j3;
 cd ..
+
+# for Nanoleaf
+source venv/bin/activate && python3 scripts/tapo_plug_session.py &
 
 # echo "[INFO]: starting otbr"
 # ./third-party/ot-br-posix/script/server

@@ -280,6 +280,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
    * breaks */
   if (need_to_perform_clean_attach) {
     /* fetch the reboot count */
+    std::cout << "[COOR]: fetchin current_reboot_count"  << std::endl;
+    my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
     int current_reboot_count = helpers::chip_check_diagnostics();
     std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
     bool spurrious_reboot = (current_reboot_count - reboot_count) !=

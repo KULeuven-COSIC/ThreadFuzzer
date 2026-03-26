@@ -2,7 +2,7 @@
     "protocol_stack_name": "OPENTHREAD",
     "coordinator_name": "PHYS_TIMEOUT_BASED",
     "packet_generator_name": "OT_BR",
-    "dut_name": "EVE_SENSOR",
+    "dut_name": "NANOLEAF",
     "rcp_name": "RCP_DUMMY",
     "asan_log_path": "asan_log",
     "use_monitor": true,
@@ -10,8 +10,8 @@
     "gen_log_file": "gen_log_output.txt",
     "technical_config_path": "configs/Fuzzing_Settings/phys_technical_config.json",
     "timers_config_path": "configs/Fuzzing_Settings/timers_config.json",
-    "chip_passcode": "80049749",
-    "chip_discriminator": "3070",
+    "chip_passcode": "2431657",
+    "chip_discriminator": "2912",
     "pg_cli_args": [
         "ifconfig up",
         "thread start"
