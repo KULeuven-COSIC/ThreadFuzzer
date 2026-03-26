@@ -38,7 +38,7 @@ echo "[INFO]: <<< syslog"
 
 # build the project here, makes incremental changes easier
 # when sharing build/ as a volume to the container
-cd build && cmake .. && make -j3;
+cd build && cmake .. && bear -- make -j15;
 cd ..
 
 # echo "[INFO]: starting otbr"
@@ -54,6 +54,6 @@ echo "[INFO]: dropping into shell";
 # in case we're testing the NANOLEAF lightbulb
 # chmod 777 /tmp/tapo_pipe && chown root /tmp/tapo_pipe;
 
-# exec /bin/bash
+exec /bin/bash
 # here we 
-exec /bin/bash -c ./run_experiment.sh && exit
+# exec /bin/bash -c ./run_experiment.sh && exit

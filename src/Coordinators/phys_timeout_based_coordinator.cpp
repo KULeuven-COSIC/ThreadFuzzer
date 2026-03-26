@@ -172,6 +172,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   global_iteration++;
   local_iteration++;
 
+  /* NOTE: from here no packets can flow! */
   wdissector_mutex.lock();
 
   /* check whether the device has crashed */
@@ -201,21 +202,25 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
   }
 
-  Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(Base_Fuzzer::mutated_fields_num);
+  Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(
+      Base_Fuzzer::mutated_fields_num);
 
   if (Base_Fuzzer::mutated_fields_num == 0) {
     statistics_g.empty_iterations++;
   }
 
-  my_logger_g.logger->debug("Number of mutated fields in this iteration: {}", Base_Fuzzer::mutated_fields_num);
+  my_logger_g.logger->debug("Number of mutated fields in this iteration: {}",
+                            Base_Fuzzer::mutated_fields_num);
   Base_Fuzzer::mutated_fields.clear();
   Base_Fuzzer::mutated_fields_num = 0;
 
-  if (fuzz_strategy_config_g.use_probability_resets && Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
-      /* Reset the probabilities. This is done by deleting all the packets in the database.*/
-      Base_Fuzzer::mut_field_num_tracker.reset();
-      my_logger_g.logger->info("Resetting the probabilities");
-      Base_Fuzzer::packet_field_tree_database.clear();
+  if (fuzz_strategy_config_g.use_probability_resets &&
+      Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
+    /* Reset the probabilities. This is done by deleting all the packets in the
+     * database.*/
+    Base_Fuzzer::mut_field_num_tracker.reset();
+    my_logger_g.logger->info("Resetting the probabilities");
+    Base_Fuzzer::packet_field_tree_database.clear();
   }
 
   if (need_to_restart_dut) {
@@ -268,9 +273,30 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                           ? INT_MAX
                           : fuzz_strategy_config_g.total_iterations));
 
+  /* NOTE: after this, packets can again flow */
   wdissector_mutex.unlock();
 
+  /* NOTE: here we'll fetch the reboot count outside the lock, as it otherwise
+   * breaks */
   if (need_to_perform_clean_attach) {
+    /* fetch the reboot count */
+    int current_reboot_count = helpers::chip_check_diagnostics();
+    std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
+    bool spurrious_reboot = (current_reboot_count - reboot_count) !=
+                            (1 + fuzz_strategy_config_g.epoch_size);
+    if (spurrious_reboot) {
+      std::cout << "[COOR]: crash!" << std::endl;
+      my_logger_g.logger->info("[COOR]: crash!");
+      std::cout << "[COOR]: expected: " << 1 + fuzz_strategy_config_g.epoch_size
+                << " but was " << current_reboot_count - reboot_count
+                << std::endl;
+      my_logger_g.logger->info("[COOR]: expected {} but was {}",
+                               1 + fuzz_strategy_config_g.epoch_size,
+                               current_reboot_count - reboot_count);
+      statistics_g.dut_crash_counter++;
+    }
+    current_reboot_count = reboot_count;
+
     statistics_g.fuzz_lock = true;
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
@@ -290,7 +316,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       need_to_finish = true;
     }
   }
-  
+
   /* Finish the fuzzing if needed */
   if (need_to_finish) {
     my_logger_g.logger->info("Finishing the fuzzing");
@@ -312,7 +338,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       //       "Protocol stack cannot be reconfigured after restart");
       //   return false;
       // }
-      my_logger_g.logger->warn("Protocol stack reconfigured successfully after restart");
+      my_logger_g.logger->warn(
+          "Protocol stack reconfigured successfully after restart");
     }
   }
 

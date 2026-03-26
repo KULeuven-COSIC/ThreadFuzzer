@@ -166,190 +166,187 @@ int RebootCntFuzzer::prepare_new_iteration() {
     statistics_g.epochs++;
 
     my_logger_g.logger->info("[RBTCNT_FUZZER]: EPOCH_IT");
-    std::cerr << "Checking reboot-count on the device via CHIP..." << std::endl;
-    int current_reboot_count = helpers::chip_check_diagnostics();
-    bool spurrious_reboot;
-    if (refinement) {
-      spurrious_reboot = (current_reboot_count - reboot_count) != 2;
-    } else {
-      spurrious_reboot =
-          (current_reboot_count - reboot_count) !=
-          (1 +
-           fuzz_strategy_config_g.epoch_size); // || chip_check_diagnostics();
-    }
-    std::cout << "rbt_cnt diff: "
-              << (current_reboot_count - reboot_count) -
-                     (1 + fuzz_strategy_config_g.epoch_size)
-              << std::endl;
+    // std::cerr << "Checking reboot-count on the device via CHIP..." << std::endl;
+    // int current_reboot_count = helpers::chip_check_diagnostics();
+    // bool spurrious_reboot;
+    // if (refinement) {
+    //   spurrious_reboot = (current_reboot_count - reboot_count) != 2;
+    // } else {
+    //   spurrious_reboot =
+    //       (current_reboot_count - reboot_count) !=
+    //       (1 +
+    //        fuzz_strategy_config_g.epoch_size); // || chip_check_diagnostics();
+    // }
+    // std::cout << "rbt_cnt diff: "
+    //           << (current_reboot_count - reboot_count) -
+    //                  (1 + fuzz_strategy_config_g.epoch_size)
+    //           << std::endl;
 
     // NOTE: reboot during epoch, from NORMAL to REFINEMENT
-    if (!refinement && spurrious_reboot) {
-      hard_reset = true;
-      ring_dinnerbell();
-      // NOTE: if this was merely a check -> return!!
-      if (fuzz_strategy_config_g.use_existing_seeds) {
-        std::cout << "CRASH CHECK SUCCESFUL!" << std::endl;
-        my_logger_g.logger->warn("crash found!");
-        statistics_g.dut_crash_counter++;
-        current_state = State::NORMAL;
-        break;
-      } else if (is_unique_crash() && fuzz_strategy_config_g.use_refinement) {
-        statistics_g.refinement_runs++;
-        refinement = true;
-        predefined_patches = std::vector<std::shared_ptr<Patch>>(
-            saved_patches.begin(), saved_patches.end());
-        current_state = State::REFINEMENT;
-        std::cout << "STARTING REFINEMENT!! ON " << saved_patches.size()
-                  << " PATCHES" << std::endl;
-        std::cout << "RBT CNT NOW " << current_reboot_count << std::endl;
-      } else { // NOT unique crash
-        std::cout << "CRASH: BUT PROLLY NOT UNIQUE" << std::endl;
-        my_logger_g.logger->warn("crash but prolly not unique!");
-        current_state = State::NORMAL;
-        statistics_g.dut_nonunique_crash_counter++;
-      }
+    // if (!refinement && spurrious_reboot) {
+    //   ring_dinnerbell();
+    //   // NOTE: if this was merely a check -> return!!
+    //   if (fuzz_strategy_config_g.use_existing_seeds) {
+    //     std::cout << "CRASH CHECK SUCCESFUL!" << std::endl;
+    //     my_logger_g.logger->warn("crash found!");
+    //     statistics_g.dut_crash_counter++;
+    //     current_state = State::NORMAL;
+    //     break;
+    //   } else if (is_unique_crash() && fuzz_strategy_config_g.use_refinement) {
+    //     statistics_g.refinement_runs++;
+    //     refinement = true;
+    //     predefined_patches = std::vector<std::shared_ptr<Patch>>(
+    //         saved_patches.begin(), saved_patches.end());
+    //     current_state = State::REFINEMENT;
+    //     std::cout << "STARTING REFINEMENT!! ON " << saved_patches.size()
+    //               << " PATCHES" << std::endl;
+    //     std::cout << "RBT CNT NOW " << current_reboot_count << std::endl;
+    //   } else { // NOT unique crash
+    //     std::cout << "CRASH: BUT PROLLY NOT UNIQUE" << std::endl;
+    //     my_logger_g.logger->warn("crash but prolly not unique!");
+    //     current_state = State::NORMAL;
+    //     statistics_g.dut_nonunique_crash_counter++;
+    //   }
 
-    }
+    // }
 
-    // NOTE: refinement did not work, try other patches
-    else if (refinement && !spurrious_reboot && saved_patches.size()) {
-      // TODO check if predefined patches has size 1, then take the next one
-      // from saved_patches
-      // TODO the problem, if no saved patches -> FAIL!!
-      // TODO: solution is quite convoluted, perhaps fix it?
+    // // NOTE: refinement did not work, try other patches
+    // else if (refinement && !spurrious_reboot && saved_patches.size()) {
+    //   // TODO check if predefined patches has size 1, then take the next one
+    //   // from saved_patches
+    //   // TODO the problem, if no saved patches -> FAIL!!
+    //   // TODO: solution is quite convoluted, perhaps fix it?
 
-      if (predefined_patches.size() == 1 && saved_patches.size() > 1) {
-        // first erase the first element from the saved ones
-        saved_patches.erase(saved_patches.begin());
-        // next get the next predefined patch
-        // hoping that by now, the saved_patches will already contain the
-        // previously found tried_patches!
-        predefined_patches.clear();
-        // predefined_patches.push_back(*(saved_patches.begin()));
-        predefined_patches.assign(saved_patches.begin(), saved_patches.end());
+    //   if (predefined_patches.size() == 1 && saved_patches.size() > 1) {
+    //     // first erase the first element from the saved ones
+    //     saved_patches.erase(saved_patches.begin());
+    //     // next get the next predefined patch
+    //     // hoping that by now, the saved_patches will already contain the
+    //     // previously found tried_patches!
+    //     predefined_patches.clear();
+    //     // predefined_patches.push_back(*(saved_patches.begin()));
+    //     predefined_patches.assign(saved_patches.begin(), saved_patches.end());
 
-      } else if (saved_patches.size() > 2) {
+    //   } else if (saved_patches.size() > 2) {
 
-        std::cout << "NOTHING FOUND! PRUNING " << tried_patches.size()
-                  << " patches!!!" << std::endl;
-        my_logger_g.logger->info("PRUNING THE RIGHT SIDE!");
+    //     std::cout << "NOTHING FOUND! PRUNING " << tried_patches.size()
+    //               << " patches!!!" << std::endl;
+    //     my_logger_g.logger->info("PRUNING THE RIGHT SIDE!");
 
-        // prune the tried patches
-        prune_saved_patches();
-        predefined_patches = std::vector<std::shared_ptr<Patch>>(
-            saved_patches.begin(), saved_patches.end());
-        // switch the leg
-        // switch_bs_leg();
+    //     // prune the tried patches
+    //     prune_saved_patches();
+    //     predefined_patches = std::vector<std::shared_ptr<Patch>>(
+    //         saved_patches.begin(), saved_patches.end());
+    //     // switch the leg
+    //     // switch_bs_leg();
 
-        // } else if (saved_patches.size() == 2) {
-        //   std::cout << "GOT TO 2 PATCHES LEFT!!" << std::endl;
-        //   // RIGHT one is culprit, only two elements
-        //   predefined_patches = {saved_patches[1]};
-        //   saved_patches = {saved_patches[1]};
-      } else { // TODO fix this!! no use in trying this again!!!
-        std::cout << "REFINEMENT END-CASE?!!" << std::endl;
-        predefined_patches = std::vector<std::shared_ptr<Patch>>(
-            saved_patches.begin(), saved_patches.end());
-        saved_patches.clear();
-      }
-      current_state = State::REFINEMENT;
-      hard_reset = true;
-      std::cout << "REFINEMENT YIELDED NO RESULT!! SWITCHING PATCH"
-                << std::endl;
-      std::cout << "-> STILL " << saved_patches.size() << " patches left "
-                << std::endl;
+    //     // } else if (saved_patches.size() == 2) {
+    //     //   std::cout << "GOT TO 2 PATCHES LEFT!!" << std::endl;
+    //     //   // RIGHT one is culprit, only two elements
+    //     //   predefined_patches = {saved_patches[1]};
+    //     //   saved_patches = {saved_patches[1]};
+    //   } else { // TODO fix this!! no use in trying this again!!!
+    //     std::cout << "REFINEMENT END-CASE?!!" << std::endl;
+    //     predefined_patches = std::vector<std::shared_ptr<Patch>>(
+    //         saved_patches.begin(), saved_patches.end());
+    //     saved_patches.clear();
+    //   }
+    //   current_state = State::REFINEMENT;
+    //   std::cout << "REFINEMENT YIELDED NO RESULT!! SWITCHING PATCH"
+    //             << std::endl;
+    //   std::cout << "-> STILL " << saved_patches.size() << " patches left "
+    //             << std::endl;
 
-      // draw_saved_patches();
-      // tried_patches.clear();
-      // ring_dinnerbell();
-    }
-    // NOTE: crash during refinement!
-    else if (refinement && spurrious_reboot) {
-      std::cout << "RBT CNT WAS " << reboot_count << " NOW "
-                << current_reboot_count << std::endl;
+    //   // draw_saved_patches();
+    //   // tried_patches.clear();
+    //   // ring_dinnerbell();
+    // }
+    // // NOTE: crash during refinement!
+    // else if (refinement && spurrious_reboot) {
+    //   std::cout << "RBT CNT WAS " << reboot_count << " NOW "
+    //             << current_reboot_count << std::endl;
 
-      // NOTE: REFINEMENT OR NORMAL & ~RBT => NORMAL
-      if (tried_patches.size() == 1) {
-        // search complete
-        std::cout << "CRASH FOUND DURING REFINEMENT!!" << std::endl;
-        std::cout << "RESUMING NORMAL EXECUTION" << std::endl;
-        saved_crashes.insert(*(tried_patches.begin()));
-        my_logger_g.logger->info(
-            "[RBTCNT_FUZZER]: FOUND CRASH DUE TO THIS PATCH!!");
-        my_logger_g.logger->info("{}", *(tried_patches.begin()->get()));
-        statistics_g.dut_crash_counter++;
-        predefined_patches.clear();
-        saved_patches.clear();
-        refinement = false;
-        draw_size = 0;
-        current_state = State::NORMAL;
-        hard_reset = true;
-      } else {
-        if (tried_patches.size() == saved_patches.size()) {
-          std::cout << "SKIPPING THIS ONE: "
-                    << (*(tried_patches.rbegin()))->get_id() << std::endl;
-          tried_patches.erase(prev(tried_patches.end()));
-          predefined_patches.clear();
-          predefined_patches.assign(tried_patches.begin(), tried_patches.end());
-          std::cout << "EDGE_CASE: ALL SAVED PATCHES ARE TRIED" << std::endl;
-        } else {
-          saved_patches = tried_patches;
-          predefined_patches.clear();
-          predefined_patches.assign(tried_patches.begin(), tried_patches.end());
-          std::cout << "SEARCH SUCCES..." << std::endl;
-          std::cout << "NARROWING DOWN TO " << saved_patches.size()
-                    << std::endl;
-        }
-        current_state = State::REFINEMENT;
-        hard_reset = true;
-      }
+    //   // NOTE: REFINEMENT OR NORMAL & ~RBT => NORMAL
+    //   if (tried_patches.size() == 1) {
+    //     // search complete
+    //     std::cout << "CRASH FOUND DURING REFINEMENT!!" << std::endl;
+    //     std::cout << "RESUMING NORMAL EXECUTION" << std::endl;
+    //     saved_crashes.insert(*(tried_patches.begin()));
+    //     my_logger_g.logger->info(
+    //         "[RBTCNT_FUZZER]: FOUND CRASH DUE TO THIS PATCH!!");
+    //     my_logger_g.logger->info("{}", *(tried_patches.begin()->get()));
+    //     statistics_g.dut_crash_counter++;
+    //     predefined_patches.clear();
+    //     saved_patches.clear();
+    //     refinement = false;
+    //     draw_size = 0;
+    //     current_state = State::NORMAL;
+    //   } else {
+    //     if (tried_patches.size() == saved_patches.size()) {
+    //       std::cout << "SKIPPING THIS ONE: "
+    //                 << (*(tried_patches.rbegin()))->get_id() << std::endl;
+    //       tried_patches.erase(prev(tried_patches.end()));
+    //       predefined_patches.clear();
+    //       predefined_patches.assign(tried_patches.begin(), tried_patches.end());
+    //       std::cout << "EDGE_CASE: ALL SAVED PATCHES ARE TRIED" << std::endl;
+    //     } else {
+    //       saved_patches = tried_patches;
+    //       predefined_patches.clear();
+    //       predefined_patches.assign(tried_patches.begin(), tried_patches.end());
+    //       std::cout << "SEARCH SUCCES..." << std::endl;
+    //       std::cout << "NARROWING DOWN TO " << saved_patches.size()
+    //                 << std::endl;
+    //     }
+    //     current_state = State::REFINEMENT;
+    //   }
 
-      // tried_patches.clear();
+    //   // tried_patches.clear();
 
-      // draw_saved_patches();
+    //   // draw_saved_patches();
 
-      ring_dinnerbell();
+    //   ring_dinnerbell();
 
-    }
-    // NOTE: no patches left, so refinement failed!!
-    else if (!saved_patches.size() && refinement) {
-      // if (spurrious_reboot && saved_patches.size() == 1) {
-      //   std::cout << "CRASH FOUND AT THE CUSP!!" << std::endl;
-      //   my_logger_g.logger->info(
-      //       "[RBTCNT_FUZZER]: FOUND CRASH DUE TO THIS PATCH!!");
-      //   log_patch(predefined_patches[0]);
-      // }
-      my_logger_g.logger->info("[RBTCNT_FUZZER]: REFINEMENT FAILED!");
-      std::cout << "REFINEMENT FAILED!!" << std::endl;
-      predefined_patches.clear();
-      saved_patches.clear();
-      // tried_patches.clear();
-      refinement = false;
-      draw_size = 0;
-      current_state = State::NORMAL;
-      std::fill(drawn_patch_list.begin(), drawn_patch_list.end(), 0);
-      to_draw_patch_list.clear();
-      hard_reset = true;
+    // }
+    // // NOTE: no patches left, so refinement failed!!
+    // else if (!saved_patches.size() && refinement) {
+    //   // if (spurrious_reboot && saved_patches.size() == 1) {
+    //   //   std::cout << "CRASH FOUND AT THE CUSP!!" << std::endl;
+    //   //   my_logger_g.logger->info(
+    //   //       "[RBTCNT_FUZZER]: FOUND CRASH DUE TO THIS PATCH!!");
+    //   //   log_patch(predefined_patches[0]);
+    //   // }
+    //   my_logger_g.logger->info("[RBTCNT_FUZZER]: REFINEMENT FAILED!");
+    //   std::cout << "REFINEMENT FAILED!!" << std::endl;
+    //   predefined_patches.clear();
+    //   saved_patches.clear();
+    //   // tried_patches.clear();
+    //   refinement = false;
+    //   draw_size = 0;
+    //   current_state = State::NORMAL;
+    //   std::fill(drawn_patch_list.begin(), drawn_patch_list.end(), 0);
+    //   to_draw_patch_list.clear();
 
-    } else {
-      my_logger_g.logger->info("NO BAD REBOOT");
-      std::cout << "NO BAD REBOOT!!" << std::endl;
-      // predefined_patches.clear();
-      saved_patches.clear();
-      // refinement = false;
-      draw_size = 0;
-      current_state = State::NORMAL;
-      hard_reset = true;
-    }
+    // } else {
+    //   my_logger_g.logger->info("NO BAD REBOOT");
+    //   std::cout << "NO BAD REBOOT!!" << std::endl;
+    //   // predefined_patches.clear();
+    //   saved_patches.clear();
+    //   // refinement = false;
+    //   draw_size = 0;
+    //   current_state = State::NORMAL;
+    // }
 
-    my_logger_g.logger->info("OLD REBOOTS: {}", reboot_count);
-    reboot_count = current_reboot_count;
-    // statistics_g.dut_reboot_counter = current_reboot_count;
+    // my_logger_g.logger->info("OLD REBOOTS: {}", reboot_count);
+    // reboot_count = current_reboot_count;
+    // // statistics_g.dut_reboot_counter = current_reboot_count;
 
-    my_logger_g.logger->info("REBOOTS: {}", current_reboot_count);
+    // my_logger_g.logger->info("REBOOTS: {}", current_reboot_count);
 
-    // draw_saved_patches();
-    tried_patches.clear();
+    // // draw_saved_patches();
+    // tried_patches.clear();
+
+    // after an epoch, we reset:
+    hard_reset = true;
 
     break;
   }

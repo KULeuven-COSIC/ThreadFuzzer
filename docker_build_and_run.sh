@@ -1,5 +1,5 @@
 #!/bin/bash
-for i in {01..20}; do
+for i in {01..01}; do
 	echo $i
 	pkill avahi-daemon
 	pkill otbr-agent
@@ -12,8 +12,6 @@ for i in {01..20}; do
                 -v /run/dbus:/run/dbus \
                 -v logs:/app/ThreadFuzzer/logs \
                 --device=/dev/net/tun \
-                --device=/dev/ttyACM0 \
-                --device=/dev/ttyUSB0 \
                 --cap-add=NET_ADMIN \
                 --cap-add=SYS_PTRACE \
                 --name=threadfuzzer --rm -it thread_fuzzer

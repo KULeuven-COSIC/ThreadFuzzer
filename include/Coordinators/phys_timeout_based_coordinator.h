@@ -12,11 +12,11 @@ public:
     void thread_dut_communication_func() override;
     bool reset_target() override;
     bool renew_fuzzing_iteration() override;
-
+    
     std::string get_name() override;
 private:
     std::string name_ = "Physical Timeout-Based Coordinator";
     bool need_to_restart_protocol_stack = false;
     bool need_to_restart_dut = false;
-  // int epoch_cnt_ = 0;
+  int reboot_count = 0;
 };
