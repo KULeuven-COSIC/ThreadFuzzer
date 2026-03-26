@@ -91,7 +91,7 @@ bool RebootCntFuzzer::init() {
 
 bool RebootCntFuzzer::fuzz(Packet &packet) {
   // are we at end of an epoch? disable fuzzing, as CHIP needs it
-  if (current_state == State::EPOCH_IT) {
+  if (current_state == State::EPOCH_IT || current_state == State::POST_EPOCH) {
     my_logger_g.logger->info("[RBT_CNT_FUZZER]: EPOCH_IT, NOT FUZZED");
     return true;
   }
@@ -153,6 +153,7 @@ int RebootCntFuzzer::prepare_new_iteration() {
     if (it_cnt >= fuzz_strategy_config_g.epoch_size) {
       it_cnt = 0;
       current_state = State::EPOCH_IT;
+      epoch_it = true;
     }
 
     break;
@@ -169,6 +170,13 @@ int RebootCntFuzzer::prepare_new_iteration() {
 
     current_state = State::NORMAL;
     
+    break;
+  }
+
+  case State::POST_EPOCH: {
+    epoch_it = false;
+    current_state = State::NORMAL;
+    my_logger_g.logger->info("[RBTCNT_FUZZER]: POST_EPOCH_IT");
     break;
   }
 

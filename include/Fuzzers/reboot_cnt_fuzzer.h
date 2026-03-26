@@ -21,7 +21,7 @@ private:
   bool is_unique_crash();
   bool mutation_contains(std::shared_ptr<Mutation> m1,
                          std::vector<std::shared_ptr<Mutation>> mutations);
-  enum State { PRE_INIT, INIT, NORMAL, EPOCH_IT, REFINEMENT };
+  enum State { PRE_INIT, INIT, NORMAL, EPOCH_IT, REFINEMENT, POST_EPOCH };
 
   bool refinement;
 

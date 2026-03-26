@@ -341,6 +341,20 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     } else {
       need_to_finish = true;
     }
+
+    // NOTE: not very proud of this.
+    // but need it to trigger the reboot fuzzer again
+
+    wdissector_mutex.lock();
+    for (size_t i = 0; i < fuzzers.size(); i++) {
+      int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
+      need_to_finish |= !need_to_finish_local;
+      if (need_to_finish_local == 0) {
+        my_logger_g.logger->info(
+            "Fuzzer indexed {} requested finishing fuzzing", i);
+      }
+    }
+    wdissector_mutex.unlock();
   }
 
   /* Finish the fuzzing if needed */
