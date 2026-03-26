@@ -59,10 +59,15 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
     // dut->start();
     // protocol_stack->start();
     dut->stop();
-    protocol_stack->reset();
+    protocol_stack->restart();
     dut->start();
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
+    my_logger_g.logger->info("[COOR]: from here we can start fuzzing");
+    std::cout << "[COOR]: here we start fuzzing" << std::endl;
     while (SHM_Layer_Communication::is_active) {
+      
+
       if (local_iteration == 0 && fuzz_strategy_config_g.chip_recommissioning_step) {
         if (main_config_g.dut_name == DUT_NAME::NANOLEAF ||
             main_config_g.dut_name == DUT_NAME::EVE_SENSOR) {
@@ -80,8 +85,8 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
         reboot_count = helpers::chip_check_diagnostics();
         statistics_g.dut_reboot_counter = reboot_count;
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
+	my_logger_g.logger->info("[COOR]: first rebootcount: {} ", reboot_count);
 
-        my_logger_g.logger->flush();
       }
 
       my_logger_g.logger->info("================ START OF A NEW FUZZING "
@@ -300,6 +305,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   /* NOTE: here we'll fetch the reboot count outside the lock, as it otherwise
    * breaks */
   if (need_to_perform_clean_attach) {
+    statistics_g.fuzz_lock = true;
     /* fetch the reboot count */
     std::cout << "[COOR]: fetchin current_reboot_count"  << std::endl;
     my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
@@ -320,7 +326,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
     current_reboot_count = reboot_count;
 
-    statistics_g.fuzz_lock = true;
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
     std::this_thread::sleep_for(std::chrono::seconds(10));

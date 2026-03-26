@@ -83,15 +83,16 @@ bool RebootCntFuzzer::init() {
                                       will be zero anyway */
 
   } else {
-    current_state = State::INIT;
+    std::cout << "[RBT_CNT_FUZZER]: you should not use this fuzzer unless you recommission devices" << std::endl;
+    my_logger_g.logger->error("[RBT_CNT_FUZZER]: you should not use this fuzzer unless you recommission devices");
+    return false;
   }
   return RandomFuzzer::init();
 }
 
 bool RebootCntFuzzer::fuzz(Packet &packet) {
   // are we at end of an epoch? disable fuzzing, as CHIP needs it
-  if (current_state == State::EPOCH_IT || current_state == State::INIT ||
-      current_state == State::PRE_INIT || statistics_g.fuzz_lock) {
+  if (current_state == State::EPOCH_IT || statistics_g.fuzz_lock) {
     my_logger_g.logger->info("[RBT_CNT_FUZZER]: PACKET WAS NOT FUZZED");
     return true;
   }
