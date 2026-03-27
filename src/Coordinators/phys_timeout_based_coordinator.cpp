@@ -64,7 +64,13 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
     // dut->start();
     // protocol_stack->start();
     dut->stop();
-    protocol_stack->restart();
+    if (!protocol_stack->restart()) {
+      std::cout << "[COOR]: cannot restart protocol stack, exiting"
+                << std::endl;
+      my_logger_g.logger->error(
+          "[COOR]: cannot restart protocol stack, exiting");
+      terminate_fuzzing()
+    }
     dut->start();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
@@ -220,7 +226,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       need_to_finish = true;
       std::cout << "[COOR]: ERROR, we should be in epoch_it at this point"
                 << std::endl;
-      my_logger_g.logger->error("[COOR]: ERROR, we should be in epoch_it at this");
+      my_logger_g.logger->error(
+          "[COOR]: ERROR, we should be in epoch_it at this");
     }
     /* fetch the reboot count */
     std::cout << "[COOR]: fetchin current_reboot_count" << std::endl;
