@@ -33,7 +33,7 @@ echo "[INFO]: testing by calling logger"
 logger "[INFO] test, test, this is a test..."
 
 echo "[INFO]: syslog >>>"
-cat /app/ThreadFuzzer/otbr-log/syslog | grep INFO
+grep "test, test, this is a test" /app/ThreadFuzzer/otbr-log/syslog | tail -n 1
 echo "[INFO]: <<< syslog"
 
 # build the project here, makes incremental changes easier
