@@ -73,11 +73,13 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       while (retries-- >= 0) {
         if (protocol_stack->restart()) {
           std::cout << "[COOR]: retry succesful!" << std::endl;
+          break;
         }
         std::cout << "[COOR] " << retries << " retries left" << std::endl;
+        if (retries < 0)
+          terminate_fuzzing();
       }
 
-      terminate_fuzzing();
     }
     dut->start();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
