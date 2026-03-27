@@ -38,15 +38,15 @@ for i in $(seq -w 1 "$ITERATIONS"); do
     
     sudo docker run --security-opt apparmor=unconfined \
                 -v build:/app/ThreadFuzzer/build \
-                -v /var:/var \
+                -v /var/run/dbus:/var/run/dbus \
                 -v otbr-log:/app/ThreadFuzzer/otbr-log \
-                -v /run/dbus:/run/dbus \
                 -v logs:/app/ThreadFuzzer/logs \
                 --device=/dev/net/tun \
                 --device=/dev/ttyACM0 \
                 --device=/dev/ttyUSB0 \
                 --cap-add=NET_ADMIN \
                 --cap-add=SYS_PTRACE \
+                --network=host \
                 --name=threadfuzzer --rm -it thread_fuzzer
                 
     echo "Iteration $i completed. Sleeping for 10 seconds..."
