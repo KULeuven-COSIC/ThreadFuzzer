@@ -169,6 +169,7 @@ int RebootCntFuzzer::prepare_new_iteration() {
     std::cerr << "Checking reboot-count on the device via CHIP..." << std::endl;
     int current_reboot_count = helpers::chip_check_diagnostics();
     bool spurrious_reboot;
+    my_logger_g.logger->debug("Refinement: {}", refinement);
     if (refinement) {
       spurrious_reboot = (current_reboot_count - reboot_count) != 2;
     } else {

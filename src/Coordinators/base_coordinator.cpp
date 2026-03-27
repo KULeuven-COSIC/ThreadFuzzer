@@ -162,7 +162,11 @@ void Base_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
 
         pdu.set_dissector_name(dissector);
 
+        my_logger_g.logger->debug("[BASE COORD] WAITING FOR THE MUTEX");
         wdissector_mutex.lock();
+        my_logger_g.logger->debug("[BASE COORD] MUTEX LOCKED");
+        my_logger_g.logger->flush();
+
         my_logger_g.logger->info("[{}] Dissector {} {}", layer_name, dissector, pdu);
             
         if (pdu.get_packet_src() == PACKET_SRC::SRC_PROTOCOL_STACK)
@@ -217,6 +221,9 @@ void Base_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
             Base_Fuzzer::packet_buffer[pdu.get_dissector_name()].insert(pdu);
         }
         wdissector_mutex.unlock();
+        my_logger_g.logger->debug("[BASE COORD] MUTEX UNLOCKED");
+        my_logger_g.logger->flush();
+
         SHM_Comm->send(pdu);
         if (failed) statistics_g.has_this_iteration_failed = true;
     }

@@ -172,7 +172,10 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   global_iteration++;
   local_iteration++;
 
+  my_logger_g.logger->debug("[PHYS COORD] WAITING FOR THE MUTEX");
   wdissector_mutex.lock();
+  my_logger_g.logger->debug("[PHYS COORD] MUTEX LOCKED");
+  my_logger_g.logger->flush();
 
   /* check whether the device has crashed */
   if (!dut->is_running()) {
@@ -182,41 +185,47 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   std::cout << "DUT CHECK COMPLETE" << std::endl;
 
   /* Update the coverage information */
-  try {
-    if (fuzz_strategy_config_g.use_coverage_logging ||
-        fuzz_strategy_config_g.use_coverage_feedback) {
-      update_coverage_information();
-      /* Update the probabilities of the fields */
-      if (fuzz_strategy_config_g.use_coverage_feedback)
-        update_probabilities(iteration_result.was_new_coverage_found);
+  if (!clean_iteration) {
+    try {
+      if (fuzz_strategy_config_g.use_coverage_logging ||
+          fuzz_strategy_config_g.use_coverage_feedback) {
+        update_coverage_information();
+        /* Update the probabilities of the fields */
+        if (fuzz_strategy_config_g.use_coverage_feedback)
+          update_probabilities(iteration_result.was_new_coverage_found);
+      }
+    } catch (std::exception &ex) {
+      my_logger_g.logger->warn("Exception during the coverage fetch: {}",
+                              ex.what());
+      if (!protocol_stack->is_running()) {
+        need_to_restart_protocol_stack = true;
+      }
+      if (!dut->is_running()) {
+        need_to_restart_dut = true;
+      }
     }
-  } catch (std::exception &ex) {
-    my_logger_g.logger->warn("Exception during the coverage fetch: {}",
-                             ex.what());
-    if (!protocol_stack->is_running()) {
-      need_to_restart_protocol_stack = true;
+
+    Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(Base_Fuzzer::mutated_fields_num);
+
+    if (Base_Fuzzer::mutated_fields_num == 0) {
+      statistics_g.empty_iterations++;
     }
-    if (!dut->is_running()) {
-      need_to_restart_dut = true;
+
+    my_logger_g.logger->debug("Number of mutated fields in this iteration: {}", Base_Fuzzer::mutated_fields_num);
+    Base_Fuzzer::mutated_fields.clear();
+    Base_Fuzzer::mutated_fields_num = 0;
+
+    if (fuzz_strategy_config_g.use_probability_resets && Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
+        /* Reset the probabilities. This is done by deleting all the packets in the database.*/
+        Base_Fuzzer::mut_field_num_tracker.reset();
+        my_logger_g.logger->info("Resetting the probabilities");
+        Base_Fuzzer::packet_field_tree_database.clear();
     }
+  } else {
+    my_logger_g.logger->debug("[PHYS COORD] The clean iteration is running.");
+    my_logger_g.logger->flush();
   }
-
-  Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(Base_Fuzzer::mutated_fields_num);
-
-  if (Base_Fuzzer::mutated_fields_num == 0) {
-    statistics_g.empty_iterations++;
-  }
-
-  my_logger_g.logger->debug("Number of mutated fields in this iteration: {}", Base_Fuzzer::mutated_fields_num);
-  Base_Fuzzer::mutated_fields.clear();
-  Base_Fuzzer::mutated_fields_num = 0;
-
-  if (fuzz_strategy_config_g.use_probability_resets && Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
-      /* Reset the probabilities. This is done by deleting all the packets in the database.*/
-      Base_Fuzzer::mut_field_num_tracker.reset();
-      my_logger_g.logger->info("Resetting the probabilities");
-      Base_Fuzzer::packet_field_tree_database.clear();
-  }
+  clean_iteration = false;
 
   if (need_to_restart_dut) {
     statistics_g.dut_crash_counter++;
@@ -241,13 +250,16 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
   }
 
+  my_logger_g.logger->debug("[PHYS COORD] Printing statistics");
+  my_logger_g.logger->flush();
   /* Update the statistics on the screen */
   // helpers::clear_screen();
   print_statistics();
 
   std::cout << "PRINTED STATS" << std::endl;
 
-  bool need_to_perform_clean_attach = false;
+  // wdissector_mutex.unlock();
+
   /* Check if any of the fuzzers requests finish of the fuzzing */
   for (size_t i = 0; i < fuzzers.size(); i++) {
     int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
@@ -259,7 +271,9 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
     // check if we need to schedule a hard reset
     if (need_to_finish_local == 2) {
-      need_to_perform_clean_attach = true;
+      clean_iteration = true;
+      my_logger_g.logger->info("Fuzzer indexed {} requested a clean iteration",
+                               i);
     }
   }
 
@@ -270,7 +284,10 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   wdissector_mutex.unlock();
 
-  if (need_to_perform_clean_attach) {
+  my_logger_g.logger->debug("[PHYS COORD] MUTEX UNLOCKED");
+  my_logger_g.logger->flush();
+
+  if (clean_iteration) {
     statistics_g.fuzz_lock = true;
     bool pstop = protocol_stack->stop();
     bool start = dut->start();

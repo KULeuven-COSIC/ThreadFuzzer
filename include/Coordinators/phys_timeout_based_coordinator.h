@@ -18,5 +18,7 @@ private:
     std::string name_ = "Physical Timeout-Based Coordinator";
     bool need_to_restart_protocol_stack = false;
     bool need_to_restart_dut = false;
+
+    bool clean_iteration = false; // Flag. If true, the next iteration is used to fetch the reboot count and therefore will not be fuzzed.
   // int epoch_cnt_ = 0;
 };
