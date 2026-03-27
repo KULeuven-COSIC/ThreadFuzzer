@@ -265,6 +265,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* NOTE: from here no packets can flow! */
   wdissector_mutex.lock();
+  my_logger_g.logger->debug("[COOR]: RFI: entering lock");
 
   /* check whether the device has crashed */
   if (!dut->is_running()) {
@@ -361,7 +362,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* NOTE: after this, packets can again flow */
   wdissector_mutex.unlock();
-
+  my_logger_g.logger->debug("[COOR]: RFI: exiting lock");
 
   /* Finish the fuzzing if needed */
   if (need_to_finish) {
@@ -451,6 +452,7 @@ void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
     pdu.set_dissector_name(dissector);
 
     wdissector_mutex.lock();
+    my_logger_g.logger->debug("[COOR]: LFZ: entering lock");
     my_logger_g.logger->info("[{}] Dissector {} {}", layer_name, dissector,
                              pdu);
 
@@ -517,6 +519,7 @@ void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
       Base_Fuzzer::packet_buffer[pdu.get_dissector_name()].insert(pdu);
     }
     wdissector_mutex.unlock();
+    my_logger_g.logger->debug("[COOR]: LFZ: exiting lock");
     SHM_Comm->send(pdu);
     if (failed)
       statistics_g.has_this_iteration_failed = true;

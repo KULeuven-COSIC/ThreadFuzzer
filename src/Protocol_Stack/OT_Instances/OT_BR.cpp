@@ -63,9 +63,6 @@ bool OT_BR::start() {
   //     LOGS"); return false;
   // }
 
-
-
-
   /* Start RCP */
   if (!rcp_->start()) {
     my_logger_g.logger->error("Failed to start RCP");
@@ -77,39 +74,31 @@ bool OT_BR::start() {
     std::this_thread::sleep_for(std::chrono::seconds(2));
   }
 
-  // const std::string factoryreset_cmd =
-  //     "sudo " + cli_name_ + " factoryreset > /dev/null";
-  // if (helpers::exec_system_cmd_with_default_timeout(factoryreset_cmd) != 0) {
-  //   my_logger_g.logger->error("Failed to run \"factoryreset\" in {}",
-  //                             cli_name_);
-  //   return false;
-  // }
   std::this_thread::sleep_for(std::chrono::seconds(2));
-  std::system("ot-ctl factoryreset");
+  if (helpers::ask_chip("ot-ctl factoryreset").contains("Segmentation")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
+
   std::this_thread::sleep_for(std::chrono::seconds(2));
   std::cout << "BR: factoryreset executed" << std::endl;
 
   std::string set_router_selection_jitter =
       cli_name_ + " routerselectionjitter " +
       std::to_string(timers_config_g.router_selection_jitter_s);
-  // if (helpers::exec_system_cmd_with_default_timeout(
-  //         set_router_selection_jitter) != 0) {
-  //   my_logger_g.logger->error("Failed to set routerselectionjitter in BR");
-  //   return false;
-  // }
-  std::system(set_router_selection_jitter.c_str());
+  if (!helpers::ask_chip(set_router_selection_jitter.c_str())
+           .contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: set routerselectionjitter " << std::endl;
   std::string set_dataset_active_br_cmd =
-      cli_name_ + " dataset set active " +
-      technical_config_g.network_dataset;
-  // if (helpers::exec_system_cmd_with_default_timeout(
-  //         set_dataset_active_br_cmd) != 0) {
-  //   my_logger_g.logger->error("Failed to set dataset active in BR");
-  //   return false;
-  // }
-  std::system(set_dataset_active_br_cmd.c_str());
+      cli_name_ + " dataset set active " + technical_config_g.network_dataset;
+  if (!helpers::ask_chip(set_dataset_active_br_cmd.c_str()).contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: set dataset " << std::endl;
-
 
   if (!activate_thread()) {
     my_logger_g.logger->error("Failed to reset in BR start");
@@ -215,18 +204,24 @@ bool OT_BR::activate_thread() {
   // const std::string ifconfig_up_cmd =
   //     "sudo " + cli_name_ + " ifconfig up > /dev/null";
   // if (helpers::exec_system_cmd_with_default_timeout(ifconfig_up_cmd) != 0) {
-  //   my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}", cli_name_);
-  //   return false;
+  //   my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}",
+  //   cli_name_); return false;
   // }
-  std::system("ot-ctl ifconfig up");
+  if (!helpers::ask_chip("ot-ctl ifconfig up").contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: ifconfig up" << std::endl;
   // const std::string thread_start =
   //     "sudo " + cli_name_ + " thread start" + " > /dev/null";
   // if (helpers::exec_system_cmd_with_default_timeout(thread_start) != 0) {
-  //   my_logger_g.logger->error("Failed to run \"thread start\" in " + cli_name_);
-  //   return false;
+  //   my_logger_g.logger->error("Failed to run \"thread start\" in " +
+  //   cli_name_); return false;
   // }
-  std::system("ot-ctl thread start");
+  if (!helpers::ask_chip("ot-ctl thread start").contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: thread start" << std::endl;
 
   std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -244,15 +239,22 @@ bool OT_BR::deactivate_thread() {
   //   my_logger_g.logger->error("Failed to run \"thread start\" in " +
   //   cli_name_); return false;
   // }
-  std::system("ot-ctl thread stop");
+  if (!helpers::ask_chip("ot-ctl thread stop").contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: thread stop" << std::endl;
   // const std::string ifconfig_down_cmd =
   //     "sudo " + cli_name_ + " ifconfig down > /dev/null";
-  // if (helpers::exec_system_cmd_with_default_timeout(ifconfig_down_cmd) != 0) {
-  //   my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}", cli_name_);
-  //   return false;
+  // if (helpers::exec_system_cmd_with_default_timeout(ifconfig_down_cmd) != 0)
+  // {
+  //   my_logger_g.logger->error("Failed to run \"ifconfig up\" in {}",
+  //   cli_name_); return false;
   // }
-  std::system("ot-ctl ifconfig down");
+  if (!helpers::ask_chip("ot-ctl ifconfig down").contains("Done")) {
+    std::cout << "FAILED" << std::endl;
+    return false;
+  }
   std::cout << "BR: ifconfig down" << std::endl;
 
   // TODO: does this fix the factoryreset problem?
