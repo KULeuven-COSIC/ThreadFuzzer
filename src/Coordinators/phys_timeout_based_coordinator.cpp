@@ -69,7 +69,15 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
                 << std::endl;
       my_logger_g.logger->error(
           "[COOR]: cannot restart protocol stack, exiting");
-      terminate_fuzzing()
+      int retries = 3;
+      while (retries-- >= 0) {
+        if (protocol_stack->restart()) {
+          std::cout << "[COOR]: retry succesful!" << std::endl;
+        }
+        std::cout << "[COOR] " << retries << " retries left" << std::endl;
+      }
+
+      terminate_fuzzing();
     }
     dut->start();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
