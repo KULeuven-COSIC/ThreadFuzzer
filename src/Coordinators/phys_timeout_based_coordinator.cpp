@@ -69,17 +69,7 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
                 << std::endl;
       my_logger_g.logger->error(
           "[COOR]: cannot restart protocol stack, exiting");
-      int retries = 3;
-      while (retries-- >= 0) {
-        if (protocol_stack->restart()) {
-          std::cout << "[COOR]: retry succesful!" << std::endl;
-          break;
-        }
-        std::cout << "[COOR] " << retries << " retries left" << std::endl;
-        if (retries < 0)
-          terminate_fuzzing();
-      }
-
+      terminate_fuzzing();
     }
     dut->start();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -108,6 +98,9 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
         my_logger_g.logger->info("[COOR]: first rebootcount: {} ",
                                  reboot_count);
+
+        // give the fuzzer_loop the powers back
+        is_epoch_it = false;
       }
 
       my_logger_g.logger->info("================ START OF A NEW FUZZING "
@@ -221,6 +214,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* disable fuzzing at end of the epoch for checking/pairing */
   if (local_iteration % fuzz_strategy_config_g.epoch_size == 0) {
+    std::cout << "[COOR]: INTO EPOCH_IT" << std::endl;
     is_epoch_it = true;
     statistics_g.epochs++;
     statistics_g.it_in_epochs = 0;
@@ -231,7 +225,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   std::cout << "iteration is an epoch_it " << is_epoch_it << std::endl;
 
   /* we ran an epoch iteration */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1) {
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 && local_iteration != 1) {
     if (!is_epoch_it) {
       need_to_finish = true;
       std::cout << "[COOR]: ERROR, we should be in epoch_it at this point"
@@ -245,7 +239,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     int current_reboot_count = helpers::chip_check_diagnostics();
     std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
     bool spurrious_reboot = (current_reboot_count - reboot_count) !=
-                            (1 + fuzz_strategy_config_g.epoch_size);
+                            (fuzz_strategy_config_g.epoch_size);
     if (spurrious_reboot) {
       std::cout << "[COOR]: crash!" << std::endl;
       my_logger_g.logger->info("[COOR]: crash!");
@@ -257,7 +251,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                                current_reboot_count - reboot_count);
       statistics_g.dut_crash_counter++;
     }
-    current_reboot_count = reboot_count;
+    reboot_count = current_reboot_count;
 
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
@@ -266,7 +260,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     bool reset = dut->factoryreset();
     bool pstart = protocol_stack->start();
     if (helpers::chip_pair() == 0) {
-      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
+      reboot_count = helpers::chip_check_diagnostics();
+      statistics_g.dut_reboot_counter = reboot_count;
       std::cout << "AND HERE WE ARE DONE!" << std::endl;
       if (!(start && reset && pstart && pstop)) {
         my_logger_g.logger->error("scheduling a hard reset failed!");
@@ -499,8 +494,12 @@ void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
         }
         my_logger_g.logger->info("Fuzzed packet: {} (type {})", pdu,
                                  fuzzed_packet_type);
-      } else if (is_epoch_it) {
+      }
+
+      if (is_epoch_it) {
         my_logger_g.logger->info("[COOR]: not fuzzing, epoch it or post-epoch");
+      } else {
+        std::cout << "FUZZING" << std::endl;
       }
     } else {
       incoming_packet_num = incoming_packet_num + 1;
@@ -578,6 +577,7 @@ void Phys_Timeout_Based_Coordinator::fuzzing_loop() {
   std::cout << "BLUG: CALLING RESTART ON NODES" << std::endl;
 
   std::cout << "BLUG: RESTARTING BR" << std::endl;
+  
   if (!protocol_stack->restart()) {
     std::cout << "Failed to start a protocol stack" << std::endl;
     my_logger_g.logger->error("Failed to start a protocol stack");

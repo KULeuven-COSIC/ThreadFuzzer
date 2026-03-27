@@ -623,7 +623,7 @@ int chip_pair() {
       "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
       "4a " +
       main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
-      " " + "--bypass-attestation-verifier true";
+      " " + "--bypass-attestation-verifier true | tail";
 
   std::cerr << cmd << std::endl;
 

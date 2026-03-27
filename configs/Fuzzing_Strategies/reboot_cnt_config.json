@@ -2,7 +2,7 @@
     "fuzzing_strategies": [
         "REBOOT_CNT_FUZZING"
     ],
-    "epoch_size": 1,
+    "epoch_size": 2,
     "mutation_prob": 100,
     "skip_prob": 0,
     "injection_prob": 0,

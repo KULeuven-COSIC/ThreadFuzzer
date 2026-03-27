@@ -268,16 +268,7 @@ void Base_Coordinator::fuzzing_loop()
         std::cout << "Failed to start a protocol stack" << std::endl;
         my_logger_g.logger->error("Failed to start a protocol stack");
         
-        int retries = 3;
-        while (retries-- >= 0) {
-          if (protocol_stack->restart()) {
-                std::cout << "[COOR]: retry succesful!" << std::endl;
-                break;
-          }
-          std::cout << "[COOR] " << retries << " retries left" << std::endl;
-          if (retries < 0)
-            terminate_fuzzing();
-        }
+        terminate_fuzzing();
 
         Base_Coordinator::terminate_fuzzing();
         goto exit;
