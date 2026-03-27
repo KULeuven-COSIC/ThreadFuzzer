@@ -2,10 +2,14 @@
 
 #include "Communication/shm_layer_communication.h"
 #include "Configs/Fuzzing_Settings/timers_config.h"
+#include "Coordinators/base_coordinator.h"
 #include "DUT/DUT_names.h"
+#include "fuzz_config.h"
 #include "helpers.h"
 #include "my_logger.h"
 #include "statistics.h"
+
+#include "Communication/shm_layer_communication_factory.h"
 
 #include <chrono>
 #include <thread>
@@ -13,6 +17,7 @@
 extern My_Logger my_logger_g;
 extern Statistics statistics_g;
 extern Timers_Config timers_config_g;
+extern Fuzz_Config fuzz_config_g;
 
 Phys_Timeout_Based_Coordinator::Phys_Timeout_Based_Coordinator() {
   if (fuzz_strategy_config_g.use_coverage_logging ||
@@ -66,9 +71,9 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
     my_logger_g.logger->info("[COOR]: from here we can start fuzzing");
     std::cout << "[COOR]: here we start fuzzing" << std::endl;
     while (SHM_Layer_Communication::is_active) {
-      
 
-      if (local_iteration == 0 && fuzz_strategy_config_g.chip_recommissioning_step) {
+      if (local_iteration == 0 &&
+          fuzz_strategy_config_g.chip_recommissioning_step) {
         if (main_config_g.dut_name == DUT_NAME::NANOLEAF ||
             main_config_g.dut_name == DUT_NAME::EVE_SENSOR) {
           std::cout << "[COOR]: assumption that DUT is in pairing mode"
@@ -85,8 +90,8 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
         reboot_count = helpers::chip_check_diagnostics();
         statistics_g.dut_reboot_counter = reboot_count;
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
-	my_logger_g.logger->info("[COOR]: first rebootcount: {} ", reboot_count);
-
+        my_logger_g.logger->info("[COOR]: first rebootcount: {} ",
+                                 reboot_count);
       }
 
       my_logger_g.logger->info("================ START OF A NEW FUZZING "
@@ -198,6 +203,66 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   global_iteration++;
   local_iteration++;
 
+  /* disable fuzzing at end of the epoch for checking/pairing */
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 0) {
+    is_epoch_it = true;
+    statistics_g.epochs++;
+    statistics_g.it_in_epochs = 0;
+  } else {
+    statistics_g.it_in_epochs++;
+  }
+  my_logger_g.logger->info("iteration is epoch_it {}", is_epoch_it);
+  std::cout << "iteration is an epoch_it " << is_epoch_it << std::endl;
+
+  /* we ran an epoch iteration */
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1) {
+    if (!is_epoch_it) {
+      need_to_finish = true;
+      std::cout << "[COOR]: ERROR, we should be in epoch_it at this point"
+                << std::endl;
+      my_logger_g.logger->error("[COOR]: ERROR, we should be in epoch_it at this");
+    }
+    /* fetch the reboot count */
+    std::cout << "[COOR]: fetchin current_reboot_count" << std::endl;
+    my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
+    int current_reboot_count = helpers::chip_check_diagnostics();
+    std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
+    bool spurrious_reboot = (current_reboot_count - reboot_count) !=
+                            (1 + fuzz_strategy_config_g.epoch_size);
+    if (spurrious_reboot) {
+      std::cout << "[COOR]: crash!" << std::endl;
+      my_logger_g.logger->info("[COOR]: crash!");
+      std::cout << "[COOR]: expected: " << 1 + fuzz_strategy_config_g.epoch_size
+                << " but was " << current_reboot_count - reboot_count
+                << std::endl;
+      my_logger_g.logger->info("[COOR]: expected {} but was {}",
+                               1 + fuzz_strategy_config_g.epoch_size,
+                               current_reboot_count - reboot_count);
+      statistics_g.dut_crash_counter++;
+    }
+    current_reboot_count = reboot_count;
+
+    bool pstop = protocol_stack->stop();
+    bool start = dut->start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    my_logger_g.logger->debug("WE ARE HERE NOW");
+    bool reset = dut->factoryreset();
+    bool pstart = protocol_stack->start();
+    if (helpers::chip_pair() == 0) {
+      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
+      std::cout << "AND HERE WE ARE DONE!" << std::endl;
+      if (!(start && reset && pstart && pstop)) {
+        my_logger_g.logger->error("scheduling a hard reset failed!");
+        need_to_finish = true;
+      }
+    } else {
+      need_to_finish = true;
+    }
+
+    // let fuzzing_loop continue fuzzing:
+    is_epoch_it = false;
+  }
+
   /* NOTE: from here no packets can flow! */
   wdissector_mutex.lock();
 
@@ -278,7 +343,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   std::cout << "PRINTED STATS" << std::endl;
 
-  bool need_to_perform_clean_attach = false;
   /* Check if any of the fuzzers requests finish of the fuzzing */
   for (size_t i = 0; i < fuzzers.size(); i++) {
     int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
@@ -287,10 +351,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
       my_logger_g.logger->info("Fuzzer indexed {} requested finishing fuzzing",
                                i);
       print_statistics();
-    }
-    // check if we need to schedule a hard reset
-    if (need_to_finish_local == 2) {
-      need_to_perform_clean_attach = true;
     }
   }
 
@@ -302,60 +362,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   /* NOTE: after this, packets can again flow */
   wdissector_mutex.unlock();
 
-  /* NOTE: here we'll fetch the reboot count outside the lock, as it otherwise
-   * breaks */
-  if (need_to_perform_clean_attach) {
-    /* fetch the reboot count */
-    std::cout << "[COOR]: fetchin current_reboot_count"  << std::endl;
-    my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
-    int current_reboot_count = helpers::chip_check_diagnostics();
-    std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
-    bool spurrious_reboot = (current_reboot_count - reboot_count) !=
-                            (1 + fuzz_strategy_config_g.epoch_size);
-    if (spurrious_reboot) {
-      std::cout << "[COOR]: crash!" << std::endl;
-      my_logger_g.logger->info("[COOR]: crash!");
-      std::cout << "[COOR]: expected: " << 1 + fuzz_strategy_config_g.epoch_size
-                << " but was " << current_reboot_count - reboot_count
-                << std::endl;
-      my_logger_g.logger->info("[COOR]: expected {} but was {}",
-                               1 + fuzz_strategy_config_g.epoch_size,
-                               current_reboot_count - reboot_count);
-      statistics_g.dut_crash_counter++;
-    }
-    current_reboot_count = reboot_count;
-
-    bool pstop = protocol_stack->stop();
-    bool start = dut->start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    my_logger_g.logger->debug("WE ARE HERE NOW");
-    bool reset = dut->factoryreset();
-    bool pstart = protocol_stack->start();
-    if (helpers::chip_pair() == 0) {
-      statistics_g.dut_reboot_counter = helpers::chip_check_diagnostics();
-      std::cout << "AND HERE WE ARE DONE!" << std::endl;
-      if (!(start && reset && pstart && pstop)) {
-        my_logger_g.logger->error("scheduling a hard reset failed!");
-        need_to_finish = true;
-      }
-    } else {
-      need_to_finish = true;
-    }
-
-    // NOTE: not very proud of this.
-    // but need it to trigger the reboot fuzzer again
-
-    wdissector_mutex.lock();
-    for (size_t i = 0; i < fuzzers.size(); i++) {
-      int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
-      need_to_finish |= !need_to_finish_local;
-      if (need_to_finish_local == 0) {
-        my_logger_g.logger->info(
-            "Fuzzer indexed {} requested finishing fuzzing", i);
-      }
-    }
-    wdissector_mutex.unlock();
-  }
 
   /* Finish the fuzzing if needed */
   if (need_to_finish) {
@@ -419,6 +425,171 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   incoming_packet_num = 0;
 
   return true;
+}
+
+void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
+
+  const std::string layer_name = helpers::get_layer_name_by_idx(mutex_num);
+  my_logger_g.logger->info("Starting {} thread", layer_name);
+  std::unique_ptr<SHM_Layer_Communication> SHM_Comm =
+      SHM_Layer_Communication_Factory::
+          get_shm_layer_communication_instance_by_layer_num(mutex_num);
+  my_logger_g.logger->info("Inited communication");
+
+  std::string dissector =
+      helpers::get_dissector_by_layer_idx(static_cast<int>(mutex_num));
+
+  while (SHM_Layer_Communication::is_active) {
+    bool failed = false;
+
+    /* Recieve intercepted message */
+    Packet pdu = SHM_Comm->receive();
+
+    if (!pdu.get_size())
+      continue;
+
+    pdu.set_dissector_name(dissector);
+
+    wdissector_mutex.lock();
+    my_logger_g.logger->info("[{}] Dissector {} {}", layer_name, dissector,
+                             pdu);
+
+    if (pdu.get_packet_src() == PACKET_SRC::SRC_PROTOCOL_STACK) {
+      if (!pdu.full_dissect()) {
+        my_logger_g.logger->warn("[{}] Fuzz iteration failed in prepare_fuzz",
+                                 layer_name);
+        failed = true;
+      }
+      my_logger_g.logger->info("---> Dissector's summary: {}",
+                               pdu.get_summary());
+      my_logger_g.logger->flush();
+
+      bool is_state_fuzzed = helpers::is_state_being_fuzzed(pdu.get_summary());
+
+      if (!failed && is_state_fuzzed && !is_epoch_it) {
+        for (size_t i = 0; i < fuzzers.size(); i++) {
+          if (!fuzzers.at(i)->fuzz(pdu)) {
+            my_logger_g.logger->warn("[{}] Fuzz iteration failed", layer_name);
+            failed = true;
+          }
+        }
+
+        std::string fuzzed_packet_type = "UNKNOWN";
+        if (pdu.quick_dissect()) {
+          fuzzed_packet_type = pdu.get_summary_short();
+        }
+        my_logger_g.logger->info("Fuzzed packet: {} (type {})", pdu,
+                                 fuzzed_packet_type);
+      } else if (is_epoch_it) {
+        my_logger_g.logger->info("[COOR]: not fuzzing, epoch it or post-epoch");
+      }
+    } else {
+      incoming_packet_num = incoming_packet_num + 1;
+      if (pdu.quick_dissect()) {
+        my_logger_g.logger->info("<--- Dissector's summary: {}",
+                                 pdu.get_summary());
+      } else {
+        my_logger_g.logger->warn(
+            "Failed to dissect the packet! (dissector: {})", dissector);
+      }
+
+      /* Check if we want to stop after the reception of the current message */
+      const std::string &packet_summary = pdu.get_summary();
+      const std::string &packet_summary_short = pdu.get_summary_short();
+      const std::vector<std::string> &stop_after_state_vec =
+          fuzz_strategy_config_g.fuzzing_stop_states;
+      if (!stop_fuzzing_iteration &&
+          (std::find(stop_after_state_vec.begin(), stop_after_state_vec.end(),
+                     packet_summary) != stop_after_state_vec.end() ||
+           std::find(stop_after_state_vec.begin(), stop_after_state_vec.end(),
+                     packet_summary_short) != stop_after_state_vec.end())) {
+        my_logger_g.logger->info("Message \"{}\" triggered termination of the "
+                                 "current fuzzing iteration",
+                                 packet_summary);
+        stop_fuzzing_iteration = true;
+        statistics_g.dut_become_router_counter++;
+      }
+    }
+    my_logger_g.logger->info("");
+    my_logger_g.logger->flush();
+
+    if (pdu.get_packet_src() == PACKET_SRC::SRC_PROTOCOL_STACK) {
+      Base_Fuzzer::packet_buffer[pdu.get_dissector_name()].insert(pdu);
+    }
+    wdissector_mutex.unlock();
+    SHM_Comm->send(pdu);
+    if (failed)
+      statistics_g.has_this_iteration_failed = true;
+  }
+}
+
+void Phys_Timeout_Based_Coordinator::fuzzing_loop() {
+  // Dissector warm-up. For some reason, wdissector does not dissect the first
+  // packet correctly.
+  auto p = helpers::get_sample_packet();
+  if (!p.quick_dissect()) {
+    my_logger_g.logger->error("Dissector failed to dissect a sample packet!");
+    return;
+  }
+
+  std::unique_ptr<std::thread> thread_mle;
+  std::unique_ptr<std::thread> thread_coap;
+
+  bool mle_thread_is_running = false;
+  bool coap_thread_is_running = false;
+
+  bool fuzz_MLE = fuzz_config_g.FUZZ_MLE;
+  bool fuzz_COAP = fuzz_config_g.FUZZ_COAP;
+
+  if (fuzz_MLE) {
+    mle_thread_is_running = true;
+    thread_mle = std::make_unique<std::thread>(
+        &Phys_Timeout_Based_Coordinator::layer_fuzzing_loop, this,
+        SHM_MUTEX_MLE);
+  }
+
+  if (fuzz_COAP) {
+    coap_thread_is_running = true;
+    thread_coap = std::make_unique<std::thread>(
+        &Phys_Timeout_Based_Coordinator::layer_fuzzing_loop, this,
+        SHM_MUTEX_COAP);
+  }
+
+  std::cout << "BLUG: CALLING RESTART ON NODES" << std::endl;
+
+  std::cout << "BLUG: RESTARTING BR" << std::endl;
+  if (!protocol_stack->restart()) {
+    std::cout << "Failed to start a protocol stack" << std::endl;
+    my_logger_g.logger->error("Failed to start a protocol stack");
+    Base_Coordinator::terminate_fuzzing();
+    goto exit;
+  }
+
+  std::cout << "BLUG: RESTARTING DUT" << std::endl;
+
+  if (!dut->restart()) {
+    std::cout << "Failed to start a DUT" << std::endl;
+    my_logger_g.logger->error("Failed to start a DUT");
+    Base_Coordinator::terminate_fuzzing();
+    goto exit;
+  }
+
+  std::cout << "restarts successfull" << std::endl;
+  my_logger_g.logger->info("restarts succesfull");
+
+  thread_dut_communication_func();
+
+exit:
+  std::cout << "killing everything" << std::endl;
+  my_logger_g.logger->error("killing everything");
+
+  if (mle_thread_is_running) {
+    thread_mle->join();
+  }
+
+  if (coap_thread_is_running) {
+    thread_coap->join();
+  }
 }
 
 bool Phys_Timeout_Based_Coordinator::reset_target() { return true; }

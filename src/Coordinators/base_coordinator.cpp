@@ -297,9 +297,6 @@ exit:
         thread_coap->join();
     }
 
-    // TODO: FIX THIS!! BAD FOR PHYS. NEEDED FOR VIRT.?
-    // Base_Fuzzer::mutated_fields.clear();
-    // Base_Fuzzer::mutated_fields_num = 0;
 }
 
 double Base_Coordinator::coverage_formula_1(double beta) {

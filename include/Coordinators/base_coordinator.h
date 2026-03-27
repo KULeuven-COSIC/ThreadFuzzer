@@ -29,7 +29,7 @@ public:
     virtual void thread_dut_communication_func() = 0;
     virtual bool reset_target() = 0;
 
-    void fuzzing_loop();
+    virtual void fuzzing_loop() = 0;
 
     virtual bool renew_fuzzing_iteration();
     virtual void print_statistics();
@@ -64,7 +64,7 @@ protected:
 
     std::vector<Fuzz_Strategy_Config> fuzz_strategy_configs_;
 
-    void layer_fuzzing_loop(EnumMutex mutex_num); // Mutex number
+    virtual void layer_fuzzing_loop(EnumMutex mutex_num) = 0; // Mutex number
     void terminate_fuzzing();
     
     bool prepare_new_fuzzing_sprint(const Fuzz_Strategy_Config& fuzz_strategy_config);

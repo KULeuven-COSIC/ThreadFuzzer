@@ -8,6 +8,7 @@
 #include "Fuzzers/base_fuzzer.h"
 #include "helpers.h"
 #include "my_logger.h"
+#include "shared_memory.h"
 #include "statistics.h"
 
 #include <chrono>
@@ -256,3 +257,11 @@ bool Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 bool Timeout_Based_Coordinator::reset_target() { return true; }
 
 std::string Timeout_Based_Coordinator::get_name() { return name_; }
+
+void Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex enum_num) {
+  Base_Coordinator::layer_fuzzing_loop(enum_num);
+}
+
+void Timeout_Based_Coordinator::fuzzing_loop() {
+  Base_Coordinator::fuzzing_loop();
+}

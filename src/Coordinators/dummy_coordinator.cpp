@@ -1,6 +1,7 @@
 #include "Coordinators/dummy_coordinator.h"
 
 #include "my_logger.h"
+#include "shared_memory.h"
 
 extern My_Logger my_logger_g;
 
@@ -32,6 +33,14 @@ void Dummy_Coordinator::thread_dut_communication_func()
 bool Dummy_Coordinator::reset_target()
 {
     return true;
+}
+
+void Dummy_Coordinator::layer_fuzzing_loop(EnumMutex _mutex_num) {
+  return;
+}
+
+void Dummy_Coordinator::fuzzing_loop() {
+  return;
 }
 
 std::string Dummy_Coordinator::get_name()

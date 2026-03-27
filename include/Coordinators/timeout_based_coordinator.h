@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Coordinators/base_coordinator.h"
+#include "shared_memory.h"
 
 #include <string>
 
@@ -13,7 +14,11 @@ public:
     bool reset_target() override;
     bool renew_fuzzing_iteration() override;
 
+    void layer_fuzzing_loop(EnumMutex enum_num) override;
+
+    void fuzzing_loop() override;
     std::string get_name() override;
-private:
+
+  private:
     std::string name_ = "Timeout-Based Coordinator";
 };

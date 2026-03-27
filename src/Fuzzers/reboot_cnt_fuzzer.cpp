@@ -110,119 +110,120 @@ bool RebootCntFuzzer::fuzz(Packet &packet) {
 
 int RebootCntFuzzer::prepare_new_iteration() {
   // it_cnt++;
-  statistics_g.it_in_epochs = it_cnt;
+  // statistics_g.it_in_epochs = it_cnt;
+  std::cout << "[RBT_CNT_FUZZER]: prepare new iteration" << std::endl;
+  my_logger_g.logger->info("[RBT_CNT_FUZZER]: prepare new iteration");
+  // bool hard_reset = false;
 
-  bool hard_reset = false;
+  // switch (current_state) {
 
-  switch (current_state) {
+  // case State::INIT: {
+  //   /* FIRST ITERATION: FETCH INITIAL REBOOT-CNT */
+  //   // my_logger_g.logger->info("[RBTCNT_FUZZER]: INIT");
+  //   // std::cerr << "RE-pairing device via CHIP..." << std::endl;
+  //   // my_logger_g.logger->warn(
+  //   //     "re-pairing device via CHIP, this should not happen in the
+  //   //     beginning!");
+  //   // helpers::chip_pair();
+  //   // int current_reboot_count = helpers::chip_check_diagnostics();
+  //   // reboot_count = current_reboot_count;
+  //   // statistics_g.dut_reboot_counter = current_reboot_count;
+  //   // my_logger_g.logger->info("INITIAL REBOOTS: {}", current_reboot_count);
+  //   // current_state = State::NORMAL;
+  //   std::cout << "THIS STATE SHOULD NOT HAPPEN!!!" << std::endl;
+  //   current_state = State::INIT;
+  //   break;
+  // }
 
-  case State::INIT: {
-    /* FIRST ITERATION: FETCH INITIAL REBOOT-CNT */
-    // my_logger_g.logger->info("[RBTCNT_FUZZER]: INIT");
-    // std::cerr << "RE-pairing device via CHIP..." << std::endl;
-    // my_logger_g.logger->warn(
-    //     "re-pairing device via CHIP, this should not happen in the
-    //     beginning!");
-    // helpers::chip_pair();
-    // int current_reboot_count = helpers::chip_check_diagnostics();
-    // reboot_count = current_reboot_count;
-    // statistics_g.dut_reboot_counter = current_reboot_count;
-    // my_logger_g.logger->info("INITIAL REBOOTS: {}", current_reboot_count);
-    // current_state = State::NORMAL;
-    std::cout << "THIS STATE SHOULD NOT HAPPEN!!!" << std::endl;
-    current_state = State::INIT;
-    break;
-  }
+  // case State::NORMAL: {
+  //   /* NORMAL FUZZING BEHAVIOR, KEEP TRACK OF ITERATIONS IN EPOCH */
 
-  case State::NORMAL: {
-    /* NORMAL FUZZING BEHAVIOR, KEEP TRACK OF ITERATIONS IN EPOCH */
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: NORMAL");
+  //   auto patches = current_seed->get_patches();
+  //   my_logger_g.logger->info(
+  //       "vvvvvvvvvvvvvvvvvvvvvvvvv SAVED PATCHES vvvvvvvvvvvvvvvvvvvvvvvvv");
+  //   for (std::shared_ptr<Patch> patch : patches) {
+  //     if (!patch->is_empty_patch()) {
+  //       saved_patches.insert(patch);
+  //       my_logger_g.logger->info("SAVED PATCH {}...", patch->get_id());
+  //     }
+  //   }
+  //   my_logger_g.logger->info(
+  //       "^^^^^^^^^^^^^^^^^^^^^^^^^ SAVED PATCHES ^^^^^^^^^^^^^^^^^^^^^^^^^");
+  //   it_cnt++;
+  //   if (it_cnt >= fuzz_strategy_config_g.epoch_size) {
+  //     it_cnt = 0;
+  //     current_state = State::EPOCH_IT;
+  //     epoch_it = true;
+  //   }
 
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: NORMAL");
-    auto patches = current_seed->get_patches();
-    my_logger_g.logger->info(
-        "vvvvvvvvvvvvvvvvvvvvvvvvv SAVED PATCHES vvvvvvvvvvvvvvvvvvvvvvvvv");
-    for (std::shared_ptr<Patch> patch : patches) {
-      if (!patch->is_empty_patch()) {
-        saved_patches.insert(patch);
-        my_logger_g.logger->info("SAVED PATCH {}...", patch->get_id());
-      }
-    }
-    my_logger_g.logger->info(
-        "^^^^^^^^^^^^^^^^^^^^^^^^^ SAVED PATCHES ^^^^^^^^^^^^^^^^^^^^^^^^^");
-    it_cnt++;
-    if (it_cnt >= fuzz_strategy_config_g.epoch_size) {
-      it_cnt = 0;
-      current_state = State::EPOCH_IT;
-      epoch_it = true;
-    }
+  //   break;
+  // }
 
-    break;
-  }
+  // case State::EPOCH_IT: {
+  //   /* EPOCH COMPLETE, CHECK THE REBOOT-COUNT  */
+  //   statistics_g.epochs++;
 
-  case State::EPOCH_IT: {
-    /* EPOCH COMPLETE, CHECK THE REBOOT-COUNT  */
-    statistics_g.epochs++;
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: EPOCH_IT");
 
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: EPOCH_IT");
+  //   // after an epoch, we reset:
+  //   hard_reset = true;
 
-    // after an epoch, we reset:
-    hard_reset = true;
+  //   current_state = State::NORMAL;
+  //   
+  //   break;
+  // }
 
-    current_state = State::NORMAL;
-    
-    break;
-  }
+  // case State::POST_EPOCH: {
+  //   epoch_it = false;
+  //   current_state = State::NORMAL;
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: POST_EPOCH_IT");
+  //   break;
+  // }
 
-  case State::POST_EPOCH: {
-    epoch_it = false;
-    current_state = State::NORMAL;
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: POST_EPOCH_IT");
-    break;
-  }
+  // case State::REFINEMENT: {
+  //   /* REFINE THE NB OF FIELDS TO FUZZ */
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: REFINEMENT");
+  //   std::cout << "REFINEMENT EPOCH IT: just tried: " << tried_patches.size()
+  //             << "/" << saved_patches.size() << " patches " << std::endl;
+  //   // NOTE: a refinement step is only one iteration, therefore,
+  //   // go back to the epoch_it check again after one!
+  //   std::cout << "PATCHES APPLIED DURING REFINEMENT: ";
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: PATCHES");
+  //   for (auto patch : tried_patches) {
+  //     if (!patch->is_empty_patch()) {
+  //       std::cout << patch->get_id() << ", ";
+  //       my_logger_g.logger->info("PATCH {}", patch->get_id());
+  //     } else {
+  //       std::cout << "... patch was empty!!! ..." << std::endl;
+  //     }
+  //   }
+  //   std::cout << std::endl;
 
-  case State::REFINEMENT: {
-    /* REFINE THE NB OF FIELDS TO FUZZ */
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: REFINEMENT");
-    std::cout << "REFINEMENT EPOCH IT: just tried: " << tried_patches.size()
-              << "/" << saved_patches.size() << " patches " << std::endl;
-    // NOTE: a refinement step is only one iteration, therefore,
-    // go back to the epoch_it check again after one!
-    std::cout << "PATCHES APPLIED DURING REFINEMENT: ";
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: PATCHES");
-    for (auto patch : tried_patches) {
-      if (!patch->is_empty_patch()) {
-        std::cout << patch->get_id() << ", ";
-        my_logger_g.logger->info("PATCH {}", patch->get_id());
-      } else {
-        std::cout << "... patch was empty!!! ..." << std::endl;
-      }
-    }
-    std::cout << std::endl;
+  //   // draw_saved_patches();
 
-    // draw_saved_patches();
+  //   current_state = State::EPOCH_IT;
+  //   break;
+  // }
 
-    current_state = State::EPOCH_IT;
-    break;
-  }
+  // case State::PRE_INIT: {
+  //   // How to check whether the check was succesful?
+  //   std::cout << "Let's hope that commissioning was succesful" << std::endl;
+  //   std::cout << "THIS STATE SHOULD NOT HAPPEN!!!" << std::endl;
+  //   current_state = State::PRE_INIT;
+  // }
 
-  case State::PRE_INIT: {
-    // How to check whether the check was succesful?
-    std::cout << "Let's hope that commissioning was succesful" << std::endl;
-    std::cout << "THIS STATE SHOULD NOT HAPPEN!!!" << std::endl;
-    current_state = State::PRE_INIT;
-  }
-
-  default:
-    break;
-  }
+  // default:
+  //   break;
+  // }
 
   bool r = Base_Fuzzer::prepare_new_iteration();
 
-  if (hard_reset && r) {
-    my_logger_g.logger->info("[RBTCNT_FUZZER]: going back to init!");
-    std::cout << "[RBTCNT_FUZZER]: going back to init!" << std::endl;
-    return 2;
-  }
+  // if (hard_reset && r) {
+  //   my_logger_g.logger->info("[RBTCNT_FUZZER]: going back to init!");
+  //   std::cout << "[RBTCNT_FUZZER]: going back to init!" << std::endl;
+  //   return 2;
+  // }
 
   return r;
 }
