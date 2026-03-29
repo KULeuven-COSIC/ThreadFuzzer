@@ -361,8 +361,7 @@ bool is_process_alive(const std::string &process_name) {
 
 bool signal_service(const std::string &service_name,
                     const std::string &signal) {
-  const std::string cmd =
-      "sudo pkill -" + signal + " " + service_name;
+  const std::string cmd = "sudo pkill -" + signal + " " + service_name;
   if (exec_system_cmd_with_default_timeout(cmd) != 0) {
     return false;
   }
@@ -611,19 +610,27 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
 }
 
 int chip_pair() {
+
+  // int ret2 = std::system("./connectedhomeip/out/chip-tool storage
+  // clear-all"); if (ret2 == TIMEOUT_CODE) {
+  //   my_logger_g.logger->warn("Command \"{}\" timed out",
+  //                            "chiptool_storage removal");
+  // } else if (ret2) {
+  //   my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}",
+  //                            "chiptool_storage removal", ret2);
+  // }
+
   std::cerr << "calling chip-pair" << std::endl;
+
   my_logger_g.logger->info("calling chip_pair");
   // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
-  std::string cmd =
-      "./connectedhomeip/out/chip-tool "
-      "pairing ble-thread 6 "
-      "hex:"
-      "0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6"
-      "183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c61795065"
-      "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
-      "4a " +
-      main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
-      " " + "--bypass-attestation-verifier true | tail";
+  std::string cmd = "./connectedhomeip/out/chip-tool "
+                    "pairing ble-thread 6 "
+                    "hex:" +
+                    technical_config_g.network_dataset + " " +
+                    main_config_g.chip_passcode + " " +
+                    main_config_g.chip_discriminator + " " +
+                    "--bypass-attestation-verifier true";
 
   std::cerr << cmd << std::endl;
 
@@ -653,13 +660,16 @@ int chip_check_diagnostics() {
   //           .c_str());
   int current_reboot_count;
   try {
-    current_reboot_count = std::stoi(ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                         "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
-                    .substr(13)
-                    .c_str());
-  } catch (std::exception& ex) {
+    current_reboot_count = std::stoi(
+        ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
+                 "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
+            .substr(13)
+            .c_str());
+  } catch (std::exception &ex) {
     std::cerr << "Exception in the chip_check_diagnostics(): ";
     std::cerr << ex.what() << std::endl;
+    my_logger_g.logger->error("[CHIP_RBT_CNT]: FAILED with exception: {}",
+                              ex.what());
     throw std::runtime_error("");
   }
   std::cout << "diag count: " << std::to_string(current_reboot_count)
@@ -696,7 +706,8 @@ int chip_check_diagnostics() {
   //   return current_reboot_count - std::stoi(saved_rbt_cnt);
   // } else {
   std::cerr << "fetch rbt count success" << std::endl;
-    return current_reboot_count;
+
+  return current_reboot_count;
 }
 
 std::string ask_chip(const char *cmd) {

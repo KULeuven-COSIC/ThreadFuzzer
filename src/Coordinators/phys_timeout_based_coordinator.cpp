@@ -90,8 +90,11 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           std::this_thread::sleep_for(std::chrono::seconds(60));
         }
 
-        if (helpers::chip_pair())
+        if (helpers::chip_pair()) {
+          std::cout << "[COOR]: ERROR pairing DUT again failed" << std::endl;
+          my_logger_g.logger->error("[COOR]: ERROR pairing DUT again failed");
           terminate_fuzzing();
+        }
 
         reboot_count = helpers::chip_check_diagnostics();
         statistics_g.dut_reboot_counter = reboot_count;
@@ -134,13 +137,6 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
               "Protocol stack is not running. Stopping the fuzzing iteration.");
           break;
         }
-
-        // NOTE: check whether dut is running at the end of each iteration, not
-        // during the iteration if (!dut->is_running()) {
-        //     need_to_restart_dut = true;
-        //     my_logger_g.logger->warn("DUT is not running. Stopping the
-        //     fuzzing iteration."); break;
-        // }
 
         // nothing is send at all
         if (incoming_packet_num == 0 &&
@@ -225,7 +221,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   std::cout << "iteration is an epoch_it " << is_epoch_it << std::endl;
 
   /* we ran an epoch iteration */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 && local_iteration != 1) {
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 &&
+      local_iteration != 1) {
     if (!is_epoch_it) {
       need_to_finish = true;
       std::cout << "[COOR]: ERROR, we should be in epoch_it at this point"
@@ -253,12 +250,30 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     }
     reboot_count = current_reboot_count;
 
+    /* remove the device from the matter network, just in case */
+    // TODO: tidy this up!
+    int ret3 = std::system(
+        "./connectedhomeip/out/chip-tool pairing unpair 6 | grep \"[TOO]\"");
+    if (ret3 == 124) {
+      my_logger_g.logger->warn("Command \"{}\" timed out",
+                               "chiptool clear session");
+    } else if (ret3) {
+      my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}",
+                               "chiptool clear session", ret3);
+      std::cout << "[CHIP]: unpairing node has failed" << std::endl;
+    }
+
+    std::cout << "waiting some seconds to make sure mdns entries are evicted"
+              << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     my_logger_g.logger->debug("WE ARE HERE NOW");
     bool reset = dut->factoryreset();
     bool pstart = protocol_stack->start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     if (helpers::chip_pair() == 0) {
       reboot_count = helpers::chip_check_diagnostics();
       statistics_g.dut_reboot_counter = reboot_count;
@@ -275,16 +290,9 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     is_epoch_it = false;
   }
 
-  /* NOTE: from here no packets can flow! */
+  /* --------------- NOTE: from here no packets can flow! ------------------- */
   wdissector_mutex.lock();
   my_logger_g.logger->debug("[COOR]: RFI: entering lock");
-
-  /* check whether the device has crashed */
-  if (!dut->is_running()) {
-    need_to_restart_dut = true; //
-  }
-
-  std::cout << "DUT CHECK COMPLETE" << std::endl;
 
   /* Update the coverage information */
   try {
@@ -300,9 +308,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                              ex.what());
     if (!protocol_stack->is_running()) {
       need_to_restart_protocol_stack = true;
-    }
-    if (!dut->is_running()) {
-      need_to_restart_dut = true;
     }
   }
 
@@ -325,18 +330,6 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     Base_Fuzzer::mut_field_num_tracker.reset();
     my_logger_g.logger->info("Resetting the probabilities");
     Base_Fuzzer::packet_field_tree_database.clear();
-  }
-
-  if (need_to_restart_dut) {
-    statistics_g.dut_crash_counter++;
-    my_logger_g.logger->warn("DUT has crashed!");
-    // /* Get the crash reason if we log the DUT's screen */
-    // if (!main_config_g.dut_log_file.empty()) {
-    //     std::this_thread::sleep_for(std::chrono::seconds(1));
-    //     std::string crash_info =
-    //     helpers::read_file_last_chars(main_config_g.dut_log_file);
-    //     my_logger_g.logger->info("DUT output:\n {}", crash_info);
-    // }
   }
 
   if (need_to_restart_protocol_stack) {
@@ -372,8 +365,9 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                           ? INT_MAX
                           : fuzz_strategy_config_g.total_iterations));
 
-  /* NOTE: after this, packets can again flow */
   wdissector_mutex.unlock();
+
+  /* ----------------- NOTE: from here packets can flow! -------------------- */
   my_logger_g.logger->debug("[COOR]: RFI: exiting lock");
 
   /* Finish the fuzzing if needed */
@@ -384,56 +378,22 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* Prepare for the new iteration */
   if (need_to_restart_protocol_stack || !protocol_stack->reset()) {
-    my_logger_g.logger->error(
-        "Failed to reset a protocol stack. Restarting...");
-    if (!protocol_stack->restart()) {
-      my_logger_g.logger->error("Protocol stack cannot be restarted");
-      return false;
-    } else {
-      my_logger_g.logger->warn("Protocol stack restarted successfully");
-      // reset is performed in restart already!
-      // if (!protocol_stack->reset()) {
-      //   my_logger_g.logger->error(
-      //       "Protocol stack cannot be reconfigured after restart");
-      //   return false;
-      // }
-      my_logger_g.logger->warn(
-          "Protocol stack reconfigured successfully after restart");
-    }
+    my_logger_g.logger->error("Protocol stack cannot be restarted");
+    return false;
+  } else {
+    my_logger_g.logger->warn("Protocol stack restarted successfully");
+    my_logger_g.logger->warn(
+        "Protocol stack reconfigured successfully after restart");
+  }
+  if (!dut->reset()) {
+    my_logger_g.logger->warn("Failed to reset a DUT. Restarting...");
+    my_logger_g.logger->error("DUT cannot be restarted");
+    return false;
+  } else {
+    my_logger_g.logger->warn("DUT restarted successfully");
   }
 
-  /* End of epoch means factoryreset of the dut */
-  // if (statistics_g.epochs > epoch_cnt_) {
-  //   std::cout << "EPOCH DONE, DOING FR INSTEAD OF RESET" << std::endl;
-  //   /* every device has its custom way of entering pairing-mode */
-  //   bool reset = dut->factoryreset();
-  //   /* we don't want the br to interfere, so reset it */
-  //   bool p_reset = protocol_stack->reset();
-  //   /* then we re-pair the device */
-  //   std::cout << "PAIRING the device using CHIP" << std::endl;
-  //   helpers::chip_pair();
-  //   if (!reset || !p_reset)
-  //     return false;
-  //   std::this_thread::sleep_for(std::chrono::seconds(1));
-
-  //   /* reset the dut just in case */
-  //   dut->reset();
-
-  //   epoch_cnt_ = statistics_g.epochs;
-  // } else
-  if ((need_to_restart_dut || !dut->reset())) {
-    my_logger_g.logger->warn("Failed to reset a DUT. Restarting...");
-    if (!dut->restart()) {
-      my_logger_g.logger->error("DUT cannot be restarted");
-      return false;
-    } else {
-      my_logger_g.logger->warn("DUT restarted successfully");
-    }
-  } /* only restart when we are not in the first iteration, as factoryreset
-       takes care of that */
-
   need_to_restart_protocol_stack = false;
-  need_to_restart_dut = false;
   stop_fuzzing_iteration = false;
   incoming_packet_num = 0;
 

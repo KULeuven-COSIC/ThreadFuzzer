@@ -167,7 +167,10 @@ bool OT_BR::restart() {
 }
 
 bool OT_BR::is_running() {
-  return helpers::is_process_alive(name_) && rcp_->is_running();
+  bool res = helpers::is_process_alive(name_) && rcp_->is_running();
+  if (!res)
+    my_logger_g.logger->error("[OT_BR]: application has died...");
+  return res;
 }
 
 bool OT_BR::reset() {

@@ -21,7 +21,6 @@ public:
 private:
     std::string name_ = "Physical Timeout-Based Coordinator";
     bool need_to_restart_protocol_stack = false;
-    bool need_to_restart_dut = false;
     int reboot_count = 0;
     bool is_epoch_it = true; // initialized at true, making sure initial steps aren't fuzzed
 };
