@@ -67,7 +67,7 @@ def parse_log_file(filepath: str) -> List[EpochData]:
                         current_epoch.start_iteration = current_iteration
                     current_epoch.end_iteration = current_iteration
                     
-            elif "REBOOTS:" in line:
+            elif "REBOOTS:" in line and not "OLD" in line:
                 try:
                     current_epoch.real_reboots = int(line.split("REBOOTS:")[1].strip())
                     epochs.append(current_epoch)
