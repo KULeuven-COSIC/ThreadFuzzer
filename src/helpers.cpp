@@ -609,7 +609,7 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
   throw std::runtime_error("Cannot get dissector: Unsupported protocol");
 }
 
-int chip_pair() {
+int chip_pair(const int node_id) {
 
   // int ret2 = std::system("./connectedhomeip/out/chip-tool storage
   // clear-all"); if (ret2 == TIMEOUT_CODE) {
@@ -620,12 +620,12 @@ int chip_pair() {
   //                            "chiptool_storage removal", ret2);
   // }
 
-  std::cerr << "calling chip-pair" << std::endl;
+  std::cerr << "calling chip-pair for node " << node_id << std::endl;
 
   my_logger_g.logger->info("calling chip_pair");
   // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
   std::string cmd = "./connectedhomeip/out/chip-tool "
-                    "pairing ble-thread 6 "
+                    "pairing ble-thread " + std::to_string(node_id) + " " +
                     "hex:" +
                     technical_config_g.network_dataset + " " +
                     main_config_g.chip_passcode + " " +
@@ -648,8 +648,8 @@ int chip_pair() {
   return ret;
 }
 
-int chip_check_diagnostics() {
-  std::cout << "fetching rbt cnt..." << std::endl;
+int chip_check_diagnostics(const int node_id) {
+  std::cout << "fetching rbt cnt for node " << node_id << std::endl;
   my_logger_g.logger->debug("fetching rbt cnt");
   // int current_reboot_count = std::atoi(
   //       ask_chip("/home/jakob/Documents/uni/doc/project/connectedhomeip/"
@@ -661,8 +661,8 @@ int chip_check_diagnostics() {
   int current_reboot_count;
   try {
     current_reboot_count = std::stoi(
-        ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                 "reboot-count 6 0 --timeout 500 | grep -o \"RebootCount: .*\" ")
+        ask_chip(("./connectedhomeip/out/chip-tool generaldiagnostics read "
+                  "reboot-count " + std::to_string(node_id) + " 0 --timeout 500 | grep -o \"RebootCount: .*\" ").c_str())
             .substr(13)
             .c_str());
   } catch (std::exception &ex) {
@@ -735,7 +735,7 @@ std::string ask_chip(const char *cmd) {
   return result;
 }
 
-bool chip_unpair(const std::string &device) {
+bool chip_unpair(const std::string &device, const int node_id) {
   std::string cmd = "sudo ../connectedhomeip/chip_unpair.sh " + device;
   int ret = std::system(cmd.c_str());
   if (ret == TIMEOUT_CODE)

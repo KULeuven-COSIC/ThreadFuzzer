@@ -63,16 +63,6 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
     // protocol_stack->reset(); //
     // dut->start();
     // protocol_stack->start();
-    dut->stop();
-    if (!protocol_stack->restart()) {
-      std::cout << "[COOR]: cannot restart protocol stack, exiting"
-                << std::endl;
-      my_logger_g.logger->error(
-          "[COOR]: cannot restart protocol stack, exiting");
-      terminate_fuzzing();
-    }
-    dut->start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     my_logger_g.logger->info("[COOR]: from here we can start fuzzing");
     std::cout << "[COOR]: here we start fuzzing" << std::endl;
@@ -90,13 +80,13 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           std::this_thread::sleep_for(std::chrono::seconds(60));
         }
 
-        if (helpers::chip_pair()) {
+        if (helpers::chip_pair(statistics_g.epochs + 1)) {
           std::cout << "[COOR]: ERROR pairing DUT again failed" << std::endl;
           my_logger_g.logger->error("[COOR]: ERROR pairing DUT again failed");
           terminate_fuzzing();
         }
 
-        reboot_count = helpers::chip_check_diagnostics();
+        reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
         statistics_g.dut_reboot_counter = reboot_count;
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
         my_logger_g.logger->info("[COOR]: first rebootcount: {} ",
@@ -104,6 +94,15 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
 
         // give the fuzzer_loop the powers back
         is_epoch_it = false;
+
+        if (!protocol_stack->reset()) {
+          std::cout << "[COOR]: cannot restart protocol stack, exiting"
+                    << std::endl;
+          my_logger_g.logger->error(
+              "[COOR]: cannot restart protocol stack, exiting");
+          terminate_fuzzing();
+        }
+
 
         dut->reset();
       }
@@ -116,26 +115,25 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       int counter = timers_config_g.iteration_length_s;
 
       /* very shady trick to make the snd iteration waay shorter */
+      int epoch_resizer = 30;
       if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 &&
           local_iteration != 0) {
         std::cerr << "warning: running shorter iteration" << std::endl;
-        if (counter < 100) {
+        if (counter < epoch_resizer) {
           std::cerr << "iteration is already short lengthening it" << std::endl;
         }
-        counter = 100;
+        counter = epoch_resizer;
       }
 
-      int iteration_time = 0;
-
       int current_silent_time = 0;
-
       int old_incoming_packet_num = 0;
+      int iteration_time = 0;
 
       while (SHM_Layer_Communication::is_active && !stop_fuzzing_iteration &&
              counter--) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        iteration_time = timers_config_g.iteration_length_s - counter;
+        iteration_time++;
 
         if (!protocol_stack->is_running()) {
           need_to_restart_protocol_stack = true;
@@ -187,6 +185,7 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           (static_cast<double>(iteration_time) -
            statistics_g.avg_iteration_time_s) /
           (global_iteration + 1);
+      iteration_time = 0;
 
       if (!SHM_Layer_Communication::is_active)
         break;
@@ -215,7 +214,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   local_iteration++;
 
   /* disable fuzzing at end of the epoch for checking/pairing */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 0) {
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 && !is_epoch_it) {
     std::cout << "[COOR]: INTO EPOCH_IT" << std::endl;
     is_epoch_it = true;
     statistics_g.epochs++;
@@ -239,14 +238,17 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     /* fetch the reboot count */
     std::cout << "[COOR]: fetchin current_reboot_count" << std::endl;
     my_logger_g.logger->info("[COOR]: fetching current_reboot_count!");
-    int current_reboot_count = helpers::chip_check_diagnostics();
+    // NOTE: need to take the prev. epoch as an idx, since epoch was increased
+    // last iteration
+    int current_reboot_count =
+        helpers::chip_check_diagnostics(statistics_g.epochs);
     std::cout << "[COOR]: rbtcnt " << current_reboot_count << std::endl;
     bool spurrious_reboot = (current_reboot_count - reboot_count) !=
                             (fuzz_strategy_config_g.epoch_size);
     if (spurrious_reboot) {
       std::cout << "[COOR]: crash!" << std::endl;
       my_logger_g.logger->info("[COOR]: crash!");
-      std::cout << "[COOR]: expected: " << 1 + fuzz_strategy_config_g.epoch_size
+      std::cout << "[COOR]: expected: " << fuzz_strategy_config_g.epoch_size
                 << " but was " << current_reboot_count - reboot_count
                 << std::endl;
       my_logger_g.logger->info("[COOR]: expected {} but was {}",
@@ -258,8 +260,13 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
     /* remove the device from the matter network, just in case */
     // TODO: tidy this up!
+    // NOTE: need to take the prev. epoch as an idx, since epoch was increased
+    // last iteration
+    std::cout << "unpairing node " << statistics_g.epochs << std::endl;
     int ret3 = std::system(
-        "./connectedhomeip/out/chip-tool pairing unpair 6 | grep \"[TOO]\"");
+        (std::string("./connectedhomeip/out/chip-tool pairing unpair ") +
+         std::to_string(statistics_g.epochs) + std::string(" | grep \"[TOO]\""))
+            .c_str());
     if (ret3 == 124) {
       my_logger_g.logger->warn("Command \"{}\" timed out",
                                "chiptool clear session");
@@ -273,6 +280,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
               << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(20));
 
+    /* and pair the device again. */
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -280,8 +288,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     bool reset = dut->factoryreset();
     bool pstart = protocol_stack->start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    if (helpers::chip_pair() == 0) {
-      reboot_count = helpers::chip_check_diagnostics();
+    if (helpers::chip_pair(statistics_g.epochs + 1) == 0) {
+      reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
       statistics_g.dut_reboot_counter = reboot_count;
       std::cout << "AND HERE WE ARE DONE!" << std::endl;
       if (!(start && reset && pstart && pstop)) {
@@ -382,12 +390,12 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     return false;
   }
 
-  if (!dut->stop()) {
-    my_logger_g.logger->error("DUT cannot be stopped");
-  } else {
-    my_logger_g.logger->warn("DUT stopped successfully");
-  }
-  std::this_thread::sleep_for(std::chrono::seconds(2));
+  // if (!dut->stop()) {
+  //   my_logger_g.logger->error("DUT cannot be stopped");
+  // } else {
+  //   my_logger_g.logger->warn("DUT stopped successfully");
+  // }
+  // std::this_thread::sleep_for(std::chrono::seconds(2));
 
   /* Prepare for the new iteration */
   if (need_to_restart_protocol_stack || !protocol_stack->reset()) {
@@ -399,7 +407,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         "Protocol stack reconfigured successfully after restart");
   }
   std::this_thread::sleep_for(std::chrono::seconds(2));
-  if (!dut->start()) {
+  if (!dut->reset()) {
     my_logger_g.logger->error("DUT cannot be restarted");
     return false;
   } else {
