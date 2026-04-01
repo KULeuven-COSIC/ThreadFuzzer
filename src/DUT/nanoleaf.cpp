@@ -49,7 +49,7 @@ bool Nanoleaf::restart() {
     std::cerr << "[DUT]: NANOLEAF: RESTARTING" << std::endl;
     if (!stop())
 	    return false;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
       std::this_thread::sleep_for(std::chrono::seconds(1));
       std::cout << "[DUT]: NANOLEAF powered off for: " << i + 1 << std::endl;
     }
@@ -105,6 +105,13 @@ bool Nanoleaf::factoryreset()
       std::cout << "[DUT]: NANOLEAF: failure detected during restarting!" << std::endl;
     std::cout << "[DUT]: [NANOLEAF]: give NANOLEAF 20 seconds to settle" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(20));
+
+    tr = tr && echo_to_pipe("off");
+    std::this_thread::sleep_for(std::chrono::seconds(30));
+    tr = tr && echo_to_pipe("on");
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
     return tr;
 }
 

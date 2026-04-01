@@ -630,7 +630,7 @@ int chip_pair() {
                     technical_config_g.network_dataset + " " +
                     main_config_g.chip_passcode + " " +
                     main_config_g.chip_discriminator + " " +
-                    "--bypass-attestation-verifier true";
+                    "--bypass-attestation-verifier true " + "--timeout 500";
 
   std::cerr << cmd << std::endl;
 
@@ -662,7 +662,7 @@ int chip_check_diagnostics() {
   try {
     current_reboot_count = std::stoi(
         ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                 "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
+                 "reboot-count 6 0 --timeout 500 | grep -o \"RebootCount: .*\" ")
             .substr(13)
             .c_str());
   } catch (std::exception &ex) {
@@ -678,7 +678,7 @@ int chip_check_diagnostics() {
 
   // if (main_config_g.chip_rbt_cnt_no_reset) {
   //   /* code to manipulate read/store the rbt count */
-      //   std::fstream rbt_file_in;
+  //   std::fstream rbt_file_in;
   //   rbt_file_in.open("rbt_cnt_val", std::ios::in);
 
   //   if (!rbt_file_in.is_open()) {
@@ -691,7 +691,8 @@ int chip_check_diagnostics() {
   //   rbt_file_in >> saved_rbt_cnt;
 
   //   std::cerr << "difference: "
-  //             << (current_reboot_count - std::stoi(saved_rbt_cnt)) << std::endl;
+  //             << (current_reboot_count - std::stoi(saved_rbt_cnt)) <<
+  //             std::endl;
 
   //   std::cout << "saved count: " << current_reboot_count << std::endl;
 

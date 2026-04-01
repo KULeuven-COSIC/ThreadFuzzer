@@ -104,6 +104,8 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
 
         // give the fuzzer_loop the powers back
         is_epoch_it = false;
+
+        dut->reset();
       }
 
       my_logger_g.logger->info("================ START OF A NEW FUZZING "
@@ -114,10 +116,14 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       int counter = timers_config_g.iteration_length_s;
 
       /* very shady trick to make the snd iteration waay shorter */
-      // if (global_iteration == 1) {
-      //   std::cerr << "warning: running shorter iteration" << std::endl;
-      //   counter = 60;
-      // }
+      if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 &&
+          local_iteration != 0) {
+        std::cerr << "warning: running shorter iteration" << std::endl;
+        if (counter < 100) {
+          std::cerr << "iteration is already short lengthening it" << std::endl;
+        }
+        counter = 100;
+      }
 
       int iteration_time = 0;
 
@@ -222,7 +228,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
   /* we ran an epoch iteration */
   if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 &&
-      local_iteration != 1) {
+      local_iteration >= fuzz_strategy_config_g.epoch_size) {
     if (!is_epoch_it) {
       need_to_finish = true;
       std::cout << "[COOR]: ERROR, we should be in epoch_it at this point"
@@ -244,7 +250,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                 << " but was " << current_reboot_count - reboot_count
                 << std::endl;
       my_logger_g.logger->info("[COOR]: expected {} but was {}",
-                               1 + fuzz_strategy_config_g.epoch_size,
+                               fuzz_strategy_config_g.epoch_size,
                                current_reboot_count - reboot_count);
       statistics_g.dut_crash_counter++;
     }
@@ -265,7 +271,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
 
     std::cout << "waiting some seconds to make sure mdns entries are evicted"
               << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(20));
 
     bool pstop = protocol_stack->stop();
     bool start = dut->start();
@@ -376,6 +382,13 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     return false;
   }
 
+  if (!dut->stop()) {
+    my_logger_g.logger->error("DUT cannot be stopped");
+  } else {
+    my_logger_g.logger->warn("DUT stopped successfully");
+  }
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+
   /* Prepare for the new iteration */
   if (need_to_restart_protocol_stack || !protocol_stack->reset()) {
     my_logger_g.logger->error("Protocol stack cannot be restarted");
@@ -385,8 +398,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     my_logger_g.logger->warn(
         "Protocol stack reconfigured successfully after restart");
   }
-  if (!dut->reset()) {
-    my_logger_g.logger->warn("Failed to reset a DUT. Restarting...");
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+  if (!dut->start()) {
     my_logger_g.logger->error("DUT cannot be restarted");
     return false;
   } else {
@@ -537,7 +550,7 @@ void Phys_Timeout_Based_Coordinator::fuzzing_loop() {
   std::cout << "BLUG: CALLING RESTART ON NODES" << std::endl;
 
   std::cout << "BLUG: RESTARTING BR" << std::endl;
-  
+
   if (!protocol_stack->restart()) {
     std::cout << "Failed to start a protocol stack" << std::endl;
     my_logger_g.logger->error("Failed to start a protocol stack");

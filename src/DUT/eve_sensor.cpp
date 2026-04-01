@@ -90,7 +90,7 @@ bool Eve_Sensor::factoryreset() {
   my_logger_g.logger->debug("[DUT]: EVE: FR");
   std::cout << "EVE STARTS FR" << std::endl;
   auto fr_on = eve_to_pipe("FR ON");
-  std::this_thread::sleep_for(std::chrono::seconds(20));
+  std::this_thread::sleep_for(std::chrono::seconds(7));
   auto fr_off = eve_to_pipe("FR OFF");
   my_logger_g.logger->debug("[DUT]: EVE: FR complete!");
   std::cout << "EVE FINISHED FR" << std::endl;
