@@ -86,7 +86,10 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           terminate_fuzzing();
         }
 
-        reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
+        /* NOTE: we need an additional offset if we run using the modulo trick
+         */
+        reboot_count =
+            helpers::chip_check_diagnostics(statistics_g.epochs + 1);
         statistics_g.dut_reboot_counter = reboot_count;
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
         my_logger_g.logger->info("[COOR]: first rebootcount: {} ",
@@ -115,8 +118,8 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
       int counter = timers_config_g.iteration_length_s;
 
       /* very shady trick to make the snd iteration waay shorter */
-      int epoch_resizer = 30;
-      if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 &&
+      int epoch_resizer = 20;
+      if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 &&
           local_iteration != 0) {
         std::cerr << "warning: running shorter iteration" << std::endl;
         if (counter < epoch_resizer) {
@@ -214,7 +217,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   local_iteration++;
 
   /* disable fuzzing at end of the epoch for checking/pairing */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 && !is_epoch_it) {
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 && !is_epoch_it) {
     std::cout << "[COOR]: INTO EPOCH_IT" << std::endl;
     is_epoch_it = true;
     statistics_g.epochs++;
@@ -226,7 +229,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   std::cout << "iteration is an epoch_it " << is_epoch_it << std::endl;
 
   /* we ran an epoch iteration */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 &&
+  if (local_iteration % fuzz_strategy_config_g.epoch_size == 0 &&
       local_iteration >= fuzz_strategy_config_g.epoch_size) {
     if (!is_epoch_it) {
       need_to_finish = true;
