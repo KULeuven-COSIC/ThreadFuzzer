@@ -619,33 +619,39 @@ int chip_pair(const int node_id) {
   //   my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}",
   //                            "chiptool_storage removal", ret2);
   // }
-
+ 
   std::cerr << "calling chip-pair for node " << node_id << std::endl;
 
   my_logger_g.logger->info("calling chip_pair");
   // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
   std::string cmd = "./connectedhomeip/out/chip-tool "
-                    "pairing ble-thread " + std::to_string(node_id) + " " +
-                    "hex:" +
-                    technical_config_g.network_dataset + " " +
+                    "pairing ble-thread " +
+                    std::to_string(node_id) + " " +
+                    "hex:" + technical_config_g.network_dataset + " " +
                     main_config_g.chip_passcode + " " +
                     main_config_g.chip_discriminator + " " +
-                    "--bypass-attestation-verifier true " + "--timeout 500";
+                    "--bypass-attestation-verifier true " +
+                    "--timeout 500";
+  bool succes = false;
+  std::string output;
 
-  std::cerr << cmd << std::endl;
+  try {
+    output = ask_chip(cmd.c_str());
+    succes =
+        output.contains("[TOO] Device commissioning completed with success");
+  } catch (std::exception &ex) {
+    my_logger_g.logger->warn("Command \"{}\" failed with exception: {}", cmd, ex.what());
+    throw std::runtime_error("");
+  }
+  // std::cerr << output << std::endl;
 
-  int ret = std::system(cmd.c_str());
-  if (ret == TIMEOUT_CODE) {
-    my_logger_g.logger->warn("Command \"{}\" timed out", cmd);
-  } else if (ret) {
-    my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}", cmd,
-                             ret);
-  } else {
+  if (succes) {
     std::cerr << "chip_pair succesfull!" << std::endl;
     my_logger_g.logger->info("chip-pair succesfull!");
+    return 0;
   }
 
-  return ret;
+  return succes;
 }
 
 int chip_check_diagnostics(const int node_id) {
@@ -662,7 +668,10 @@ int chip_check_diagnostics(const int node_id) {
   try {
     current_reboot_count = std::stoi(
         ask_chip(("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                  "reboot-count " + std::to_string(node_id) + " 0 --timeout 500 | grep -o \"RebootCount: .*\" ").c_str())
+                  "reboot-count " +
+                  std::to_string(node_id) +
+                  " 0 --timeout 500 | grep -o \"RebootCount: .*\" ")
+                     .c_str())
             .substr(13)
             .c_str());
   } catch (std::exception &ex) {
