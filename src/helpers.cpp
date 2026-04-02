@@ -23,6 +23,7 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <stdexcept>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -30,6 +31,8 @@
 #include <unistd.h>
 
 #include <fstream>
+
+#include <regex>
 
 // #include <sys/wait.h>
 
@@ -619,19 +622,21 @@ int chip_pair(const int node_id) {
   //   my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}",
   //                            "chiptool_storage removal", ret2);
   // }
- 
+
   std::cerr << "calling chip-pair for node " << node_id << std::endl;
 
   my_logger_g.logger->info("calling chip_pair");
   // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
-  std::string cmd = "./connectedhomeip/out/chip-tool "
-                    "pairing ble-thread " +
-                    std::to_string(node_id) + " " +
-                    "hex:" + technical_config_g.network_dataset + " " +
-                    main_config_g.chip_passcode + " " +
-                    main_config_g.chip_discriminator + " " +
-                    "--bypass-attestation-verifier true " +
-                    "--timeout 500";
+  std::string cmd =
+      "./connectedhomeip/out/chip-tool "
+      "pairing ble-thread " +
+      std::to_string(node_id) + " " +
+      "hex:" + technical_config_g.network_dataset + " " +
+      main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
+      " " +
+      "--bypass-attestation-verifier true "
+      + "--commissioner-name " + std::to_string(node_id + 3) + " "
+      + "--timeout 500";
   bool succes = false;
   std::string output;
 
@@ -640,7 +645,8 @@ int chip_pair(const int node_id) {
     succes =
         output.contains("[TOO] Device commissioning completed with success");
   } catch (std::exception &ex) {
-    my_logger_g.logger->warn("Command \"{}\" failed with exception: {}", cmd, ex.what());
+    my_logger_g.logger->warn("Command \"{}\" failed with exception: {}", cmd,
+                             ex.what());
     throw std::runtime_error("");
   }
   // std::cerr << output << std::endl;
@@ -649,6 +655,9 @@ int chip_pair(const int node_id) {
     std::cerr << "chip_pair succesfull!" << std::endl;
     my_logger_g.logger->info("chip-pair succesfull!");
     return 0;
+  } else {
+    std::cerr << "chip_pair failed" << std::endl;
+    my_logger_g.logger->error("chip-pair failed");
   }
 
   return succes;
@@ -657,30 +666,30 @@ int chip_pair(const int node_id) {
 int chip_check_diagnostics(const int node_id) {
   std::cout << "fetching rbt cnt for node " << node_id << std::endl;
   my_logger_g.logger->debug("fetching rbt cnt");
-  // int current_reboot_count = std::atoi(
-  //       ask_chip("/home/jakob/Documents/uni/doc/project/connectedhomeip/"
-  //                "OWN_BUILD_DIR/chip-tool generaldiagnostics read "
-  //                "active-network-faults 6 0 | grep -o \"ActiveNetworkFaults:
-  //                .*\"")
-  //           .substr(21)
-  //           .c_str());
   int current_reboot_count;
+  std::string cmd =
+      std::string("./connectedhomeip/out/chip-tool generaldiagnostics read ") +
+      "reboot-count " + std::to_string(node_id) + " 0 --timeout 500 " + "--commissioner-name " + std::to_string(node_id + 3);
+  std::string output;
+
   try {
-    current_reboot_count = std::stoi(
-        ask_chip(("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                  "reboot-count " +
-                  std::to_string(node_id) +
-                  " 0 --timeout 500 | grep -o \"RebootCount: .*\" ")
-                     .c_str())
-            .substr(13)
-            .c_str());
+    output = ask_chip(cmd.c_str());
+    std::regex r("RebootCount:\\s*(\\d+)");
+    std::smatch match;
+    if (!std::regex_search(output, match, r)) {
+      throw std::runtime_error("");
+    }
+    current_reboot_count = std::stoi(match[1]);
   } catch (std::exception &ex) {
     std::cerr << "Exception in the chip_check_diagnostics(): ";
     std::cerr << ex.what() << std::endl;
     my_logger_g.logger->error("[CHIP_RBT_CNT]: FAILED with exception: {}",
                               ex.what());
+    std::cerr << "when running: " << std::endl;
+    std::cerr << cmd << std::endl;
     throw std::runtime_error("");
   }
+
   std::cout << "diag count: " << std::to_string(current_reboot_count)
             << std::endl;
   my_logger_g.logger->info("COLLECTED RBT CNT: {}", current_reboot_count);

@@ -12,6 +12,7 @@
 #include "Communication/shm_layer_communication_factory.h"
 
 #include <chrono>
+#include <string>
 #include <thread>
 
 extern My_Logger my_logger_g;
@@ -278,7 +279,9 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     std::cout << "unpairing node " << statistics_g.epochs << std::endl;
     int ret3 = std::system(
         (std::string("./connectedhomeip/out/chip-tool pairing unpair ") +
-         std::to_string(statistics_g.epochs) + std::string(" | grep \"[TOO]\""))
+         std::to_string(statistics_g.epochs)
+         + " --commissioner-name " + std::to_string(statistics_g.epochs + 3)
+         + " " + std::string(" | grep \"[TOO]\""))
             .c_str());
     if (ret3 == 124) {
       my_logger_g.logger->warn("Command \"{}\" timed out",
