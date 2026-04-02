@@ -88,8 +88,7 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
 
         /* NOTE: we need an additional offset if we run using the modulo trick
          */
-        reboot_count =
-            helpers::chip_check_diagnostics(statistics_g.epochs + 1);
+        reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
         statistics_g.dut_reboot_counter = reboot_count;
         std::cout << "[COOR]: first rebootcount: " << reboot_count << std::endl;
         my_logger_g.logger->info("[COOR]: first rebootcount: {} ",
@@ -105,7 +104,6 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
               "[COOR]: cannot restart protocol stack, exiting");
           terminate_fuzzing();
         }
-
 
         dut->reset();
       }
@@ -179,6 +177,13 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           old_incoming_packet_num = incoming_packet_num;
           // break;
         }
+
+        /* TODO: tidy this up */
+        if (advertisement_counter > 100) {
+          std::cout << "ending this iteration early" << std::endl;
+          my_logger_g.logger->info("ending this iteration early");
+          break;
+        }
       }
 
       std::cout << "FINISHED ITERATION" << std::endl;
@@ -216,8 +221,13 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
   global_iteration++;
   local_iteration++;
 
+  /* reset advertisement counter */
+  advertisement_counter = 0;
+
   /* disable fuzzing at end of the epoch for checking/pairing */
-  if (local_iteration % fuzz_strategy_config_g.epoch_size == 1 && !is_epoch_it) {
+  if (local_iteration % fuzz_strategy_config_g.epoch_size ==
+          fuzz_strategy_config_g.epoch_size - 1 &&
+      !is_epoch_it) {
     std::cout << "[COOR]: INTO EPOCH_IT" << std::endl;
     is_epoch_it = true;
     statistics_g.epochs++;
@@ -490,6 +500,9 @@ void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
       if (pdu.quick_dissect()) {
         my_logger_g.logger->info("<--- Dissector's summary: {}",
                                  pdu.get_summary());
+        if (!is_epoch_it) {
+          advertisement_counter++;
+        }
       } else {
         my_logger_g.logger->warn(
             "Failed to dissect the packet! (dissector: {})", dissector);
