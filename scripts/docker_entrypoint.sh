@@ -50,6 +50,8 @@ source venv/bin/activate && python3 scripts/tapo_plug_session.py &
 # echo "[INFO]: checking syslog"
 # tail -f otbr-log/syslog &
 # wait $!
+sudo ip -6 route add fe80::/64 dev dummy0 metric 100
+sudo ip -6 route add fe02::/16 dev dummy0 metric 100
 
 # echo "[INFO]: if all went right, otbr should now be running in the background"
 echo "[INFO]: dropping into shell";
