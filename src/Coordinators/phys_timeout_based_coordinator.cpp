@@ -176,21 +176,25 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         }
 
         my_logger_g.logger->info("[COOR]: Fetching current_reboot_count to check for crashes...");
-        int current_reboot_count = helpers::chip_fetch_reboot_count(node_id); 
-        
-        bool spurrious_reboot = (current_reboot_count - reboot_count) != fuzz_strategy_config_g.epoch_size;
-        if (spurrious_reboot) {
-            my_logger_g.logger->warn("[COOR]: CRASH DETECTED! Expected {} reboots but saw {}",
-                                     fuzz_strategy_config_g.epoch_size,
-                                     current_reboot_count - reboot_count);
-            statistics_g.dut_crash_counter++;
+        try {
+            int current_reboot_count = helpers::chip_fetch_reboot_count(node_id);
+            bool spurrious_reboot = (current_reboot_count - reboot_count) != fuzz_strategy_config_g.epoch_size;
+            if (spurrious_reboot) {
+                my_logger_g.logger->warn("[COOR]: CRASH DETECTED! Expected {} reboots but saw {}",
+                                        fuzz_strategy_config_g.epoch_size,
+                                        current_reboot_count - reboot_count);
+                statistics_g.dut_crash_counter++;
+            }
+            reboot_count = current_reboot_count;
+        } catch (std::exception& ex) {
+            my_logger_g.logger->debug("Exception during the reboot count fetch: {}", ex.what());
+            my_logger_g.logger->warn("Failed to read a reboot count. Ignoring it during this iteration.");
         }
-        reboot_count = current_reboot_count;
 
         // Unpair the device
-        if (!helpers::chip_unpair(node_id)) { 
-            my_logger_g.logger->error("Chip unpair failed for Node ID: {}", node_id);
-            throw std::runtime_error("Chip unpair failed");
+        if (!helpers::chip_unpair(node_id)) {
+            my_logger_g.logger->warn("Chip unpair failed for Node ID: {}", node_id);
+            my_logger_g.logger->debug("Still continuing hoping to recover.");
         }
 
         // Wait for host mDNS caches to gracefully expire after a potential dirty crash
