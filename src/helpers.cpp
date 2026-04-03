@@ -635,7 +635,7 @@ int chip_pair(const int node_id) {
       main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
       " " +
       "--bypass-attestation-verifier true "
-      + "--commissioner-name " + std::to_string(node_id + 3) + " "
+      // + "--commissioner-name " + std::to_string(node_id + 3) + " "
       + "--timeout 500";
   bool succes = false;
   std::string output;
@@ -669,7 +669,7 @@ int chip_check_diagnostics(const int node_id) {
   int current_reboot_count;
   std::string cmd =
       std::string("./connectedhomeip/out/chip-tool generaldiagnostics read ") +
-      "reboot-count " + std::to_string(node_id) + " 0 --timeout 500 " + "--commissioner-name " + std::to_string(node_id + 3);
+      "reboot-count " + std::to_string(node_id) + " 0 --timeout 500 "; // + "--commissioner-name " + std::to_string(node_id + 3);
   std::string output;
 
   try {

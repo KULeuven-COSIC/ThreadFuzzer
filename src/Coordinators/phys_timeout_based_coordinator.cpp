@@ -280,7 +280,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     int ret3 = std::system(
         (std::string("./connectedhomeip/out/chip-tool pairing unpair ") +
          std::to_string(statistics_g.epochs)
-         + " --commissioner-name " + std::to_string(statistics_g.epochs + 3)
+         // + " --commissioner-name " + std::to_string(statistics_g.epochs + 3)
          + " " + std::string(" | grep \"[TOO]\""))
             .c_str());
     if (ret3 == 124) {
