@@ -1,7 +1,8 @@
 {
     "iteration_length_ms": 100,
-    "iteration_length_s": 15,
-    "empty_iteration_length_s": 100,
+    "iteration_length_s": 1,
+    "// iteration_length_s": 900,
+    "empty_iteration_length_s": 1000,
     "router_selection_jitter_s": 1,
     "speed": 100,
     "system_cmd_max_timeout_default_s": 5,

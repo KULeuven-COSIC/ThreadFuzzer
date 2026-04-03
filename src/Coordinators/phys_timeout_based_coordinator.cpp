@@ -305,7 +305,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     bool reset = dut->factoryreset();
     bool pstart = protocol_stack->start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    if (!helpers::chip_pair(statistics_g.epochs + 1)) {
+    if (helpers::chip_pair(statistics_g.epochs + 1)) {
       reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
       statistics_g.dut_reboot_counter = reboot_count;
       std::cout << "AND HERE WE ARE DONE!" << std::endl;

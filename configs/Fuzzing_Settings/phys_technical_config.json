@@ -4,5 +4,6 @@
     "interface": "dummy0",
     "ot_path_for_dut": "./third-party/openthread",
     "ot_path_for_packet_generator": "./third-party/ot-br-posix",
-    "// network_dataset": ""
+    "// iljas_network_dataset_channel_11": "0e08000000000001000035060004001fffe0020843966e920d1e80630708fd29afe73ce245430410ad3ffe4fb50a54b46e97ae33d27f53be0c0402a0f7f80102beef000300000b030c496c6a6173506c617950656e051000112233445566778899aabbccddbeef",
+    "network_dataset": "0e08000000000001000035060004001fffe00208642e4e0d622d1a530708fd42ae75dca0f1dd0410eaabb6507330dba149a7afa7e1940ade0c0402a0f7f800030000190102cafe030e456c6c69506c617947726f756e64051000112233445566778899aabbccddcafe"
 }

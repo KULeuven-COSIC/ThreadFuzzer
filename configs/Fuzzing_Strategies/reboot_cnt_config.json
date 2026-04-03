@@ -1,23 +1,21 @@
 {
     "fuzzing_strategies": [
-        "REBOOT_CNT_FUZZING"
+        "RANDOM_FUZZING"
     ],
     "epoch_size": 2,
-    "mutation_prob": 100,
-    "skip_prob": 0,
+    "mutation_prob": 0,
+    "skip_prob": 100,
     "injection_prob": 0,
-    "total_iterations": 500,
+    "total_iterations": 1000,
     "fields_not_to_fuzz": [
         "mle.sec_suite"
     ],
     "chip_recommissioning_step": true,
     "use_existing_seeds": false,
     "// seed_paths": [
-        "seeds/crash_seeds/Crash_1/crash_seed_1_mut.json"
+        "seeds/crash_seeds/Crash_1/crash_seed_1_mut_dr.json", "seeds/crash_seeds/Crash_1/crash_seed_1_mut.json"
     ],
-    "// seed_paths": [
-    	"seeds/crash_seeds/Crash_9/crash_seed_9_mut.json"
-    ],
+    "// seed_paths": [],
     "use_coverage_logging": true,
     "use_coverage_feedback": true,
     "use_probability_resets": true,
