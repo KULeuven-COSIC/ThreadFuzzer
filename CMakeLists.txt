@@ -8,6 +8,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -pedantic-errors -
 set(THIRD_PARTY_PATH "third-party")
 set(COMMON_PATH "common")
 
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+
 include_directories(
 	include
     ${THIRD_PARTY_PATH}/wdissector/
@@ -66,8 +68,9 @@ add_executable(ThreadFuzzer
     src/Fuzzers/tlv_duplicator.cpp
     src/Fuzzers/tlv_inserter.cpp
     src/Fuzzers/tlv_mixer.cpp
-    src/Fuzzers/reboot_cnt_fuzzer.cpp
     src/DUT/alexa.cpp
+    src/DUT/aqara_sensor.cpp
+    src/DUT/generic_sensor.cpp
     src/DUT/nanoleaf.cpp
     src/DUT/eve_sensor.cpp
     src/DUT/DUT_base.cpp
@@ -89,6 +92,7 @@ add_executable(ThreadFuzzer
 )
 
 target_link_libraries(ThreadFuzzer
+    Boost::system Boost::filesystem
     shared_memory
     wdissector
     fmt

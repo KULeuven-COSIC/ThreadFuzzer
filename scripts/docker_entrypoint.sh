@@ -21,6 +21,8 @@ echo "[INFO]: hooking dummy interface up to otbr"
 sed -i "s/eth0/dummy0/g" /etc/default/otbr-agent
 sed -i "s/wlan0/dummy0/g" /etc/default/otbr-agent
 
+chown -R syslog:adm /app/ThreadFuzzer/otbr-log
+chown syslog:adm /app/ThreadFuzzer/syslog.conf
 echo "[INFO]: starting custom rsyslog"
 rsyslogd -n -f syslog.conf &
 

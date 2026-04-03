@@ -15,14 +15,6 @@ extern My_Logger my_logger_g;
 extern Technical_Config technical_config_g;
 extern Timers_Config timers_config_g;
 
-Nanoleaf::Nanoleaf() {
-    // std::string command = "python3 scripts/tapo_plug_session.py -p " + technical_config_g.tapo_pipe_name;
-    // if (std::system(command.c_str()) != 0) {
-    //     my_logger_g.logger->error("Failed to initialize a tapo plug session");
-    //     throw std::runtime_error("Failed to initialize a tapo plug session");
-    // }
-}
-
 Nanoleaf::~Nanoleaf() {
     echo_to_pipe("exit");
 }

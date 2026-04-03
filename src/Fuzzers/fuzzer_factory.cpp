@@ -9,7 +9,6 @@
 #include "Fuzzers/tlv_duplicator.h"
 #include "Fuzzers/tlv_inserter.h"
 #include "Fuzzers/tlv_mixer.h"
-#include "Fuzzers/reboot_cnt_fuzzer.h"
 #include "Fuzzers/skip_fuzzer.h"
 
 #include <memory>
@@ -23,7 +22,6 @@ std::unique_ptr<Base_Fuzzer> Fuzzer_Factory::get_fuzzer_by_fuzzing_strategy(Fuzz
         case FuzzingStrategy::TLV_DUPLICATING: return std::make_unique<TLV_Duplicator>();
         case FuzzingStrategy::TLV_INSERTING: return std::make_unique<TLV_Inserter>();
         case FuzzingStrategy::LEN_FUZZING: return std::make_unique<LenFuzzer>();
-        case FuzzingStrategy::REBOOT_CNT_FUZZING: return std::make_unique<RebootCntFuzzer>();
         default: break;
     }
     throw std::runtime_error("Unknown fuzzing strategy");

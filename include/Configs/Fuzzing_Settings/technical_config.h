@@ -18,7 +18,7 @@ public:
       "fdcbed4a";
 
   std::string tapo_pipe_name = "/tmp/tapo_pipe";
-  std::string eve_pipe_name = "/dev/ttyUSB0";
+  std::string dut_pipe_name = "/dev/ttyUSB0";
 
   std::string ot_path_for_dut;
   std::string ot_path_for_packet_generator = "";

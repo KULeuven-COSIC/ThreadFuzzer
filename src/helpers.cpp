@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <asm-generic/errno-base.h>
+#include <boost/process.hpp>
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
@@ -27,9 +28,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <thread>
+#include <termios.h>
 #include <unistd.h>
 
 #include <fstream>
+#include <fmt/core.h>
 
 // #include <sys/wait.h>
 
@@ -186,165 +189,6 @@ bool is_pid_alive(const std::string &pid_name) {
   return true;
 }
 
-/* TODO: dont hardcode ports! */
-bool send_udp_heartbeat(int port) {
-  int fd;
-  if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    std::cout << "COULD NOT CREATE A SOCKET!!" << std::endl;
-    my_logger_g.logger->warn("could not create socket");
-    return false;
-  }
-  fcntl(fd, F_SETFL, O_NONBLOCK);
-
-  int fdret;
-  if ((fdret = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    std::cout << "COULD NOT CREATE A SOCKET!!" << std::endl;
-    my_logger_g.logger->warn("could not create socket");
-    close(fd);
-    return false;
-  }
-  fcntl(fdret, F_SETFL, O_NONBLOCK);
-
-  sockaddr_in retAddr;
-  memset((char *)&retAddr, 0, sizeof(retAddr));
-  retAddr.sin_family = AF_INET;
-  retAddr.sin_port = htons(9000);
-  inet_pton(AF_INET, "127.0.0.1", &retAddr.sin_addr);
-
-  /* make sure the return address is reserved for us */
-  if (bind(fdret, (const struct sockaddr *)&retAddr, sizeof(retAddr)) < 0) {
-    std::cout << "COULD NOT BIND RETURN ADDRESS" << std::endl;
-    my_logger_g.logger->warn("could not bind socket to address!");
-    close(fd);
-    close(fdret);
-    return false;
-  }
-
-  uint8_t buf[11] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, // time delay
-      0x00, // UART write
-      0x00, // 2B size in little endian!!
-      0x00,
-  };
-
-  sockaddr_in destAddr;
-  memset((char *)&destAddr, 0, sizeof(destAddr));
-  destAddr.sin_family = AF_INET;
-  destAddr.sin_port = htons(9000 + port);
-  inet_pton(AF_INET, "127.0.0.1", &destAddr.sin_addr);
-
-  for (auto c : buf) {
-    std::cout << c << " ";
-    if (c == '\0')
-      break;
-  }
-  std::cout << std::endl;
-
-  /* "<<<Azrael, are you dead?>>>" */
-  ssize_t sentBytes =
-      sendto(fd, buf, 11, 0, reinterpret_cast<sockaddr *>(&destAddr),
-             sizeof(destAddr));
-  if (sentBytes < 0) {
-    std::cout << "FAILED TO SEND PACKET" << std::endl;
-    my_logger_g.logger->warn("failed to send packet");
-    return false;
-  }
-
-  /* "<<<Miauw>>>" */
-  socklen_t len = sizeof(retAddr);
-  char buffer[1024];
-
-  int tries = 0;
-
-  int n = -1;
-  while (tries < 50) {
-    n = recvfrom(fdret, buffer, 1024, 0, reinterpret_cast<sockaddr *>(&retAddr),
-                 &len);
-    tries++;
-    std::this_thread::sleep_for(std::chrono::microseconds(1));
-    if (errno != EAGAIN || n > -1)
-      break;
-  }
-
-  close(fd);
-  close(fdret);
-
-  if (n < 0) {
-    std::cout << "no response from " << port + 9000 << std::endl;
-    std::cout << "error is " << n << std::endl;
-    my_logger_g.logger->warn("response code was: {}", errno);
-    return false;
-  }
-
-  buffer[n] = '\0';
-  std::cout << "Server :" << buffer << ": End Server" << std::endl;
-
-  return true;
-}
-
-/* TODO avoid creating a socket over and over again!! */
-bool send_udp_request(const std::string msg, int port) {
-  int fd;
-
-  if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    std::cout << "COULD NOT CREATE A SOCKET!!" << std::endl;
-    return false;
-  }
-
-  uint8_t buf[1024] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
-      0x00,                         // time delay
-      0x02,                         // UART write
-      0x06,                         // 2B size in little endian!!
-      0x00, 0x73, 0x74, 0x61, 0x65, // message (just state here)
-      0x0D,                         // carriage return
-      0x0A,                         // newline
-  };
-
-  // put in the message size
-  buf[9] = msg.length();
-
-  // then the msg itself
-  for (int i = 0; i < msg.length(); i++) {
-    buf[9 + i] = msg.c_str()[i];
-  }
-
-  // followed by a footer
-  buf[9 + msg.length()] = '\r';
-  buf[9 + msg.length() + 1] = '\n';
-  buf[9 + msg.length() + 2] = '\0';
-
-  sockaddr_in destAddr;
-
-  memset((char *)&destAddr, 0, sizeof(destAddr));
-  destAddr.sin_family = AF_INET;
-  destAddr.sin_port = htons(port + 9000);
-
-  inet_pton(AF_INET, "127.0.0.1", &destAddr.sin_addr);
-
-  for (auto c : buf) {
-    std::cout << c << " ";
-    if (c == '\0')
-      break;
-  }
-  std::cout << std::endl;
-
-  ssize_t sentBytes =
-      sendto(fd, buf, 9 + msg.length() + 3, 0,
-             reinterpret_cast<sockaddr *>(&destAddr), sizeof(destAddr));
-  close(fd);
-
-  if (sentBytes < 0) {
-    std::cout << "FAILED TO SEND PACKET" << std::endl;
-    return false;
-  } else {
-    std::cout << "Sent " << sentBytes << "B" << std::endl;
-  }
-
-  return true;
-}
-
 // NOTE: no longer used, in favor of is_pid_alive
 bool is_process_alive(const std::string &process_name) {
 
@@ -460,21 +304,6 @@ bool run_screen_cli_commands(const std::string session_name,
       return false;
     } else {
       my_logger_g.logger->debug("ran " + cmd + " on " + session_name);
-    }
-  }
-
-  return true;
-}
-
-bool run_udp_cli_commands(const std::vector<std::string> cli_commands,
-                          int port) {
-  for (auto cmd : cli_commands) {
-    if (!helpers::send_udp_request(cmd, port)) {
-      my_logger_g.logger->error("failed to run command " + cmd + " on " +
-                                std::to_string(port));
-      return false;
-    } else {
-      my_logger_g.logger->debug("ran " + cmd + " on " + std::to_string(port));
     }
   }
 
@@ -610,128 +439,209 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
   throw std::runtime_error("Cannot get dissector: Unsupported protocol");
 }
 
-int chip_pair() {
-  std::cerr << "calling chip-pair" << std::endl;
-  my_logger_g.logger->info("calling chip_pair");
-  // DUT_Base dut = DUT_Factory::get_dut_by_name(device_name);
-  std::string cmd =
-      "./connectedhomeip/out/chip-tool "
-      "pairing ble-thread 6 "
-      "hex:"
-      "0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6"
-      "183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c61795065"
-      "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
-      "4a " +
-      main_config_g.chip_passcode + " " + main_config_g.chip_discriminator +
-      " " + "--bypass-attestation-verifier true | tail";
+/* TODO: Change it to use the return value. */
+bool chip_pair(int node_id, const std::string& passcode, const std::string& discriminator) {
+    static const std::string thread_dataset_hex = 
+        "0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6"
+        "183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c61795065"
+        "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
+        "4a";
 
-  std::cerr << cmd << std::endl;
+    my_logger_g.logger->info("Initiating CHIP pairing sequence for Node ID: {}", node_id);
 
-  int ret = std::system(cmd.c_str());
-  if (ret == TIMEOUT_CODE) {
-    my_logger_g.logger->warn("Command \"{}\" timed out", cmd);
-  } else if (ret) {
-    my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}", cmd,
-                             ret);
-  } else {
-    std::cerr << "chip_pair succesfull!" << std::endl;
-    my_logger_g.logger->info("chip-pair succesfull!");
-  }
+    const std::string program = "./connectedhomeip/out/chip-tool";
+    const std::vector<std::string> args = {
+        "pairing",
+        "ble-thread",
+        std::to_string(node_id),
+        "hex:" + thread_dataset_hex,
+        passcode,
+        discriminator,
+        "--bypass-attestation-verifier",
+        "true",
+        "--timeout",
+        "500"
+    };
 
-  return ret;
+    try {
+        std::string output = execute_command_and_get_output(program, args, true);
+
+        // Safely get the last 1000 characters (or less, if the output is unusually short)
+        size_t tail_length = std::min<size_t>(output.length(), 1000);
+        std::string_view tail(output.data() + output.length() - tail_length, tail_length);
+
+        // Only search the tail end for fatal errors
+        if (tail.find("CHIP Error") != std::string_view::npos || tail.find("Timeout") != std::string_view::npos) {
+            my_logger_g.logger->warn("CHIP pairing failed or timed out for Node ID: {}", node_id);
+            return false;
+        }
+
+        my_logger_g.logger->info("CHIP pairing successful for Node ID: {}", node_id);
+    } catch (const std::exception& ex) {
+        my_logger_g.logger->error("Failed to launch chip-tool process for Node ID {}: {}", node_id, ex.what());
+        return false;
+    }
+
+    return true;
 }
 
-int chip_check_diagnostics() {
-  std::cout << "fetching rbt cnt..." << std::endl;
-  my_logger_g.logger->debug("fetching rbt cnt");
-  // int current_reboot_count = std::atoi(
-  //       ask_chip("/home/jakob/Documents/uni/doc/project/connectedhomeip/"
-  //                "OWN_BUILD_DIR/chip-tool generaldiagnostics read "
-  //                "active-network-faults 6 0 | grep -o \"ActiveNetworkFaults:
-  //                .*\"")
-  //           .substr(21)
-  //           .c_str());
-  int current_reboot_count;
-  try {
-    current_reboot_count = std::stoi(ask_chip("./connectedhomeip/out/chip-tool generaldiagnostics read "
-                         "reboot-count 6 0 | grep -o \"RebootCount: .*\" ")
-                    .substr(13)
-                    .c_str());
-  } catch (std::exception& ex) {
-    std::cerr << "Exception in the chip_check_diagnostics(): ";
-    std::cerr << ex.what() << std::endl;
-    throw std::runtime_error("");
-  }
-  std::cout << "diag count: " << std::to_string(current_reboot_count)
-            << std::endl;
-  my_logger_g.logger->info("COLLECTED RBT CNT: {}", current_reboot_count);
+bool chip_unpair(int node_id) {
+    my_logger_g.logger->info("Initiating CHIP unpair sequence for Node ID: {}", node_id);
 
-  // if (main_config_g.chip_rbt_cnt_no_reset) {
-  //   /* code to manipulate read/store the rbt count */
-      //   std::fstream rbt_file_in;
-  //   rbt_file_in.open("rbt_cnt_val", std::ios::in);
+    const std::string program = "./connectedhomeip/out/chip-tool";
+    const std::vector<std::string> args = {
+        "pairing",
+        "unpair",
+        std::to_string(node_id)
+    };
 
-  //   if (!rbt_file_in.is_open()) {
-  //     std::cerr << "file for rbt cnt cannot be opened" << std::endl;
-  //     my_logger_g.logger->error(
-  //         "cannot read rbt cnt from file!! File cannot be opened");
-  //   }
+    try {
+        std::string output = execute_command_and_get_output(program, args, true);
 
-  //   std::string saved_rbt_cnt;
-  //   rbt_file_in >> saved_rbt_cnt;
+        // Safely get the last 1000 characters (or less, if the output is unusually short)
+        size_t tail_length = std::min<size_t>(output.length(), 1000);
+        std::string_view tail(output.data() + output.length() - tail_length, tail_length);
 
-  //   std::cerr << "difference: "
-  //             << (current_reboot_count - std::stoi(saved_rbt_cnt)) << std::endl;
+        // Only search the tail end for fatal errors
+        if (tail.find("CHIP Error") != std::string_view::npos || tail.find("Timeout") != std::string_view::npos) {
+            my_logger_g.logger->warn("CHIP unpair failed or timed out for Node ID: {}", node_id);
+            return false;
+        }
 
-  //   std::cout << "saved count: " << current_reboot_count << std::endl;
+        my_logger_g.logger->info("CHIP unpair successful for Node ID: {}", node_id);
+    } catch (const std::exception& ex) {
+        my_logger_g.logger->error("Failed to launch chip-tool process for Node ID {}: {}", node_id, ex.what());
+        return false;
+    }
 
-  //   rbt_file_in.close();
+    return true;
+}
 
-  //   std::fstream rbt_file_out;
-  //   rbt_file_out.open("rbt_cnt_val", std::ios::out | std::ios::trunc);
+int chip_fetch_reboot_count(int node_id, int endpoint_id) {
+    my_logger_g.logger->debug("Fetching reboot count for Node {}...", node_id);
 
-  //   rbt_file_out << current_reboot_count;
-  //   rbt_file_out.close();
+    const std::string program = "./connectedhomeip/out/chip-tool";
+    const std::vector<std::string> args = {
+        "generaldiagnostics",
+        "read",
+        "reboot-count",
+        std::to_string(node_id),
+        std::to_string(endpoint_id)
+    };
 
-  //   return current_reboot_count - std::stoi(saved_rbt_cnt);
-  // } else {
-  std::cerr << "fetch rbt count success" << std::endl;
+    int current_reboot_count = -1;
+
+    try {
+        std::string response = execute_command_and_get_output(program, args, true);
+        
+        const std::string prefix = "RebootCount: ";
+        size_t pos = response.find(prefix);
+        
+        if (pos == std::string::npos) {
+            throw std::runtime_error("Unexpected response format: 'RebootCount:' not found in output.");
+        }
+        
+        std::string number_str = response.substr(pos + prefix.length());
+        current_reboot_count = std::stoi(number_str);
+        
+    } catch (const std::exception& ex) {
+        my_logger_g.logger->error("Failed to parse reboot count for Node {}: {}", node_id, ex.what());
+        throw std::runtime_error(std::string("chip_fetch_reboot_count failed: ") + ex.what());
+    }
+
+    my_logger_g.logger->info("COLLECTED RBT CNT FOR NODE {}: {}", node_id, current_reboot_count);
     return current_reboot_count;
 }
 
-std::string ask_chip(const char *cmd) {
-  std::array<char, 128> buffer;
-  std::string result;
-  std::unique_ptr<FILE, void (*)(FILE *)> pipe(popen(cmd, "r"),
-                                               [](FILE *f) -> void {
-                                                 // wrapper to ignore the return
-                                                 // value from pclose() is
-                                                 // needed with newer versions
-                                                 // of gnu g++
-                                                 std::ignore = pclose(f);
-                                               });
+bool send_command_to_device(const std::string& device_path, const std::string& cmd) {
+    my_logger_g.logger->debug("Preparing to send command to device: {}", device_path);
 
-  if (!pipe) {
-    std::cerr << "popen() failed!" << std::endl;
-    throw std::runtime_error("popen() failed!");
-  }
-  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) !=
-         nullptr) {
-    result += buffer.data();
-  }
-  std::cout << "Ask chip result: " << result << std::endl;
-  return result;
+    if (!std::filesystem::exists(device_path)) {
+        my_logger_g.logger->error("The device at {} does not exist.", device_path);
+        return false;
+    }
+
+    // Open the device natively.
+    // O_RDWR = Read/Write, O_NOCTTY = No controlling terminal, O_NDELAY = Non-blocking
+    int fd = open(device_path.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fd == -1) {
+        my_logger_g.logger->error("Failed to open {}. Check permissions (e.g., dialout group).", device_path);
+        return false;
+    }
+
+    // Configure the serial port natively to prevent board resets
+    struct termios tty;
+    if (tcgetattr(fd, &tty) != 0) {
+        my_logger_g.logger->error("Error from tcgetattr on {}", device_path);
+        close(fd);
+        return false;
+    }
+
+    // Apply the raw-mode flags
+    tty.c_cflag &= ~HUPCL; 
+    tty.c_iflag &= ~(BRKINT | ICRNL | IMAXBEL);
+    tty.c_oflag &= ~OPOST;
+    tty.c_lflag &= ~(ISIG | ICANON | IEXTEN | ECHO | ECHOE | ECHOK | ECHOCTL | ECHOKE);
+
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+        my_logger_g.logger->error("Error from tcsetattr on {}", device_path);
+        close(fd);
+        return false;
+    }
+
+    // Append newline and write the payload
+    std::string payload = cmd + "\n"; 
+    ssize_t bytes_written = write(fd, payload.c_str(), payload.length());
+    
+    close(fd);
+
+    // Verify the write was entirely successful
+    if (bytes_written < 0 || static_cast<size_t>(bytes_written) != payload.length()) {
+        my_logger_g.logger->error("Failed to write to {}. Wrote {} bytes.", device_path, bytes_written);
+        return false;
+    }
+
+    my_logger_g.logger->debug("Successfully wrote command: {}", cmd);
+    return true;
 }
 
-bool chip_unpair(const std::string &device) {
-  std::string cmd = "sudo ../connectedhomeip/chip_unpair.sh " + device;
-  int ret = std::system(cmd.c_str());
-  if (ret == TIMEOUT_CODE)
-    my_logger_g.logger->warn("Command \"{}\" timed out", cmd);
-  else if (ret)
-    my_logger_g.logger->warn("Command \"{}\" failed with exit code: {}", cmd,
-                             ret);
-  return ret;
+std::string execute_command_and_get_output(const std::string& program, const std::vector<std::string>& args, bool verbose) {
+    my_logger_g.logger->debug("Executing command: {}", program);
+    boost::filesystem::path full_path = boost::process::search_path(program);
+    if (full_path.empty()) {
+        full_path = program;
+    }
+    boost::process::ipstream out_stream;
+    std::string result;
+    std::string line;
+    try {
+        boost::process::child process(full_path, boost::process::args(args), boost::process::std_out > out_stream);
+        if (verbose) {
+            std::cout << "\n--- Execution Output Start (" << program << ") ---\n";
+        }
+        while (std::getline(out_stream, line)) {
+            result += line + "\n";   
+            if (verbose) {
+                std::cout << line << std::endl;
+            }
+        }
+        if (verbose) {
+            std::cout << "--- Execution Output End ---\n\n";
+        }
+        process.wait(); 
+        int exit_code = process.exit_code();
+        if (exit_code != 0) {
+            my_logger_g.logger->warn("Command '{}' returned non-zero exit code {}. Output length: {} bytes.", 
+                                     program, exit_code, result.length());
+        } else {
+            my_logger_g.logger->debug("Command '{}' executed successfully. Captured {} bytes.", 
+                                      program, result.length());
+        }
+    } catch (const boost::process::process_error& ex) {
+        my_logger_g.logger->error("OS failed to launch process '{}': {}", program, ex.what());
+        throw std::runtime_error(std::string("execute_command_and_get_output failed: ") + ex.what());
+    }
+    return result;
 }
 
 } // namespace helpers

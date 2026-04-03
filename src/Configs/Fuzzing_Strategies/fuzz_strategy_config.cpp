@@ -13,7 +13,6 @@ std::string get_fuzzing_strategy_name_by_idx(FuzzingStrategy fs) {
 		case FuzzingStrategy::TLV_DUPLICATING: return "TLV_DUPLICATING";
 		case FuzzingStrategy::TLV_INSERTING: return "TLV_INSERTING";
 		case FuzzingStrategy::LEN_FUZZING: return "LEN_FUZZING";
-    	case FuzzingStrategy::REBOOT_CNT_FUZZING: return "REBOOT_CNT_FUZZING";
 		default: break;
 	}
 	throw std::runtime_error("Unknown fuzzing strategy");

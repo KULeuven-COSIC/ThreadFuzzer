@@ -29,7 +29,7 @@ fi
 ITERATIONS=$1
 
 # Build the docker image
-sudo docker build --pull --progress=plain -t thread_fuzzer:latest .
+sudo docker build --build-arg BUILD_CORES=3 --progress=plain -t thread_fuzzer:latest .
 
 # Run the fuzzer loop
 # Using 'seq -w' keeps the zero-padded formatting (e.g., 01, 02) depending on the max number

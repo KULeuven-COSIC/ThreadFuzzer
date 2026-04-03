@@ -19,7 +19,7 @@ public:
     bool reset() override;
     bool activate_thread() override;
     bool deactivate_thread() override;
-  bool factoryreset() override;
+    bool factoryreset() override;
 
 private:
     const std::string name_ = "otbr-agent"; // NOTE: DO NOT CHANGE

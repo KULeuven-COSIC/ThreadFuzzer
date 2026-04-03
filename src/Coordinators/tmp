@@ -1,0 +1,208 @@
+
+bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
+  my_logger_g.logger->info("Renewing fuzzing iteration");
+  bool need_to_finish = false;
+
+  /* Update the iteration */
+  global_iteration++;
+  local_iteration++;
+
+  my_logger_g.logger->debug("[PHYS COORD] WAITING FOR THE MUTEX");
+  wdissector_mutex.lock();
+  my_logger_g.logger->debug("[PHYS COORD] MUTEX LOCKED");
+  my_logger_g.logger->flush();
+
+  /* check whether the device has crashed */
+  if (!dut->is_running()) {
+    need_to_restart_dut = true; //
+  }
+
+  std::cout << "DUT CHECK COMPLETE" << std::endl;
+
+  /* Update the coverage information */
+  if (!clean_iteration) {
+    try {
+      if (fuzz_strategy_config_g.use_coverage_logging ||
+          fuzz_strategy_config_g.use_coverage_feedback) {
+        update_coverage_information();
+        /* Update the probabilities of the fields */
+        if (fuzz_strategy_config_g.use_coverage_feedback)
+          update_probabilities(iteration_result.was_new_coverage_found);
+      }
+    } catch (std::exception &ex) {
+      my_logger_g.logger->warn("Exception during the coverage fetch: {}",
+                              ex.what());
+      if (!protocol_stack->is_running()) {
+        need_to_restart_protocol_stack = true;
+      }
+      if (!dut->is_running()) {
+        need_to_restart_dut = true;
+      }
+    }
+
+    Base_Fuzzer::mut_field_num_tracker.push_mutated_field_num(Base_Fuzzer::mutated_fields_num);
+
+    if (Base_Fuzzer::mutated_fields_num == 0) {
+      statistics_g.empty_iterations++;
+    }
+
+    my_logger_g.logger->debug("Number of mutated fields in this iteration: {}", Base_Fuzzer::mutated_fields_num);
+    Base_Fuzzer::mutated_fields.clear();
+    Base_Fuzzer::mutated_fields_num = 0;
+
+    if (fuzz_strategy_config_g.use_probability_resets && Base_Fuzzer::mut_field_num_tracker.needs_reset()) {
+        /* Reset the probabilities. This is done by deleting all the packets in the database.*/
+        Base_Fuzzer::mut_field_num_tracker.reset();
+        my_logger_g.logger->info("Resetting the probabilities");
+        Base_Fuzzer::packet_field_tree_database.clear();
+    }
+  } else {
+    my_logger_g.logger->debug("[PHYS COORD] The clean iteration is running.");
+    my_logger_g.logger->flush();
+  }
+  clean_iteration = false;
+
+  if (need_to_restart_dut) {
+    statistics_g.dut_crash_counter++;
+    my_logger_g.logger->warn("DUT has crashed!");
+    // /* Get the crash reason if we log the DUT's screen */
+    // if (!main_config_g.dut_log_file.empty()) {
+    //     std::this_thread::sleep_for(std::chrono::seconds(1));
+    //     std::string crash_info =
+    //     helpers::read_file_last_chars(main_config_g.dut_log_file);
+    //     my_logger_g.logger->info("DUT output:\n {}", crash_info);
+    // }
+  }
+
+  if (need_to_restart_protocol_stack) {
+    statistics_g.protocol_stack_crash_counter++;
+    my_logger_g.logger->warn("Protocol Stack has crashed!");
+    if (!main_config_g.gen_log_file.empty()) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::string crash_info =
+          helpers::read_file_last_chars(main_config_g.gen_log_file);
+      my_logger_g.logger->info("PS output:\n {}", crash_info);
+    }
+  }
+
+  my_logger_g.logger->debug("[PHYS COORD] Printing statistics");
+  my_logger_g.logger->flush();
+  /* Update the statistics on the screen */
+  // helpers::clear_screen();
+  print_statistics();
+
+  std::cout << "PRINTED STATS" << std::endl;
+
+  // wdissector_mutex.unlock();
+
+  /* Check if any of the fuzzers requests finish of the fuzzing */
+  for (size_t i = 0; i < fuzzers.size(); i++) {
+    int need_to_finish_local = fuzzers[i]->prepare_new_iteration();
+    need_to_finish |= !need_to_finish_local;
+    if (need_to_finish_local == 0) {
+      my_logger_g.logger->info("Fuzzer indexed {} requested finishing fuzzing",
+                               i);
+      print_statistics();
+    }
+    // check if we need to schedule a hard reset
+    if (need_to_finish_local == 2) {
+      clean_iteration = true;
+      my_logger_g.logger->info("Fuzzer indexed {} requested a clean iteration",
+                               i);
+    }
+  }
+
+  need_to_finish |= (static_cast<int>(local_iteration) >=
+                     (fuzz_strategy_config_g.total_iterations == -1
+                          ? INT_MAX
+                          : fuzz_strategy_config_g.total_iterations));
+
+  wdissector_mutex.unlock();
+
+  my_logger_g.logger->debug("[PHYS COORD] MUTEX UNLOCKED");
+  my_logger_g.logger->flush();
+
+  if (clean_iteration) {
+    statistics_g.fuzz_lock = true;
+    bool pstop = protocol_stack->stop();
+    bool start = dut->start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    my_logger_g.logger->debug("WE ARE HERE NOW");
+    bool reset = dut->factoryreset();
+    bool pstart = protocol_stack->start();
+    const int node_id = 6; /* TODO: Remove the hard-coded values here! */
+    if (helpers::chip_pair(node_id, main_config_g.chip_passcode, main_config_g.chip_discriminator)) {
+      statistics_g.dut_reboot_counter = helpers::chip_fetch_reboot_count(node_id, 0); /* TODO: Remove the hard-coded values here! */
+      std::cout << "AND HERE WE ARE DONE!" << std::endl;
+      if (!(start && reset && pstart && pstop)) {
+        my_logger_g.logger->error("scheduling a hard reset failed!");
+        need_to_finish = true;
+      }
+      statistics_g.fuzz_lock = false;
+    } else {
+      need_to_finish = true;
+    }
+  }
+  
+  /* Finish the fuzzing if needed */
+  if (need_to_finish) {
+    my_logger_g.logger->info("Finishing the fuzzing");
+    return false;
+  }
+
+  /* Prepare for the new iteration */
+  if (need_to_restart_protocol_stack || !protocol_stack->reset()) {
+    my_logger_g.logger->error(
+        "Failed to reset a protocol stack. Restarting...");
+    if (!protocol_stack->restart()) {
+      my_logger_g.logger->error("Protocol stack cannot be restarted");
+      return false;
+    } else {
+      my_logger_g.logger->warn("Protocol stack restarted successfully");
+      // reset is performed in restart already!
+      // if (!protocol_stack->reset()) {
+      //   my_logger_g.logger->error(
+      //       "Protocol stack cannot be reconfigured after restart");
+      //   return false;
+      // }
+      my_logger_g.logger->warn("Protocol stack reconfigured successfully after restart");
+    }
+  }
+
+  /* End of epoch means factoryreset of the dut */
+  // if (statistics_g.epochs > epoch_cnt_) {
+  //   std::cout << "EPOCH DONE, DOING FR INSTEAD OF RESET" << std::endl;
+  //   /* every device has its custom way of entering pairing-mode */
+  //   bool reset = dut->factoryreset();
+  //   /* we don't want the br to interfere, so reset it */
+  //   bool p_reset = protocol_stack->reset();
+  //   /* then we re-pair the device */
+  //   std::cout << "PAIRING the device using CHIP" << std::endl;
+  //   helpers::chip_pair(main_config_g.chip_passcode, main_config_g.chip_discriminator);
+  //   if (!reset || !p_reset)
+  //     return false;
+  //   std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  //   /* reset the dut just in case */
+  //   dut->reset();
+
+  //   epoch_cnt_ = statistics_g.epochs;
+  // } else
+  if ((need_to_restart_dut || !dut->reset())) {
+    my_logger_g.logger->warn("Failed to reset a DUT. Restarting...");
+    if (!dut->restart()) {
+      my_logger_g.logger->error("DUT cannot be restarted");
+      return false;
+    } else {
+      my_logger_g.logger->warn("DUT restarted successfully");
+    }
+  } /* only restart when we are not in the first iteration, as factoryreset
+       takes care of that */
+
+  need_to_restart_protocol_stack = false;
+  need_to_restart_dut = false;
+  stop_fuzzing_iteration = false;
+  incoming_packet_num = 0;
+
+  return true;
+}

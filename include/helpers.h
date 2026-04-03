@@ -75,15 +75,11 @@ bool clear_instrumentation_files(const std::filesystem::path &path);
 bool run_screen_cli_commands(const std::string session_name,
                              const std::vector<std::string> cli_commands);
 bool is_pid_alive(const std::string &pid_name);
-bool send_udp_heartbeat(int port);
-
-bool send_udp_request(const std::string, int port);
-bool run_udp_cli_commands(const std::vector<std::string> cli_commands,
-                          int port);
-int chip_pair();
-bool chip_unpair(const std::string &device);
-int chip_check_diagnostics();
-std::string ask_chip(const char *cmd);
+bool chip_pair(int node_id, const std::string& passcode, const std::string& discriminator);
+bool chip_unpair(int node_id);
+int chip_fetch_reboot_count(int node_id, int endpoint_id = 0);
+bool send_command_to_device(const std::string& device_path, const std::string& cmd);
+std::string execute_command_and_get_output(const std::string& program, const std::vector<std::string>& args, bool verbose = false);
 
 std::string shell_command(const std::string cmd);
 

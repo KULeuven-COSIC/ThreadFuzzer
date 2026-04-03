@@ -64,7 +64,7 @@ protected:
 
     std::vector<Fuzz_Strategy_Config> fuzz_strategy_configs_;
 
-    void layer_fuzzing_loop(EnumMutex mutex_num); // Mutex number
+    virtual void layer_fuzzing_loop(EnumMutex mutex_num); // Mutex number
     void terminate_fuzzing();
     
     bool prepare_new_fuzzing_sprint(const Fuzz_Strategy_Config& fuzz_strategy_config);

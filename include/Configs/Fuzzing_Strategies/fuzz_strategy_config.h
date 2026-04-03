@@ -15,7 +15,6 @@ enum class FuzzingStrategy {
   TLV_INSERTING,
   LEN_FUZZING,
   LAST_FUZZING_STRATEGY,
-  REBOOT_CNT_FUZZING,
   SKIP_FUZZING
 };
 
@@ -26,7 +25,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
      {FuzzingStrategy::TLV_MIXING, "TLV_MIXING"},
      {FuzzingStrategy::TLV_DUPLICATING, "TLV_DUPLICATING"},
      {FuzzingStrategy::SKIP_FUZZING, "SKIP_FUZZING"},
-     {FuzzingStrategy::REBOOT_CNT_FUZZING, "REBOOT_CNT_FUZZING"},
      {FuzzingStrategy::TLV_INSERTING, "TLV_INSERTING"},
      {FuzzingStrategy::LEN_FUZZING, "LEN_FUZZING"}})
 

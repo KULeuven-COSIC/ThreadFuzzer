@@ -4,9 +4,9 @@
 
 #include "DUT/DUT_base.h"
 
-class Nanoleaf : public DUT_Base {
+/* TODO: Refactor this class. */
+class Nanoleaf final : public DUT_Base {
 public:
-    Nanoleaf();
     ~Nanoleaf();
     bool start() override;
     bool stop() override;
