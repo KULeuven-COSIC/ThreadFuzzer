@@ -50,8 +50,11 @@ source venv/bin/activate && python3 scripts/tapo_plug_session.py &
 # echo "[INFO]: checking syslog"
 # tail -f otbr-log/syslog &
 # wait $!
+
+# make chip-tool prefer our dummy0 interface
 sudo ip -6 route add fe80::/64 dev dummy0 metric 100
 sudo ip -6 route add fe02::/16 dev dummy0 metric 100
+ip link set eth0 multicast off
 
 # echo "[INFO]: if all went right, otbr should now be running in the background"
 echo "[INFO]: dropping into shell";

@@ -80,7 +80,7 @@ bool send_udp_heartbeat(int port);
 bool send_udp_request(const std::string, int port);
 bool run_udp_cli_commands(const std::vector<std::string> cli_commands,
                           int port);
-int chip_pair(const int node_id);
+bool chip_pair(const int node_id);
 bool chip_unpair(const std::string &device, const int node_id);
 int chip_check_diagnostics(const int node_id);
 std::string ask_chip(const char *cmd);

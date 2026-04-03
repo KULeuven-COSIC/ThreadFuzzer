@@ -81,9 +81,10 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
           std::this_thread::sleep_for(std::chrono::seconds(60));
         }
 
-        if (helpers::chip_pair(statistics_g.epochs + 1)) {
-          std::cout << "[COOR]: ERROR pairing DUT again failed" << std::endl;
-          my_logger_g.logger->error("[COOR]: ERROR pairing DUT again failed");
+        if (!helpers::chip_pair(statistics_g.epochs + 1)) {
+          std::cout << "[COOR]: ERROR pairing DUT failed" << std::endl;
+          my_logger_g.logger->error("[COOR]: ERROR pairing DUT failed");
+
           terminate_fuzzing();
         }
 
@@ -304,7 +305,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
     bool reset = dut->factoryreset();
     bool pstart = protocol_stack->start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    if (helpers::chip_pair(statistics_g.epochs + 1) == 0) {
+    if (!helpers::chip_pair(statistics_g.epochs + 1)) {
       reboot_count = helpers::chip_check_diagnostics(statistics_g.epochs + 1);
       statistics_g.dut_reboot_counter = reboot_count;
       std::cout << "AND HERE WE ARE DONE!" << std::endl;
@@ -313,6 +314,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         need_to_finish = true;
       }
     } else {
+      // 
       need_to_finish = true;
     }
 

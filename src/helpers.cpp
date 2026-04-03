@@ -612,7 +612,7 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
   throw std::runtime_error("Cannot get dissector: Unsupported protocol");
 }
 
-int chip_pair(const int node_id) {
+bool chip_pair(const int node_id) {
 
   // int ret2 = std::system("./connectedhomeip/out/chip-tool storage
   // clear-all"); if (ret2 == TIMEOUT_CODE) {
@@ -654,7 +654,6 @@ int chip_pair(const int node_id) {
   if (succes) {
     std::cerr << "chip_pair succesfull!" << std::endl;
     my_logger_g.logger->info("chip-pair succesfull!");
-    return 0;
   } else {
     std::cerr << "chip_pair failed" << std::endl;
     my_logger_g.logger->error("chip-pair failed");

@@ -142,7 +142,16 @@ bool OT_BR::stop() {
     // if (helpers::exec_system_cmd_with_default_timeout(
     // "./third-party/ot-br-posix/script/server shutdown &> /dev/null") != 0) {
     my_logger_g.logger->error("Failed to start BR server");
-    return false;
+    success = false;
+  }
+
+  if (std::system("rm -rf /tmp/chip_*") != 0) {
+    std::cerr << " failed to remove chip_tool cache " << std::endl;
+    my_logger_g.logger->error(" failed to remove chip_tool cache ");
+  }
+  if (std::system("rm -rf /var/lib/thread/*") != 0) {
+    std::cerr << " failed to remove otbr cache " << std::endl;
+    my_logger_g.logger->error(" failed to remove otbr cache ");
   }
 
   my_logger_g.logger->debug("BR application is stopped");
