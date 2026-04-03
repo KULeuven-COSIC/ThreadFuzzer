@@ -52,11 +52,16 @@ void Phys_Timeout_Based_Coordinator::thread_dut_communication_func() {
                 
                 if (!helpers::chip_pair(node_id, main_config_g.chip_passcode, main_config_g.chip_discriminator)) {
                     my_logger_g.logger->error("[COOR]: Initial pairing failed. Terminating sprint.");
+                    /* TODO: ADD RECOVERY MECHANISM */
                     terminate_fuzzing();
                     break;
                 }
-
-                reboot_count = helpers::chip_fetch_reboot_count(node_id);
+                try {
+                    reboot_count = helpers::chip_fetch_reboot_count(node_id);
+                } catch(std::exception& ex) {
+                    /* TODO: ADD RECOVERY MECHANISM */
+                    terminate_fuzzing();
+                }
                 statistics_g.dut_reboot_counter = reboot_count;
                 my_logger_g.logger->info("[COOR]: Baseline reboot count established: {}", reboot_count);
 
@@ -193,29 +198,51 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         std::this_thread::sleep_for(std::chrono::seconds(20));
 
         // Restart stack and device
-        bool pstop = protocol_stack->stop();
-        bool start = dut->start();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        bool reset = dut->factoryreset();
-        bool pstart = protocol_stack->start();
+        bool restart_success = restart_stack_and_device();
 
         // Wait for the Border Router to form the Thread partition and initialize radios
         my_logger_g.logger->debug("Waiting 10 seconds for Protocol Stack network initialization...");
-        std::this_thread::sleep_for(std::chrono::seconds(10)); 
+        std::this_thread::sleep_for(std::chrono::seconds(10));
 
-        // Re-pair the device
-        if (helpers::chip_pair(node_id, main_config_g.chip_passcode, main_config_g.chip_discriminator)) {
-            reboot_count = helpers::chip_fetch_reboot_count(node_id);
-            statistics_g.dut_reboot_counter = reboot_count;
-            
-            if (!(start && reset && pstart && pstop)) {
-                my_logger_g.logger->error("Scheduling a hard reset failed during epoch setup!");
-                need_to_finish = true;
+        bool done = false;
+        int counter = 5;
+        while (!done && --counter) {
+            // Re-pair the device
+            if (helpers::chip_pair(node_id, main_config_g.chip_passcode, main_config_g.chip_discriminator)) {
+                try {
+                    reboot_count = helpers::chip_fetch_reboot_count(node_id);
+                } catch (std::exception& ex) {
+                    /* REBOOT COUNT FETCH FAILED. RECOVERING... */
+                    my_logger_g.logger->debug("Trying to recover from crash");
+                    my_logger_g.logger->debug("Protocol stack running: {}", protocol_stack->is_running());
+                    restart_success = restart_stack_and_device();
+                    my_logger_g.logger->debug("Recovered from crash");
+                    my_logger_g.logger->debug("Waiting 10 seconds for Protocol Stack network initialization...");
+                    std::this_thread::sleep_for(std::chrono::seconds(10));
+                    continue;
+                }
+                done = true; /* The only success */
+                statistics_g.dut_reboot_counter = reboot_count;
+            } else {
+                /* PAIRING FAILED. RECOVERING... */
+                my_logger_g.logger->error("Failed to re-pair CHIP device after epoch reset.");
+                my_logger_g.logger->debug("Protocol stack running: {}", protocol_stack->is_running());
+                my_logger_g.logger->debug("Trying to recover from crash");
+                restart_success = restart_stack_and_device();
+                my_logger_g.logger->debug("Recovered from crash");
+                my_logger_g.logger->debug("Waiting 10 seconds for Protocol Stack network initialization...");
+                std::this_thread::sleep_for(std::chrono::seconds(10));
             }
-        } else {
-            my_logger_g.logger->error("Failed to re-pair CHIP device after epoch reset.");
-            my_logger_g.logger->debug("Protocol stack running: {}", protocol_stack->is_running());
+        }
+
+        if (!restart_success) {
+            my_logger_g.logger->error("Scheduling a hard reset failed during epoch setup!");
             need_to_finish = true;
+        }
+
+        if (counter == 0) {
+            need_to_finish = true; // Failed to recover from crash. Terminating
+            return false;
         }
 
         clean_iteration.store(false); // Back to fuzzing
@@ -422,6 +449,16 @@ void Phys_Timeout_Based_Coordinator::layer_fuzzing_loop(EnumMutex mutex_num) {
     if (failed)
       statistics_g.has_this_iteration_failed = true;
   }
+}
+
+bool Phys_Timeout_Based_Coordinator::restart_stack_and_device() {
+    // Restart stack and device
+    bool pstop = protocol_stack->stop();
+    bool start = dut->start();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    bool reset = dut->factoryreset();
+    bool pstart = protocol_stack->start();
+    return pstop && start && reset && pstart;
 }
 
 bool Phys_Timeout_Based_Coordinator::reset_target() { return true; }

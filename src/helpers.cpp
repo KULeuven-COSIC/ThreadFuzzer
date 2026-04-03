@@ -545,6 +545,7 @@ int chip_fetch_reboot_count(int node_id, int endpoint_id) {
         current_reboot_count = std::stoi(number_str);
         
     } catch (const std::exception& ex) {
+        /* TODO: ADD RECOVERY MECHANISM */
         my_logger_g.logger->error("Failed to parse reboot count for Node {}: {}", node_id, ex.what());
         throw std::runtime_error(std::string("chip_fetch_reboot_count failed: ") + ex.what());
     }

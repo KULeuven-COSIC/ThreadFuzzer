@@ -16,6 +16,7 @@ public:
 
     std::string get_name() override;
 private:
+    bool restart_stack_and_device();
     void layer_fuzzing_loop(EnumMutex mutex_num) override; 
 
     std::string name_ = "Physical Timeout-Based Coordinator";
