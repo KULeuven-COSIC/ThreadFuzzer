@@ -505,9 +505,18 @@ void Base_Coordinator::print_statistics() {
     std::cout << std::setw(40) << std::left
               << RED "\tWeird epochs: " +
                      std::to_string(statistics_g.refinement_runs) + std::string(CRESET);
+
+    std::cout << std::setw(40) << std::left
+              << "\tAvg iteration time: " +
+                     std::to_string(statistics_g.avg_iteration_time_s);
     std::cout << std::endl;
-
-
-    std::cout << std::setw(40) << std::left << "\tAvg iteration time: " + std::to_string(statistics_g.avg_iteration_time_s);
+    std::cout << std::endl;
+    std::cout << std::setw(40) << std::left
+              << "\tBroken epochs: " +
+                     std::to_string(statistics_g.broken_iterations);
+    std::cout << std::endl;
+    std::cout << std::setw(40) << std::left
+              << "\tBroken pairings: " +
+                     std::to_string(statistics_g.broken_pairings);
     std::cout << std::endl;
 }

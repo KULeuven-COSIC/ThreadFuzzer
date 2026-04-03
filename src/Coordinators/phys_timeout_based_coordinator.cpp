@@ -189,7 +189,8 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
         } catch (std::exception& ex) {
             my_logger_g.logger->debug("Exception during the reboot count fetch: {}", ex.what());
             my_logger_g.logger->warn("Failed to read a reboot count. Ignoring it during this iteration.");
-        }
+            statistics_g.broken_iterations++;
+            }
 
         // Unpair the device
         if (!helpers::chip_unpair(node_id)) {
@@ -223,6 +224,7 @@ bool Phys_Timeout_Based_Coordinator::renew_fuzzing_iteration() {
                     my_logger_g.logger->debug("Recovered from crash");
                     my_logger_g.logger->debug("Waiting 10 seconds for Protocol Stack network initialization...");
                     std::this_thread::sleep_for(std::chrono::seconds(10));
+                    statistics_g.broken_pairings++;
                     continue;
                 }
                 done = true; /* The only success */

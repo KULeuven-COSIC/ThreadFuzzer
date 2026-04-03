@@ -441,11 +441,7 @@ std::string get_dissector_by_layer_idx(uint8_t mutex_name) {
 
 /* TODO: Change it to use the return value. */
 bool chip_pair(int node_id, const std::string& passcode, const std::string& discriminator) {
-    static const std::string thread_dataset_hex = 
-        "0e08000000000001000000030000174a0300001035060004001fffe00708fd1e234fcca6"
-        "183b0c0402a0f7f80102dead0208dead1111dead2222030d4a616b6f6273506c61795065"
-        "6e051011112233445566778899dead1111dead0410209f8ccb50f556da46166ef4fdcbed"
-        "4a";
+  static const std::string thread_dataset_hex = technical_config_g.network_dataset;
 
     my_logger_g.logger->info("Initiating CHIP pairing sequence for Node ID: {}", node_id);
 

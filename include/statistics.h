@@ -10,6 +10,10 @@ struct Statistics {
   size_t crash_counter = 0;
   size_t empty_iterations = 0;
 
+  /* for rebootcount diagnostics */
+  size_t broken_iterations = 0;
+  size_t broken_pairings = 0;
+
   size_t rand_mutator_counter = 0;
   size_t min_mutator_counter = 0;
   size_t max_mutator_counter = 0;
