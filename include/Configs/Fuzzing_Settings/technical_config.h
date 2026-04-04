@@ -30,6 +30,6 @@ std::ostream &operator<<(std::ostream &os, const Technical_Config &config);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Technical_Config, socket_1,
                                                 socket_2, interface,
-                                                network_dataset, tapo_pipe_name,
+                                                network_dataset, tapo_pipe_name, dut_pipe_name,
                                                 ot_path_for_dut,
                                                 ot_path_for_packet_generator)
