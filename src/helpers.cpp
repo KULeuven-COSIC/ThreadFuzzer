@@ -604,6 +604,8 @@ bool send_command_to_device(const std::string& device_path, const std::string& c
 
 std::string execute_command_and_get_output(const std::string& program, const std::vector<std::string>& args, bool verbose) {
     my_logger_g.logger->debug("Executing command: {}", program);
+    for (auto arg : args)
+        my_logger_g.logger->debug("Executing command: {}", arg);
     boost::filesystem::path full_path = boost::process::search_path(program);
     if (full_path.empty()) {
         full_path = program;
