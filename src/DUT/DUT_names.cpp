@@ -14,6 +14,8 @@ std::string dut_name_to_string(DUT_NAME dut_name) {
             return "EVE_SENSOR";
         case DUT_NAME::AQARA_SENSOR:
             return "AQARA_SENSOR";
+        case DUT_NAME::ARRE_SENSOR:
+            return "ARRE_SENSOR";
         case DUT_NAME::NANOLEAF:
             return "NANOLEAF";
         case DUT_NAME::ALEXA:
