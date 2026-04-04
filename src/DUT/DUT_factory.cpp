@@ -3,6 +3,7 @@
 #include "DUT/DUT_names.h"
 #include "DUT/alexa.h"
 #include "DUT/aqara_sensor.h"
+#include "DUT/arre_sensor.h"
 #include "DUT/dummy_DUT.h"
 #include "DUT/eve_sensor.h"
 #include "DUT/nanoleaf.h"
@@ -26,6 +27,8 @@ std::unique_ptr<DUT_Base> DUT_Factory::get_dut_by_name(DUT_NAME dut_name) {
     return std::make_unique<Eve_Sensor>();
   case DUT_NAME::AQARA_SENSOR:
     return std::make_unique<Aqara_Sensor>();
+  case DUT_NAME::ARRE_SENSOR:
+    return std::make_unique<Arre_Sensor>();
   case DUT_NAME::OT_MTD:
     return std::make_unique<OT_MTD>(OT_TYPE::DUT);
   case DUT_NAME::OT_FTD:

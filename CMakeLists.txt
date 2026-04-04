@@ -70,6 +70,7 @@ add_executable(ThreadFuzzer
     src/Fuzzers/tlv_mixer.cpp
     src/DUT/alexa.cpp
     src/DUT/aqara_sensor.cpp
+    src/DUT/arre_sensor.cpp
     src/DUT/generic_sensor.cpp
     src/DUT/nanoleaf.cpp
     src/DUT/eve_sensor.cpp
