@@ -253,11 +253,19 @@ WORKDIR /app/ThreadFuzzer
 
 ################################################################ CLEAN ################################################################
 
+# NOTE: for funzies
+RUN apt-get -y install vim
+
 # apply patch to the server script for the mdns and webgui:
 COPY fix_mdns_webgui.patch ./
 WORKDIR /app/ThreadFuzzer/third-party/ot-br-posix
 RUN git apply --ignore-whitespace ../../fix_mdns_webgui.patch
 WORKDIR /app/ThreadFuzzer
+
+# NOTE: not necessary
+# install tapo python version library for controlling the p115 plug
+RUN . venv/bin/activate && pip install tapo dotenv
+COPY .env ./
 
 ### ThreadFuzzer
 COPY src/ ./src/
