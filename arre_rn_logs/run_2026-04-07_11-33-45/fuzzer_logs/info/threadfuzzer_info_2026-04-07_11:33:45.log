@@ -1,0 +1,99 @@
+[2026-04-07 11:33:45.929] [logger] [info] Starting MLE thread
+[2026-04-07 11:33:45.930] [logger] [info] Inited communication
+[2026-04-07 11:33:52.082] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 EB 72 20 50 7E 1C 4E 75 0E 01 80 12 02 00 04 00 00 
+[2026-04-07 11:33:52.084] [logger] [info] ---> Dissector's summary: Parent Request, Bad FCS
+[2026-04-07 11:33:52.084] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:52.084] [logger] [info] 
+[2026-04-07 11:33:52.837] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 10 72 00 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 B0 4B 00 00 
+[2026-04-07 11:33:52.839] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:33:52.839] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:52.839] [logger] [info] 
+[2026-04-07 11:33:53.516] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 11 73 00 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 B0 4B 0B 0E 80 01 01 0D 09 00 00 58 00 05 00 00 0E 10 00 00 
+[2026-04-07 11:33:53.519] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:33:53.519] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:53.519] [logger] [info] 
+[2026-04-07 11:33:53.800] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 00 00 0B 08 68 AF C9 14 40 11 73 00 09 0A 30 80 00 00 00 00 00 00 00 01 00 00 
+[2026-04-07 11:33:53.802] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 11:33:53.802] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:53.802] [logger] [info] 
+[2026-04-07 11:33:54.157] [logger] [info] [ARRE]:  Initiating RESTART sequence.
+[2026-04-07 11:33:54.178] [logger] [info] [ARRE]:  Stopped successfully.
+[2026-04-07 11:33:55.603] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 12 74 00 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 B0 4B 0B 0E 80 01 01 0D 09 00 00 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 00 00 F1 00 07 02 11 40 00 00 
+[2026-04-07 11:33:55.606] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:33:55.606] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:55.606] [logger] [info] 
+[2026-04-07 11:33:55.692] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 00 00 0B 08 68 AF C9 14 40 12 74 00 09 0A 30 80 00 00 00 00 00 00 00 01 00 00 
+[2026-04-07 11:33:55.692] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 11:33:55.692] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:55.692] [logger] [info] 
+[2026-04-07 11:33:56.830] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 13 75 00 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 B0 4B 0B 0E 80 01 01 0D 09 00 00 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 00 00 F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 00 00 E0 00 00 
+[2026-04-07 11:33:56.835] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:33:56.835] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:56.835] [logger] [info] 
+[2026-04-07 11:33:57.200] [logger] [info] [ARRE]:  Started successfully.
+[2026-04-07 11:33:57.955] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 00 00 0B 08 68 AF C9 14 40 13 75 00 09 0A 30 80 00 00 00 00 00 00 00 01 00 00 
+[2026-04-07 11:33:57.956] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 11:33:57.956] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:33:57.956] [logger] [info] 
+[2026-04-07 11:34:02.507] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 04 03 08 9F 83 ED CC E8 39 D2 E0 0E 01 80 12 02 00 04 00 00 
+[2026-04-07 11:34:02.507] [logger] [info] <--- Dissector's summary: Parent Request, Bad FCS
+[2026-04-07 11:34:02.507] [logger] [info] 
+[2026-04-07 11:34:02.712] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0A 00 02 00 00 0B 08 68 AF C9 14 40 13 75 00 05 04 00 00 00 02 08 04 00 00 00 08 04 08 9F 83 ED CC E8 39 D2 E0 56 02 FF FF 03 08 35 20 08 C8 B7 2C B0 2C 10 01 3E 0F 0A 00 00 00 00 00 30 01 05 00 01 12 02 00 04 00 00 
+[2026-04-07 11:34:02.715] [logger] [info] ---> Dissector's summary: Parent Response, Bad FCS
+[2026-04-07 11:34:02.715] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:02.715] [logger] [info] 
+[2026-04-07 11:34:03.263] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0C 00 02 00 00 0B 08 68 AF C9 14 40 13 75 00 16 08 00 00 00 00 00 01 00 00 0A 02 00 01 0C 3B 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 1B 02 00 81 13 00 00 00 
+[2026-04-07 11:34:03.267] [logger] [info] ---> Dissector's summary: Child ID Response, Bad FCS
+[2026-04-07 11:34:03.267] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.267] [logger] [info] 
+[2026-04-07 11:34:03.267] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0B 04 08 35 20 08 C8 B7 2C B0 2C 05 04 00 00 0B DA 08 04 00 00 0B C5 01 01 04 02 04 00 00 00 F0 12 02 00 04 1B 02 00 81 13 09 80 4A 1C C2 89 11 F3 CA EB 0D 02 0A 0C 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:03.268] [logger] [info] <--- Dissector's summary: Child ID Request, Bad FCS
+[2026-04-07 11:34:03.268] [logger] [info] 
+[2026-04-07 11:34:03.431] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 14 76 00 16 08 00 00 00 00 00 01 00 00 0C 4B 08 04 0B 02 B0 4B 0B 0E 80 01 01 0D 09 00 00 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 00 00 F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 00 00 E0 03 08 00 07 FC 01 03 00 00 00 00 00 
+[2026-04-07 11:34:03.435] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:34:03.435] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.435] [logger] [info] 
+[2026-04-07 11:34:03.436] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 00 00 0B 08 68 AF C9 14 40 14 76 00 0C 45 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:03.440] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:03.440] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.440] [logger] [info] 
+[2026-04-07 11:34:03.506] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 00 00 01 01 04 0B 08 68 AF C9 14 40 14 76 00 13 09 81 2E D4 AE B3 6F C4 07 4F 02 04 00 00 00 F0 1B 02 00 81 00 00 
+[2026-04-07 11:34:03.508] [logger] [info] ---> Dissector's summary: Child Update Response, Bad FCS
+[2026-04-07 11:34:03.508] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.508] [logger] [info] 
+[2026-04-07 11:34:03.508] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 00 02 00 01 0B 08 68 AF C9 14 40 13 75 00 02 04 00 00 00 F0 1B 02 00 81 13 12 80 4A 1C C2 89 11 F3 CA EB 81 2E D4 AE B3 6F C4 07 4F 00 00 
+[2026-04-07 11:34:03.509] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:03.509] [logger] [info] 
+[2026-04-07 11:34:03.529] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 00 00 0B 08 68 AF C9 14 40 14 76 00 0C 45 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 03 08 00 07 FC 01 03 FF FE 00 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:03.529] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:03.530] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.530] [logger] [info] 
+[2026-04-07 11:34:03.552] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 00 01 0B 08 68 AF C9 14 40 14 76 00 00 00 
+[2026-04-07 11:34:03.552] [logger] [info] <--- Dissector's summary: Child Update Response, Bad FCS
+[2026-04-07 11:34:03.552] [logger] [info] 
+[2026-04-07 11:34:03.584] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 00 01 0B 08 68 AF C9 14 40 14 76 00 00 00 
+[2026-04-07 11:34:03.584] [logger] [info] <--- Dissector's summary: Child Update Response, Bad FCS
+[2026-04-07 11:34:03.584] [logger] [info] 
+[2026-04-07 11:34:03.644] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0E 00 02 00 00 01 01 04 0B 08 68 AF C9 14 40 14 76 00 13 09 81 2E D4 AE B3 6F C4 07 4F 02 04 00 00 00 F0 1B 02 00 81 00 00 
+[2026-04-07 11:34:03.644] [logger] [info] ---> Dissector's summary: Child Update Response, Bad FCS
+[2026-04-07 11:34:03.644] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.644] [logger] [info] 
+[2026-04-07 11:34:03.644] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 01 01 04 00 02 00 01 0B 08 68 AF C9 14 40 14 76 00 02 04 00 00 00 F0 1B 02 00 81 13 12 80 4A 1C C2 89 11 F3 CA EB 81 2E D4 AE B3 6F C4 07 4F 00 00 
+[2026-04-07 11:34:03.645] [logger] [info] <--- Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:03.645] [logger] [info] 
+[2026-04-07 11:34:03.943] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 00 00 0B 08 68 AF C9 14 40 15 77 00 16 08 00 00 00 00 00 01 00 00 0C 66 08 04 0B 02 B0 4B 0B 0E 80 01 01 0D 09 00 00 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 00 00 F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 00 00 E0 03 08 00 07 FC 01 03 00 00 00 0B 19 81 01 5D 0D 14 00 00 FD 29 AF E7 3C E2 45 43 C3 4B E2 83 59 1F 5E 91 D1 1F 00 00 
+[2026-04-07 11:34:03.950] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 11:34:03.950] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.950] [logger] [info] 
+[2026-04-07 11:34:03.951] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 00 00 0B 08 68 AF C9 14 40 15 77 00 0C 60 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 03 08 00 07 FC 01 03 FF FE 00 0B 19 81 01 5D 0D 14 FC 11 FD 29 AF E7 3C E2 45 43 C3 4B E2 83 59 1F 5E 91 D1 1F 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:03.956] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:03.956] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:03.956] [logger] [info] 
+[2026-04-07 11:34:04.535] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 00 00 0B 08 68 AF C9 14 40 15 77 00 0C 60 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 03 08 00 07 FC 01 03 FF FE 00 0B 19 81 01 5D 0D 14 FC 11 FD 29 AF E7 3C E2 45 43 C3 4B E2 83 59 1F 5E 91 D1 1F 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:04.535] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:04.535] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:04.535] [logger] [info] 
+[2026-04-07 11:34:05.531] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 0D 00 02 00 00 0B 08 68 AF C9 14 40 15 77 00 0C 60 0B 0E 80 01 01 0D 09 FC 10 58 00 05 00 00 0E 10 03 14 00 40 FD 9B F1 40 3C 99 00 01 05 04 FF FE F1 00 07 02 11 40 03 13 00 60 FD 9B F1 40 3C 99 00 02 00 00 00 00 01 03 FF FE E0 03 08 00 07 FC 01 03 FF FE 00 0B 19 81 01 5D 0D 14 FC 11 FD 29 AF E7 3C E2 45 43 C3 4B E2 83 59 1F 5E 91 D1 1F 16 08 00 00 00 00 00 01 00 00 00 00 
+[2026-04-07 11:34:05.531] [logger] [info] ---> Dissector's summary: Child Update Request, Bad FCS
+[2026-04-07 11:34:05.531] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 11:34:05.531] [logger] [info] 
