@@ -1,0 +1,50 @@
+[2026-04-07 10:49:00.365] [logger] [info] Starting MLE thread
+[2026-04-07 10:49:00.365] [logger] [info] Inited communication
+[2026-04-07 10:49:05.702] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 09 01 01 0F 03 08 0C 90 15 5A 3D 55 4A 68 0E 01 80 12 02 00 04 00 00 
+[2026-04-07 10:49:05.702] [logger] [info] ---> Dissector's summary: Parent Request, Bad FCS
+[2026-04-07 10:49:05.702] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:05.702] [logger] [info] 
+[2026-04-07 10:49:06.454] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 6C 00 0B 08 2D 14 63 F6 40 EF 85 1B 16 08 00 00 00 00 00 01 00 00 0C 06 08 04 0B 02 B3 CF 00 00 
+[2026-04-07 10:49:06.454] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 10:49:06.454] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:06.454] [logger] [info] 
+[2026-04-07 10:49:07.202] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 6C 00 0B 08 2D 14 63 F6 40 F0 86 1B 16 08 00 00 00 00 00 01 00 00 0C 16 08 04 0B 02 B3 CF 0B 0E 80 01 01 0D 09 6C 00 25 00 05 00 00 0E 10 00 00 
+[2026-04-07 10:49:07.203] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 10:49:07.203] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:07.203] [logger] [info] 
+[2026-04-07 10:49:07.304] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 6C 00 0B 08 2D 14 63 F6 40 F0 86 1B 09 0A 30 00 00 00 10 00 00 00 00 01 00 00 
+[2026-04-07 10:49:07.305] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 10:49:07.305] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:07.305] [logger] [info] 
+[2026-04-07 10:49:08.064] [logger] [info] [EVE]:  Initiating RESTART sequence.
+[2026-04-07 10:49:08.065] [logger] [info] [EVE]:  Stopped successfully.
+[2026-04-07 10:49:09.042] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 6C 00 0B 08 2D 14 63 F6 40 F0 86 1B 09 0A 30 00 00 00 10 00 00 00 00 01 00 00 
+[2026-04-07 10:49:09.043] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 10:49:09.043] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:09.043] [logger] [info] 
+[2026-04-07 10:49:09.265] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 6C 00 0B 08 2D 14 63 F6 40 F1 87 1B 16 08 00 00 00 00 00 01 00 00 0C 2C 08 04 0B 02 B3 CF 0B 0E 80 01 01 0D 09 6C 00 25 00 05 00 00 0E 10 03 14 00 40 FD 17 82 E6 A2 60 00 01 05 04 6C 00 F1 00 07 02 11 40 00 00 
+[2026-04-07 10:49:09.266] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 10:49:09.266] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:09.266] [logger] [info] 
+[2026-04-07 10:49:11.066] [logger] [info] [EVE]:  Started successfully.
+[2026-04-07 10:49:12.536] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 08 00 02 6C 00 0B 08 2D 14 63 F6 40 F2 88 1B 16 08 00 00 00 00 00 01 00 00 0C 41 08 04 0B 02 B3 CF 0B 0E 80 01 01 0D 09 6C 00 25 00 05 00 00 0E 10 03 14 00 40 FD 17 82 E6 A2 60 00 01 05 04 6C 00 F1 00 07 02 11 40 03 13 00 60 FD 17 82 E6 A2 60 00 02 00 00 00 00 01 03 6C 00 E0 00 00 
+[2026-04-07 10:49:12.537] [logger] [info] ---> Dissector's summary: Data Response, Bad FCS
+[2026-04-07 10:49:12.537] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:12.537] [logger] [info] 
+[2026-04-07 10:49:12.957] [logger] [info] [MLE] Dissector wpan 41 D8 CD 3F 66 FF FF 55 9A 9D 60 0E B9 6E A6 7F 3B 02 F0 4D 4C 4D 4C A6 BF FF 04 00 02 6C 00 0B 08 2D 14 63 F6 40 F2 88 1B 09 0A 30 00 00 00 10 00 00 00 00 01 00 00 
+[2026-04-07 10:49:12.957] [logger] [info] ---> Dissector's summary: Advertisement, Bad FCS
+[2026-04-07 10:49:12.957] [logger] [info] [COOR]: not fuzzing, epoch it or post-epoch
+[2026-04-07 10:49:12.957] [logger] [info] 
+[2026-04-07 10:49:13.809] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:14.185] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:15.100] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:15.278] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:15.467] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:15.612] [logger] [warning] Called SIGINT handler!
+[2026-04-07 10:49:21.067] [logger] [info] [EVE]:  Initiating Factory Reset...
+[2026-04-07 10:49:46.069] [logger] [info] [EVE]:  Factory Reset complete!
+[2026-04-07 10:49:46.069] [logger] [info] [EVE]:  RESTART SUCCESSFUL.
+[2026-04-07 10:49:46.069] [logger] [info] restarts succesfull
+[2026-04-07 10:49:46.080] [logger] [info] terminate fuzzing
+[2026-04-07 10:49:46.080] [logger] [error] killing everything
+[2026-04-07 10:49:51.361] [logger] [info] [EVE]:  Stopped successfully.
