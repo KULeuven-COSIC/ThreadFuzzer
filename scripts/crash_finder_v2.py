@@ -126,7 +126,7 @@ def parse_log_file(filepath: str) -> Tuple[List[EpochData], List[str]]:
         sys.exit(1)
     return epochs, broken_epochs_info
 
-def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPacket], device_type: str, broken_epochs: List[str], verbose: bool):
+def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPacket], device_type: str, broken_epochs: List[str], verbose_level: int):
     if not epochs and not broken_epochs:
         print(f"\n[!] No log data parsed for {device_type}.")
         return
@@ -139,6 +139,7 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
     anomalies = []
     iter_counts = []
     crashed_epochs_verbose = []
+    non_crashing_signature_epochs = []
     global_packet_index = 0 
     overall_first_seed = None
 
@@ -147,6 +148,7 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
         total_iters += epoch.normal_iterations
         total_reboot_delta += epoch.real_reboot_diff
         epoch_crash_count = 0
+        epoch_triggered_signatures = set()
         
         for packet in epoch.packets:
             global_packet_index += 1
@@ -155,6 +157,7 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
                     key = f"{crash.name} [{crash.packet_type}]"
                     crash_counts[key] += 1
                     epoch_crash_count += 1
+                    epoch_triggered_signatures.add(f"{key} (Iter. {packet.iteration})")
                     if key not in first_occurrence:
                         first_occurrence[key] = (global_packet_index, packet.iteration)
                     if overall_first_seed is None or global_packet_index < overall_first_seed[0]:
@@ -162,11 +165,15 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
 
         epoch_total_crashes = epoch.real_reboot_diff - epoch.normal_iterations
         if epoch_total_crashes > 0:
-            crashed_epochs_verbose.append(
-                f"Epoch {epoch.epoch_id} [{epoch.end_timestamp}] (Iters {epoch.start_iteration}-{epoch.end_iteration}): "
-                f"{epoch_total_crashes} crash(es) | RBT Cnt: {epoch.start_reboots} -> {epoch.end_reboots} "
-                f"(Delta: {epoch.real_reboot_diff}, Expected: {epoch.normal_iterations})"
-            )
+            crashed_epochs_verbose.append({
+                "info": f"Epoch {epoch.epoch_id} [{epoch.end_timestamp}] (Iters {epoch.start_iteration}-{epoch.end_iteration}): {epoch_total_crashes} crash(es) | RBT Cnt: {epoch.start_reboots} -> {epoch.end_reboots} (Delta: {epoch.real_reboot_diff}, Expected: {epoch.normal_iterations})",
+                "signatures": sorted(list(epoch_triggered_signatures))
+            })
+        elif epoch_triggered_signatures:
+            non_crashing_signature_epochs.append({
+                "info": f"Epoch {epoch.epoch_id} [{epoch.end_timestamp}] (Iters {epoch.start_iteration}-{epoch.end_iteration}) | RBT Cnt: {epoch.start_reboots} -> {epoch.end_reboots} (Delta: {epoch.real_reboot_diff}, Expected: {epoch.normal_iterations})",
+                "signatures": sorted(list(epoch_triggered_signatures))
+            })
 
         expected_delta = epoch.normal_iterations + epoch_crash_count
         actual_delta = epoch.real_reboot_diff
@@ -182,7 +189,7 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
     print(f"\n--- FUZZING ANALYSIS REPORT ({device_type} TARGET) ---")
     
     print("\n1. CAMPAIGN CRASH SUMMARY")
-    print(f"   - Total Crashes Found: {total_crashes_global}")
+    print(f"   - Total Crashes Found: {max(0, total_crashes_global)}")
     print(f"   - Total Iterations:    {total_iters}")
     print(f"   - Total Reboot Delta:  {total_reboot_delta}")
 
@@ -219,7 +226,7 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
     else:
         print("   - No valid iterations tracked.")
 
-    if verbose:
+    if verbose_level >= 1:
         print("\n5. VERBOSE DETAILS")
         print("   [Broken Epochs]")
         if broken_epochs:
@@ -230,10 +237,24 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
 
         print("\n   [Detailed Crash Locations]")
         if crashed_epochs_verbose:
-            for c_info in crashed_epochs_verbose:
-                print(f"   - {c_info}")
+            for c_dict in crashed_epochs_verbose:
+                print(f"   - {c_dict['info']}")
+                if verbose_level >= 2:
+                    if c_dict['signatures']:
+                        print(f"       -> Signatures injected: {', '.join(c_dict['signatures'])}")
+                    else:
+                        print("       -> Signatures injected: NONE (Potential Unknown Anomaly)")
         else:
             print("   - No crashes detected in any epoch.")
+
+        if verbose_level >= 2:
+            print("\n   [Signatures Injected but NO Crash Observed]")
+            if non_crashing_signature_epochs:
+                for nc_dict in non_crashing_signature_epochs:
+                    print(f"   - {nc_dict['info']}")
+                    print(f"       -> Signatures injected: {', '.join(nc_dict['signatures'])}")
+            else:
+                print("   - None. All injected signatures correctly resulted in a crash.")
 
     print("\n" + "-"*35 + "\n")
 
@@ -241,7 +262,7 @@ def main():
     parser = argparse.ArgumentParser(description="Production-ready fuzzer log analysis script.")
     parser.add_argument("logfile", help="Path to the fuzzer log file.")
     parser.add_argument("--device", "-d", choices=["MTD", "FTD"], required=True, help="Target device type.")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Print detailed epoch-level crash locations and broken epochs.")
+    parser.add_argument("-v", "--verbose", action="count", default=0, help="Verbosity level (-v for epoch crashes, -vv for signature mappings & non-crashing injections).")
     args = parser.parse_args()
 
     mapping = {"MTD": ["V1", "V3", "V4"], "FTD": ["V1", "V3", "V5"]}
