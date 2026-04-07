@@ -1,5 +1,6 @@
 import argparse
 import re
+import sys
 from dataclasses import dataclass, field
 from typing import Set, List, Tuple, Dict
 
@@ -23,6 +24,7 @@ class EpochData:
     normal_iterations: int = 0
     start_iteration: int = -1
     end_iteration: int = -1
+    end_timestamp: str = "Unknown"
     packets: List[MutatedPacket] = field(default_factory=list)
 
     @property
@@ -43,20 +45,37 @@ CRASH_SIGNATURES = [
     }),
 ]
 
-def parse_log_file(filepath: str) -> List[EpochData]:
+def parse_log_file(filepath: str) -> Tuple[List[EpochData], List[str]]:
     epochs = []
+    broken_epochs_info = []
     current_epoch = EpochData(epoch_id=1)
     waiting_for_baseline = False
     waiting_for_final = False
     current_summary = ""
     current_mutations = set()
     current_iteration = -1 
+    
     mutation_pattern = re.compile(r"Fuzzed field\s+([a-zA-Z0-9_.]+).*?(New value=[^;]+)")
     iteration_pattern = re.compile(r"START OF A NEW FUZZING ITERATION\s+(\d+)")
     reboot_pattern = re.compile(r"COLLECTED RBT CNT FOR NODE \d+:\s+(\d+)")
+    timestamp_pattern = re.compile(r"^\[(.*?)\]")
+    
     try:
         with open(filepath, "r") as file:
             for line in file:
+                if "Failed to parse reboot count for Node" in line:
+                    ts_match = timestamp_pattern.search(line)
+                    ts = ts_match.group(1) if ts_match else "Unknown Timestamp"
+                    broken_epochs_info.append(f"Attempted Epoch {len(epochs) + 1} at [{ts}]")
+                    
+                    current_epoch = EpochData(epoch_id=len(epochs) + 1)
+                    waiting_for_baseline = False
+                    waiting_for_final = False
+                    current_summary = ""
+                    current_mutations = set()
+                    current_iteration = -1
+                    continue
+
                 if "CHIP pairing successful" in line:
                     waiting_for_baseline = True
                 elif "Fetching current_reboot_count to check for crashes" in line:
@@ -70,6 +89,9 @@ def parse_log_file(filepath: str) -> List[EpochData]:
                             waiting_for_baseline = False
                         elif waiting_for_final:
                             current_epoch.end_reboots = val
+                            ts_match = timestamp_pattern.search(line)
+                            if ts_match:
+                                current_epoch.end_timestamp = ts_match.group(1)
                             epochs.append(current_epoch)
                             current_epoch = EpochData(epoch_id=len(epochs) + 1)
                             waiting_for_final = False
@@ -100,25 +122,32 @@ def parse_log_file(filepath: str) -> List[EpochData]:
                         field_name, new_val = match.groups()
                         current_mutations.add(Mutation(field_name, new_val))
     except FileNotFoundError:
-        return []
-    return epochs
+        print(f"Error: File {filepath} not found.")
+        sys.exit(1)
+    return epochs, broken_epochs_info
 
-def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPacket], device_type: str):
-    if not epochs:
-        print("\n[!] No valid log data found.")
+def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPacket], device_type: str, broken_epochs: List[str], verbose: bool):
+    if not epochs and not broken_epochs:
+        print(f"\n[!] No log data parsed for {device_type}.")
         return
+
     first_occurrence = {}
     crash_counts = {f"{c.name} [{c.packet_type}]": 0 for c in active_signatures}
     total_unexpected_reboots = 0
     total_reboot_delta = 0
     total_iters = 0
     anomalies = []
+    iter_counts = []
+    crashed_epochs_verbose = []
     global_packet_index = 0 
     overall_first_seed = None
+
     for epoch in epochs:
+        iter_counts.append(epoch.normal_iterations)
         total_iters += epoch.normal_iterations
         total_reboot_delta += epoch.real_reboot_diff
         epoch_crash_count = 0
+        
         for packet in epoch.packets:
             global_packet_index += 1
             for crash in active_signatures:
@@ -130,51 +159,96 @@ def analyze_crashes(epochs: List[EpochData], active_signatures: List[MutatedPack
                         first_occurrence[key] = (global_packet_index, packet.iteration)
                     if overall_first_seed is None or global_packet_index < overall_first_seed[0]:
                         overall_first_seed = (global_packet_index, packet.iteration)
+
+        epoch_total_crashes = epoch.real_reboot_diff - epoch.normal_iterations
+        if epoch_total_crashes > 0:
+            crashed_epochs_verbose.append(
+                f"Epoch {epoch.epoch_id} [{epoch.end_timestamp}] (Iters {epoch.start_iteration}-{epoch.end_iteration}): "
+                f"{epoch_total_crashes} crash(es) | RBT Cnt: {epoch.start_reboots} -> {epoch.end_reboots} "
+                f"(Delta: {epoch.real_reboot_diff}, Expected: {epoch.normal_iterations})"
+            )
+
         expected_delta = epoch.normal_iterations + epoch_crash_count
         actual_delta = epoch.real_reboot_diff
         diff = actual_delta - expected_delta
         if diff > 0:
             total_unexpected_reboots += diff
-            anomalies.append(f"Epoch {epoch.epoch_id} (Iters {epoch.start_iteration}-{epoch.end_iteration}): {diff} unexpected reboot(s)")
+            iter_range = f"Iters {epoch.start_iteration}-{epoch.end_iteration}"
+            anomalies.append(f"Epoch {epoch.epoch_id} ({iter_range}): {diff} unexpected reboot(s)")
+
     total_crashes_global = total_reboot_delta - total_iters
     total_crash_mutations = sum(crash_counts.values())
-    print(f"\n--- FUZZING ANALYSIS REPORT ({device_type}) ---")
-    print("\n1. CRASH EXECUTION SUMMARY")
-    print(f"   - Total Crashes Found: {max(0, total_crashes_global)}")
+
+    print(f"\n--- FUZZING ANALYSIS REPORT ({device_type} TARGET) ---")
+    
+    print("\n1. CAMPAIGN CRASH SUMMARY")
+    print(f"   - Total Crashes Found: {total_crashes_global}")
     print(f"   - Total Iterations:    {total_iters}")
     print(f"   - Total Reboot Delta:  {total_reboot_delta}")
-    print("\n2. CRASHING MUTATIONS INFORMATION")
+
+    print("\n2. CRASHING SEEDS INFORMATION")
     print(f"   - Total Crash Mutations: {total_crash_mutations}")
     if overall_first_seed:
-        print(f"   - First Crashing Mutation:   Packet #{overall_first_seed[0]} (Iteration {overall_first_seed[1]})")
+        print(f"   - First Crashing Seed:   Packet #{overall_first_seed[0]} (Iteration {overall_first_seed[1]})")
     else:
-        print("   - First Crashing Mutation:   None detected")
+        print("   - First Crashing Seed:   None detected")
+    
     print("\n   [Detailed Breakdown]")
     if not first_occurrence:
         print("   No signature-matched crashes found.")
     else:
         for k in sorted(crash_counts.keys()):
             occ = first_occurrence.get(k)
-            occ_info = f"First: Packet #{occ[0]} (Iter {occ[1]})" if occ else "N/A"
+            occ_info = f"First at Packet #{occ[0]} (Iter {occ[1]})" if occ else "N/A"
             print(f"   - {k}: {crash_counts[k]} count | {occ_info}")
-    print("\n3. UNEXPECTED REBOOTS")
+
+    print("\n3. UNEXPECTED REBOOTS (ANOMALIES)")
     print(f"   - Total Anomalies: {total_unexpected_reboots}")
     if anomalies:
         for a in anomalies:
             print(f"   - [!] {a}")
     else:
         print("   - No anomalies detected.")
-    print("\n" + "-"*31 + "\n")
+
+    print("\n4. EPOCH SIZE STATISTICS")
+    print(f"   - Total Broken Epochs:    {len(broken_epochs)}")
+    if iter_counts:
+        avg_iters = sum(iter_counts) / len(iter_counts)
+        print(f"   - Total Epochs Validated: {len(epochs)}")
+        print(f"   - Iterations per Epoch:   Min: {min(iter_counts)} | Max: {max(iter_counts)} | Avg: {avg_iters:.2f}")
+    else:
+        print("   - No valid iterations tracked.")
+
+    if verbose:
+        print("\n5. VERBOSE DETAILS")
+        print("   [Broken Epochs]")
+        if broken_epochs:
+            for b in broken_epochs:
+                print(f"   - Failed {b}")
+        else:
+            print("   - No broken epochs.")
+
+        print("\n   [Detailed Crash Locations]")
+        if crashed_epochs_verbose:
+            for c_info in crashed_epochs_verbose:
+                print(f"   - {c_info}")
+        else:
+            print("   - No crashes detected in any epoch.")
+
+    print("\n" + "-"*35 + "\n")
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("logfile")
-    parser.add_argument("--device", "-d", choices=["MTD", "FTD"], required=True)
+    parser = argparse.ArgumentParser(description="Production-ready fuzzer log analysis script.")
+    parser.add_argument("logfile", help="Path to the fuzzer log file.")
+    parser.add_argument("--device", "-d", choices=["MTD", "FTD"], required=True, help="Target device type.")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Print detailed epoch-level crash locations and broken epochs.")
     args = parser.parse_args()
+
     mapping = {"MTD": ["V1", "V3", "V4"], "FTD": ["V1", "V3", "V5"]}
     active = [c for c in CRASH_SIGNATURES if c.name in mapping[args.device]]
-    epochs = parse_log_file(args.logfile)
-    analyze_crashes(epochs, active, args.device)
+    
+    epochs, broken_epochs = parse_log_file(args.logfile)
+    analyze_crashes(epochs, active, args.device, broken_epochs, args.verbose)
 
 if __name__ == "__main__":
     main()
