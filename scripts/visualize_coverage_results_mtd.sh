@@ -3,7 +3,7 @@ python3 scripts/coverage_dir_visualizer.py -i \
     coverage_log/MTD_none_config_100ms_it_speed_100/ \
     coverage_log/MTD_random_wo_coverage_k_2_100ms_it_speed_100/ \
     coverage_log/MTD_random_with_greybox_coverage_k_2_beta_3_100ms_it_speed_100/ \
-    coverage_log/MTD_random_with_blackbox_coverage_k_2_beta_5_100ms_it_speed_100 \
+    coverage_log/MTD_random_with_blackbox_coverage_k_2_beta_5_100ms_it_speed_100_copy/ \
     coverage_log/MTD_random_wo_coverage_k_2_and_tlv_inserter_100ms_it_speed_100/ \
     -l \
     "NO FUZZING" \
